@@ -1,4 +1,4 @@
-type RealtimeRole = 'desktop' | 'remote'
+type RealtimeRole = 'desktop' | 'remote' | 'drop-host' | 'drop-guest'
 
 interface RealtimeMessage {
   type: string
@@ -7,7 +7,7 @@ interface RealtimeMessage {
   from?: RealtimeRole
 }
 
-export function useRealtimeRoom(roomId: Ref<string>, role: RealtimeRole) {
+export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole>) {
   const config = useRuntimeConfig()
   const status = ref<'idle' | 'connecting' | 'connected' | 'offline'>('idle')
   const peerConnected = ref(false)
@@ -24,7 +24,7 @@ export function useRealtimeRoom(roomId: Ref<string>, role: RealtimeRole) {
     socket.send(JSON.stringify({
       type: 'room:join',
       roomId: roomId.value,
-      role,
+      role: toValue(role),
     }))
   }
 

@@ -23,13 +23,13 @@
       "index": "02",
       "title": "Web AirDrop",
       "description": "Join a room and exchange text and files instantly with WebRTC.",
-      "badge": "NEXT"
+      "badge": "LIVE"
     },
     "links": {
       "index": "03",
       "title": "Short Links & Thumbnails",
       "description": "Create short links, QR codes, rich previews, and page thumbnails.",
-      "badge": "LATER"
+      "badge": "LIVE"
     }
   },
   "remote": {

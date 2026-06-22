@@ -9,13 +9,15 @@ const roomPattern = /^[A-Z0-9]{6}$/
 interface Client extends WebSocket {
   isAlive: boolean
   roomId?: string
-  role?: 'desktop' | 'remote'
+  role?: RealtimeRole
 }
+
+type RealtimeRole = 'desktop' | 'remote' | 'drop-host' | 'drop-guest'
 
 interface ClientMessage {
   type: string
   roomId?: string
-  role?: 'desktop' | 'remote'
+  role?: RealtimeRole
   payload?: unknown
 }
 
@@ -24,7 +26,11 @@ const rooms = new Map<string, Set<Client>>()
 const server = createServer((request, response) => {
   if (request.url === '/health') {
     response.writeHead(200, { 'content-type': 'application/json' })
-    response.end(JSON.stringify({ ok: true, rooms: rooms.size }))
+    response.end(JSON.stringify({
+      connections: [...rooms.values()].reduce((total, room) => total + room.size, 0),
+      ok: true,
+      rooms: rooms.size,
+    }))
     return
   }
 
@@ -62,7 +68,9 @@ function leaveRoom(client: Client) {
 function joinRoom(client: Client, message: ClientMessage) {
   const roomId = message.roomId?.toUpperCase()
 
-  if (!roomId || !roomPattern.test(roomId) || !message.role) {
+  const validRoles: RealtimeRole[] = ['desktop', 'remote', 'drop-host', 'drop-guest']
+
+  if (!roomId || !roomPattern.test(roomId) || !message.role || !validRoles.includes(message.role)) {
     send(client, { type: 'error', code: 'INVALID_JOIN' })
     return
   }

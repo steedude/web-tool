@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     langDir: 'locales',
   },
   runtimeConfig: {
+    supabaseServiceRoleKey: '',
     public: {
       realtimeUrl: 'wss://ws.3854335.com/ws',
       supabasePublishableKey: '',
