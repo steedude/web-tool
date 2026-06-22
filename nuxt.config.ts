@@ -24,6 +24,13 @@ export default defineNuxtConfig({
     ],
     langDir: 'locales',
   },
+  runtimeConfig: {
+    public: {
+      realtimeUrl: 'wss://ws.3854335.com/ws',
+      supabasePublishableKey: '',
+      supabaseUrl: '',
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

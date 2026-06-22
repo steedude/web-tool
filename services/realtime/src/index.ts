@@ -69,15 +69,16 @@ function joinRoom(client: Client, message: ClientMessage) {
 
   leaveRoom(client)
   const room = rooms.get(roomId) ?? new Set<Client>()
+  const existingPeers = [...room]
   room.add(client)
   rooms.set(roomId, room)
   client.roomId = roomId
   client.role = message.role
 
   send(client, { type: 'room:joined', roomId, role: message.role })
-  room.forEach((peer) => {
-    if (peer !== client)
-      send(peer, { type: 'peer:joined', role: message.role })
+  existingPeers.forEach((peer) => {
+    send(peer, { type: 'peer:joined', role: message.role })
+    send(client, { type: 'peer:joined', role: peer.role })
   })
 }
 

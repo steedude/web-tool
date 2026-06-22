@@ -1,5 +1,55 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Avenir Next', 'Segoe UI', 'Noto Sans TC', ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #171714;
+  --color-paper: #f4f1e8;
+  --color-acid: #d9ff63;
+  --color-coral: #ff735c;
+  --color-sky: #8fd7ff;
+  --color-violet: #ad9cff;
+}
+
+:root {
+  color: var(--color-ink);
+  background: var(--color-paper);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(217 255 99 / 32%), transparent 30rem),
+    radial-gradient(circle at 88% 20%, rgb(143 215 255 / 36%), transparent 32rem), var(--color-paper);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: var(--color-ink);
+  background: var(--color-acid);
+}
+
+.noise {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+}
+
+.focus-ring:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 4px;
 }

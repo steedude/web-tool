@@ -1,9 +1,88 @@
 {
-  "brand": "Nuxt 4 Starter",
-  "title": "Your foundation is ready",
-  "description": "Nuxt 4, TypeScript, Pinia, i18n, Tailwind CSS, and persisted state are connected.",
-  "increment": "Increment",
-  "language": "Language",
-  "persistedCount": "This count survives a page refresh",
-  "reset": "Reset"
+  "brand": "3854335 WEB LAB",
+  "systemOnline": "Systems online",
+  "common": {
+    "backHome": "Back to the lab",
+    "comingSoon": "Coming soon",
+    "openFeature": "Open experiment"
+  },
+  "home": {
+    "eyebrow": "FRONTEND EXPERIMENTS / 2026",
+    "title": "Turning the browser into a playground.",
+    "description": "Three frontend experiments grown from real needs: cross-device control, peer-to-peer transfer, and smarter short links.",
+    "choose": "Choose an experiment"
+  },
+  "features": {
+    "remote": {
+      "index": "01",
+      "title": "Phone Remote",
+      "description": "Scan a QR code and turn your phone into a slide remote, laser pointer, and touchpad.",
+      "badge": "LIVE"
+    },
+    "drop": {
+      "index": "02",
+      "title": "Web AirDrop",
+      "description": "Join a room and exchange text and files instantly with WebRTC.",
+      "badge": "NEXT"
+    },
+    "links": {
+      "index": "03",
+      "title": "Short Links & Thumbnails",
+      "description": "Create short links, QR codes, rich previews, and page thumbnails.",
+      "badge": "LATER"
+    }
+  },
+  "remote": {
+    "eyebrow": "EXPERIMENT 01 / SECOND SCREEN",
+    "title": "Let your phone take over this screen.",
+    "description": "The desktop creates a disposable room. Scan to control slides, scroll content, and move a laser pointer. Every command is relayed in real time over WebSocket.",
+    "room": "Room code",
+    "scan": "Scan with your phone",
+    "copyLink": "Copy phone link",
+    "copied": "Copied",
+    "waiting": "Waiting for phone",
+    "connected": "Phone connected",
+    "connecting": "Connecting",
+    "offline": "Connection lost",
+    "desktopHint": "Keep this page open on your desktop",
+    "slideCounter": "Slide {current} / {total}",
+    "keyboardHint": "Arrow keys work too",
+    "slides": {
+      "one": {
+        "kicker": "HELLO, SECOND SCREEN",
+        "title": "One phone. Two screens.",
+        "body": "After scanning the QR code, phone and desktop join the same temporary room. Commands arrive instantly without a refresh."
+      },
+      "two": {
+        "kicker": "WEBSOCKET / REALTIME",
+        "title": "Every interaction is an event.",
+        "body": "Left and right change slides, up and down scroll, while the touchpad streams normalized pointer coordinates. The server only handles rooms and relays."
+      },
+      "three": {
+        "kicker": "BUILT FOR THE WEB",
+        "title": "A remote without an app install.",
+        "body": "The QR code is the invitation. With a modern browser and internet access, your phone and desktop do not need to share the same Wi-Fi."
+      }
+    },
+    "controller": {
+      "eyebrow": "REMOTE CONTROL",
+      "title": "Control desktop",
+      "room": "Room {room}",
+      "touchpad": "Move the laser pointer here",
+      "previous": "Previous",
+      "next": "Next",
+      "scrollUp": "Scroll up",
+      "scrollDown": "Scroll down",
+      "spotlight": "Spotlight",
+      "connected": "Desktop connected",
+      "waiting": "Waiting for desktop",
+      "leaveOpen": "Keep this page open while controlling"
+    }
+  },
+  "placeholder": {
+    "dropTitle": "Web AirDrop",
+    "dropDescription": "The next phase will add peer-to-peer text and file transfer with WebRTC.",
+    "linksTitle": "Short Links & Thumbnails",
+    "linksDescription": "Supabase is wired up. Next comes the short-link schema, redirects, and thumbnail pipeline."
+  }
 }
