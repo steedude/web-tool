@@ -4,15 +4,14 @@ import { LINK_CONFIG } from '../../configs/link.config'
 import { isDuplicateError, throwApiError } from '../../utils/error.util'
 import { buildShortLinkResponse, enforceCreateRateLimit, getExpiresAt, randomSlug, safeOptionalUrl, sanitizePassword, sanitizeText } from '../../utils/link.util'
 import { createShortLink } from '../../utils/supabase-rest.util'
-import { assertPublicDestination, normalizePublicUrl } from '../../utils/url.util'
+import { parseHttpUrl } from '../../utils/url.util'
 
 export default defineEventHandler(async (event) => {
   const now = enforceCreateRateLimit(event)
   const body = await readBody<CreateLinkBody>(event)
   if (!body.url || body.url.length > LINK_CONFIG.maxUrlLength)
     throwApiError(400, ApiErrorCode.InvalidUrl)
-  const target = normalizePublicUrl(body.url)
-  await assertPublicDestination(target)
+  const target = parseHttpUrl(body.url)
   const days = Number(body.expiresInDays || 0)
   const payload: Omit<NewShortLink, 'slug'> = {
     description: sanitizeText(body.description, LINK_CONFIG.maxDescriptionLength),

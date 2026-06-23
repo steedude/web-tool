@@ -130,7 +130,7 @@
   "links": {
     "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT",
     "title": "一條連結，變得更好分享。",
-    "description": "產生短網址、頁面截圖、QR Code，也可以上傳圖片做成有密碼保護的分享頁。",
+    "description": "產生短網址與 QR Code，也可以上傳圖片做成有密碼保護的分享頁。",
     "mode": {
       "url": "短網址",
       "image": "圖片分享"
@@ -144,6 +144,7 @@
       "password": "密碼保護（選填）"
     },
     "placeholders": {
+      "targetUrl": "https://example.com/article",
       "imageDescription": "留給接收者看的說明",
       "password": "留空代表任何人都能開啟"
     },
@@ -168,7 +169,8 @@
     "result": {
       "eyebrow": "YOUR SHORT LINK",
       "qrAlt": "短網址 QR Code",
-      "passwordProtected": "已啟用密碼保護"
+      "passwordProtected": "已啟用密碼保護",
+      "defaultPreviewEyebrow": "LINK PREVIEW"
     },
     "preview": {
       "imageEyebrow": "IMAGE PREVIEW",
@@ -178,7 +180,7 @@
     },
     "empty": {
       "title": "預覽會出現在這裡",
-      "description": "短網址會顯示頁面截圖，圖片分享會顯示上傳圖片。"
+      "description": "短網址會顯示預設卡片，圖片分享會顯示上傳圖片。"
     }
   },
   "image": {

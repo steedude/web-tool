@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CreatedLink, LinkPreview } from '~/types/link.type'
+import type { CreatedLink } from '~/types/link.type'
 import QRCode from 'qrcode'
 import { LINK_EXPIRY_OPTIONS, LINK_FORM_LIMITS, LINK_QR_CONFIG, LinkExpiryDay } from '~/configs/link.config'
 import { getApiErrorMessage } from '~/utils/error.util'
@@ -16,19 +16,19 @@ const imageDescription = ref('')
 const selectedImage = ref<File | null>(null)
 const selectedImagePreview = ref('')
 const expiresInDays = ref<LinkExpiryDay>(LinkExpiryDay.Forever)
-const preview = ref<LinkPreview | null>(null)
 const created = ref<CreatedLink | null>(null)
 const qrCode = ref('')
-const loadingPreview = ref(false)
 const creating = ref(false)
 const errorMessage = ref('')
 const copied = ref(false)
+const createdPreviewFailed = ref(false)
 const { t } = useI18n()
 const localePath = useLocalePath()
 
-const previewHostname = computed(() => preview.value ? getHostname(preview.value.url) : '')
 const createdHostname = computed(() => created.value ? getHostname(created.value.target_url) : '')
 const createdIsImage = computed(() => Boolean(created.value?.target_url.includes('/image/')))
+const createdPreviewImage = computed(() => created.value ? getPreviewImage(created.value.image_url, created.value.screenshot_url) : '')
+const shouldShowCreatedPreviewImage = computed(() => Boolean(createdPreviewImage.value && !createdPreviewFailed.value))
 const canCreate = computed(() => mode.value === 'url' ? Boolean(url.value.trim()) : Boolean(selectedImage.value))
 
 function limitText(value: string, maxLength: number) {
@@ -39,13 +39,10 @@ function characterCount(value: string, maxLength: number) {
   return `${value.length}/${maxLength}`
 }
 
-function isLikelyUrlInput(value: string) {
-  const input = value.trim()
-  if (!input)
-    return false
+function isValidHttpUrlInput(value: string) {
   try {
-    const candidate = new URL(input.includes('://') ? input : `https://${input}`)
-    return ['http:', 'https:'].includes(candidate.protocol) && candidate.hostname.includes('.')
+    const candidate = new URL(value.trim())
+    return ['http:', 'https:'].includes(candidate.protocol)
   }
   catch {
     return false
@@ -66,11 +63,11 @@ function resetForm() {
   imageTitle.value = ''
   imageDescription.value = ''
   expiresInDays.value = LinkExpiryDay.Forever
-  preview.value = null
   created.value = null
   qrCode.value = ''
   errorMessage.value = ''
   copied.value = false
+  createdPreviewFailed.value = false
   clearImagePreview()
 }
 
@@ -81,48 +78,18 @@ function setMode(nextMode: LinkMode) {
   resetForm()
 }
 
-async function loadPreview() {
-  if (!url.value.trim())
-    return
-  if (!isLikelyUrlInput(url.value)) {
-    preview.value = null
-    created.value = null
+async function createUrlLink() {
+  if (!isValidHttpUrlInput(url.value)) {
     errorMessage.value = getApiErrorMessage({ data: { code: 'INVALID_URL' } }, t, 'errors.INVALID_URL')
     return
   }
-  loadingPreview.value = true
-  errorMessage.value = ''
-  created.value = null
-  try {
-    preview.value = await $fetch<LinkPreview>('/api/links/preview', { query: { url: url.value } })
-    url.value = preview.value.url
-  }
-  catch (error: any) {
-    preview.value = null
-    errorMessage.value = getApiErrorMessage(error, t, 'errors.PREVIEW_FETCH_FAILED')
-  }
-  finally {
-    loadingPreview.value = false
-  }
-}
-
-async function createUrlLink() {
-  if (!preview.value || preview.value.url !== url.value.trim())
-    await loadPreview()
-  if (!preview.value)
-    return
 
   created.value = await $fetch<CreatedLink>('/api/links', {
     method: 'POST',
     body: {
-      description: preview.value.description,
       expiresInDays: expiresInDays.value,
-      favicon: preview.value.favicon,
-      image: preview.value.image,
       password: limitText(password.value, LINK_FORM_LIMITS.password) || undefined,
-      screenshot: preview.value.screenshot,
-      title: preview.value.title,
-      url: preview.value.url,
+      url: url.value.trim(),
     },
   })
 }
@@ -147,6 +114,7 @@ async function createLink() {
   creating.value = true
   errorMessage.value = ''
   try {
+    createdPreviewFailed.value = false
     if (mode.value === 'url')
       await createUrlLink()
     else
@@ -170,7 +138,6 @@ function onImageChange(event: Event) {
   selectedImage.value = file
   selectedImagePreview.value = file ? URL.createObjectURL(file) : ''
   created.value = null
-  preview.value = null
   errorMessage.value = ''
   if (file && !imageTitle.value)
     imageTitle.value = limitText(file.name.replace(/\.[^.]+$/, ''), LINK_FORM_LIMITS.title)
@@ -184,13 +151,13 @@ async function copyShortUrl() {
   setTimeout(() => copied.value = false, 1500)
 }
 
-watch(url, (value) => {
-  if (mode.value !== 'url' || !preview.value || preview.value.url === value.trim())
+watch(url, () => {
+  if (mode.value !== 'url')
     return
-  preview.value = null
   created.value = null
   qrCode.value = ''
   copied.value = false
+  createdPreviewFailed.value = false
 })
 
 onBeforeUnmount(clearImagePreview)
@@ -226,7 +193,7 @@ onBeforeUnmount(clearImagePreview)
 
           <template v-if="mode === 'url'">
             <label class="mt-5 block text-sm font-black" for="target-url">{{ t('links.fields.targetUrl') }}</label>
-            <input id="target-url" v-model="url" required type="text" placeholder="example.com/article" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-4 py-4">
+            <input id="target-url" v-model="url" required type="text" :placeholder="t('links.placeholders.targetUrl')" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-4 py-4">
           </template>
 
           <template v-else>
@@ -279,7 +246,7 @@ onBeforeUnmount(clearImagePreview)
             {{ errorMessage }}
           </p>
 
-          <button class="focus-ring mt-6 w-full border-2 border-ink bg-ink px-5 py-4 text-lg font-black text-white disabled:opacity-40" :disabled="creating || loadingPreview || !canCreate">
+          <button class="focus-ring mt-6 w-full border-2 border-ink bg-ink px-5 py-4 text-lg font-black text-white disabled:opacity-40" :disabled="creating || !canCreate">
             {{ creating ? t('links.actions.creating') : mode === 'url' ? t('links.actions.createUrl') : t('links.actions.createImage') }}
           </button>
         </form>
@@ -293,7 +260,20 @@ onBeforeUnmount(clearImagePreview)
           <a :href="created.shortUrl" target="_blank" class="focus-ring mt-3 block break-all text-3xl font-black underline sm:text-4xl">{{ created.shortUrl }}</a>
           <div class="mt-5 overflow-hidden border-2 border-ink bg-white">
             <div class="aspect-[1200/630] overflow-hidden border-b-2 border-ink bg-violet/20">
-              <img :src="getPreviewImage(created.image_url, created.screenshot_url)" :alt="created.title || created.target_url" class="h-full w-full" :class="createdIsImage ? 'object-contain p-3' : 'object-cover object-top'">
+              <img v-if="shouldShowCreatedPreviewImage" :src="createdPreviewImage" :alt="created.title || created.target_url" class="h-full w-full" :class="createdIsImage ? 'object-contain p-3' : 'object-cover object-top'" @error="createdPreviewFailed = true">
+              <div v-else class="grid h-full place-items-center bg-gradient-to-br from-acid via-paper to-sky/30 p-8 text-center">
+                <div>
+                  <div class="text-6xl font-black">
+                    {{ t('common.previewIcon') }}
+                  </div>
+                  <p class="mt-4 text-xs font-black tracking-[.2em] text-ink/50">
+                    {{ t('links.result.defaultPreviewEyebrow') }}
+                  </p>
+                  <p class="mt-2 line-clamp-2 break-all text-2xl font-black">
+                    {{ createdHostname || created.target_url }}
+                  </p>
+                </div>
+              </div>
             </div>
             <div class="p-4">
               <div class="flex items-center gap-2 text-xs font-bold text-ink/55">
@@ -336,23 +316,6 @@ onBeforeUnmount(clearImagePreview)
             </h2>
             <p class="mt-3 line-clamp-3 break-words leading-7 text-ink/70">
               {{ imageDescription || t('links.preview.imageDescription') }}
-            </p>
-          </div>
-        </div>
-
-        <div v-else-if="preview" class="overflow-hidden border-2 border-ink bg-white shadow-[8px_8px_0_#171714]">
-          <div class="aspect-[1200/630] overflow-hidden border-b-2 border-ink bg-violet/20">
-            <img :src="getPreviewImage(preview.image, preview.screenshot)" :alt="preview.title" class="h-full w-full object-cover object-top" @error="($event.target as HTMLImageElement).src = preview!.image || ''">
-          </div>
-          <div class="p-5 sm:p-7">
-            <div class="flex items-center gap-2 text-xs font-bold text-ink/55">
-              <img :src="preview.favicon" alt="" class="size-5" @error="($event.target as HTMLImageElement).style.display = 'none'"><span>{{ previewHostname }}</span>
-            </div>
-            <h2 class="mt-3 text-3xl font-black tracking-tight">
-              {{ preview.title }}
-            </h2>
-            <p class="mt-3 leading-7 text-ink/70">
-              {{ preview.description || t('links.preview.noDescription') }}
             </p>
           </div>
         </div>

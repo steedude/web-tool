@@ -22,6 +22,19 @@ export function normalizePublicUrl(input: string) {
   return url
 }
 
+export function parseHttpUrl(input: string) {
+  let url: URL
+  try {
+    url = new URL(input.trim())
+  }
+  catch {
+    throwApiError(400, ApiErrorCode.InvalidUrl)
+  }
+  if (!['http:', 'https:'].includes(url.protocol))
+    throwApiError(400, ApiErrorCode.UnsupportedUrlProtocol)
+  return url
+}
+
 export async function assertPublicDestination(url: URL) {
   if (url.hostname === 'localhost' || url.hostname.endsWith('.local'))
     throwApiError(400, ApiErrorCode.UnsafeInternalUrl)

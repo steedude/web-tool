@@ -130,7 +130,7 @@
   "links": {
     "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT",
     "title": "One link, easier to share.",
-    "description": "Create short links, page screenshots, QR codes, or upload images as password-protected share pages.",
+    "description": "Create short links and QR codes, or upload images as password-protected share pages.",
     "mode": {
       "url": "Short link",
       "image": "Image share"
@@ -144,6 +144,7 @@
       "password": "Password protection (optional)"
     },
     "placeholders": {
+      "targetUrl": "https://example.com/article",
       "imageDescription": "A note for the receiver",
       "password": "Leave empty to let anyone open it"
     },
@@ -168,7 +169,8 @@
     "result": {
       "eyebrow": "YOUR SHORT LINK",
       "qrAlt": "Short link QR Code",
-      "passwordProtected": "Password protection enabled"
+      "passwordProtected": "Password protection enabled",
+      "defaultPreviewEyebrow": "LINK PREVIEW"
     },
     "preview": {
       "imageEyebrow": "IMAGE PREVIEW",
@@ -178,7 +180,7 @@
     },
     "empty": {
       "title": "Preview appears here",
-      "description": "Short links show a page screenshot. Image shares show the uploaded image."
+      "description": "Short links show a default card. Image shares show the uploaded image."
     }
   },
   "image": {
