@@ -145,6 +145,7 @@
     },
     "placeholders": {
       "targetUrl": "https://example.com/article",
+      "imageTitle": "Give this image a title",
       "imageDescription": "A note for the receiver",
       "password": "Leave empty to let anyone open it"
     },

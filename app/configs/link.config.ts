@@ -26,3 +26,7 @@ export const LINK_FORM_LIMITS = {
   password: 16,
   title: 50,
 } as const
+
+export const LINK_SCREENSHOT_CONFIG = {
+  provider: 'https://api.microlink.io',
+} as const

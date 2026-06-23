@@ -145,6 +145,7 @@
     },
     "placeholders": {
       "targetUrl": "https://example.com/article",
+      "imageTitle": "替圖片取一個標題",
       "imageDescription": "留給接收者看的說明",
       "password": "留空代表任何人都能開啟"
     },

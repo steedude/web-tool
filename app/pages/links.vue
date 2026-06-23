@@ -3,7 +3,7 @@ import type { CreatedLink } from '~/types/link.type'
 import QRCode from 'qrcode'
 import { LINK_EXPIRY_OPTIONS, LINK_FORM_LIMITS, LINK_QR_CONFIG, LinkExpiryDay } from '~/configs/link.config'
 import { getApiErrorMessage } from '~/utils/error.util'
-import { getHostname, getPreviewImage } from '~/utils/link.util'
+import { getHostname, getPreviewImage, getWebsiteScreenshotUrl } from '~/utils/link.util'
 
 type LinkMode = 'url' | 'image'
 
@@ -27,7 +27,13 @@ const localePath = useLocalePath()
 
 const createdHostname = computed(() => created.value ? getHostname(created.value.target_url) : '')
 const createdIsImage = computed(() => Boolean(created.value?.target_url.includes('/image/')))
-const createdPreviewImage = computed(() => created.value ? getPreviewImage(created.value.image_url, created.value.screenshot_url) : '')
+const createdPreviewImage = computed(() => {
+  if (!created.value)
+    return ''
+  if (createdIsImage.value)
+    return getPreviewImage(created.value.image_url, created.value.screenshot_url)
+  return getPreviewImage(created.value.image_url, created.value.screenshot_url) || getWebsiteScreenshotUrl(created.value.target_url)
+})
 const shouldShowCreatedPreviewImage = computed(() => Boolean(createdPreviewImage.value && !createdPreviewFailed.value))
 const canCreate = computed(() => mode.value === 'url' ? Boolean(url.value.trim()) : Boolean(selectedImage.value))
 
@@ -139,8 +145,6 @@ function onImageChange(event: Event) {
   selectedImagePreview.value = file ? URL.createObjectURL(file) : ''
   created.value = null
   errorMessage.value = ''
-  if (file && !imageTitle.value)
-    imageTitle.value = limitText(file.name.replace(/\.[^.]+$/, ''), LINK_FORM_LIMITS.title)
 }
 
 async function copyShortUrl() {
@@ -208,7 +212,7 @@ onBeforeUnmount(clearImagePreview)
                   <span>{{ t('links.fields.imageTitle') }}</span>
                   <span class="text-xs text-ink/45">{{ characterCount(imageTitle, LINK_FORM_LIMITS.title) }}</span>
                 </span>
-                <input v-model="imageTitle" type="text" :maxlength="LINK_FORM_LIMITS.title" placeholder="My image" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-4 py-4">
+                <input v-model="imageTitle" type="text" :maxlength="LINK_FORM_LIMITS.title" :placeholder="t('links.placeholders.imageTitle')" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-4 py-4">
               </label>
               <label class="text-sm font-black">
                 <span class="flex items-center justify-between gap-3">
@@ -312,7 +316,7 @@ onBeforeUnmount(clearImagePreview)
               {{ t('links.preview.imageEyebrow') }}
             </p>
             <h2 class="mt-3 line-clamp-2 break-words text-3xl font-black tracking-tight">
-              {{ imageTitle || selectedImage?.name }}
+              {{ imageTitle || t('image.fallbackTitle') }}
             </h2>
             <p class="mt-3 line-clamp-3 break-words leading-7 text-ink/70">
               {{ imageDescription || t('links.preview.imageDescription') }}
