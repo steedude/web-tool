@@ -147,7 +147,11 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     if (!channel || channel.bufferedAmount < DROP_FILE_TRANSFER_CONFIG.maxBufferedAmount)
       return Promise.resolve()
     return new Promise<void>((resolve) => {
-      channel?.addEventListener('bufferedamountlow', () => resolve(), { once: true })
+      const activeChannel = channel
+      const finish = () => resolve()
+      activeChannel?.addEventListener('bufferedamountlow', finish, { once: true })
+      activeChannel?.addEventListener('close', finish, { once: true })
+      activeChannel?.addEventListener('error', finish, { once: true })
     })
   }
 
@@ -159,9 +163,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     const chunkSize = DROP_FILE_TRANSFER_CONFIG.chunkSize
     transferProgress.value = 0
     for (let offset = 0; offset < file.size; offset += chunkSize) {
+      const nextOffset = Math.min(offset + chunkSize, file.size)
+      channel.send(await file.slice(offset, nextOffset).arrayBuffer())
+      transferProgress.value = Math.min(100, Math.round((nextOffset / file.size) * 100))
       await waitForBuffer()
-      channel.send(await file.slice(offset, offset + chunkSize).arrayBuffer())
-      transferProgress.value = Math.min(100, Math.round(((offset + chunkSize) / file.size) * 100))
     }
     channel.send(JSON.stringify({ kind: DropMessageKind.FileEnd }))
     addFile({ name: file.name, size: file.size }, true)

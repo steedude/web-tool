@@ -28,10 +28,10 @@ export const DROP_QR_CONFIG = {
 } as const
 
 export const DROP_FILE_TRANSFER_CONFIG = {
-  // Keep chunks small enough for DataChannel backpressure to stay responsive on mobile browsers.
-  bufferLowThreshold: 256 * 1024,
-  chunkSize: 16 * 1024,
-  maxBufferedAmount: 512 * 1024,
+  // Keep each DataChannel message Safari-friendly, but allow enough queued bytes for decent throughput.
+  bufferLowThreshold: 1 * 1024 * 1024,
+  chunkSize: 64 * 1024,
+  maxBufferedAmount: 4 * 1024 * 1024,
   maxFileSize: 50 * 1024 * 1024,
 } as const
 
