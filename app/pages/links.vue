@@ -259,9 +259,6 @@ onBeforeUnmount(clearImagePreview)
           <div class="mt-6 grid items-start gap-5 sm:grid-cols-[170px_1fr]">
             <img :src="qrCode" alt="短網址 QR Code" class="w-full border-2 border-ink bg-white p-2">
             <div class="space-y-4">
-              <p class="break-all text-sm">
-                前往：{{ created.target_url }}
-              </p>
               <p v-if="created.password_required" class="inline-flex border border-ink bg-white px-2 py-1 text-xs font-black">
                 已啟用密碼保護
               </p>
