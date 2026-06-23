@@ -14,11 +14,11 @@ export enum LinkResolveStatus {
 
 export const LINK_CONFIG = {
   aliasPattern: /^[a-z0-9_-]{3,24}$/,
-  maxDescriptionLength: 100,
+  maxDescriptionLength: 50,
   maxImageUploadBytes: 5 * 1024 * 1024,
   maxPasswordLength: 16,
   maxSlugAttempts: 4,
-  maxTitleLength: 50,
+  maxTitleLength: 20,
   maxUrlLength: 2048,
   rateLimit: {
     maxAttempts: 10,

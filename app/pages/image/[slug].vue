@@ -85,10 +85,10 @@ onMounted(async () => {
           <p class="text-xs font-black tracking-[.2em] text-ink/55">
             {{ t('image.unlocked') }}
           </p>
-          <h1 class="mt-4 text-4xl leading-none font-black tracking-[-.055em] sm:text-6xl">
+          <h1 class="mt-4 break-all text-4xl leading-none font-black tracking-[-.055em] [overflow-wrap:anywhere] sm:text-6xl">
             {{ image?.title || t('image.fallbackTitle') }}
           </h1>
-          <p v-if="image?.description" class="mt-5 text-lg leading-8 text-ink/70">
+          <p v-if="image?.description" class="mt-5 break-all text-lg leading-8 text-ink/70 [overflow-wrap:anywhere]">
             {{ image.description }}
           </p>
           <p v-if="image?.password_required" class="mt-6 border-l-4 border-sky bg-sky/20 px-4 py-3 text-sm font-bold">

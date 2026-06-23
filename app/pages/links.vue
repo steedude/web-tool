@@ -206,15 +206,15 @@ onBeforeUnmount(clearImagePreview)
             <p class="mt-2 text-xs font-bold text-ink/55">
               {{ t('links.hints.imageTypes') }}
             </p>
-            <div class="mt-5 grid gap-4 sm:grid-cols-2">
-              <label class="text-sm font-black">
+            <div class="mt-5 grid gap-4 md:grid-cols-2">
+              <label class="min-w-0 text-sm font-black">
                 <span class="flex items-center justify-between gap-3">
                   <span>{{ t('links.fields.imageTitle') }}</span>
                   <span class="text-xs text-ink/45">{{ characterCount(imageTitle, LINK_FORM_LIMITS.title) }}</span>
                 </span>
                 <input v-model="imageTitle" type="text" :maxlength="LINK_FORM_LIMITS.title" :placeholder="t('links.placeholders.imageTitle')" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-4 py-4">
               </label>
-              <label class="text-sm font-black">
+              <label class="min-w-0 text-sm font-black">
                 <span class="flex items-center justify-between gap-3">
                   <span>{{ t('links.fields.imageDescription') }}</span>
                   <span class="text-xs text-ink/45">{{ characterCount(imageDescription, LINK_FORM_LIMITS.description) }}</span>
@@ -224,7 +224,7 @@ onBeforeUnmount(clearImagePreview)
             </div>
           </template>
 
-          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="mt-5 grid gap-4 md:grid-cols-2">
             <label class="text-sm font-black">{{ t('links.fields.expiry') }}
               <select v-model="expiresInDays" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-3 py-3">
                 <option v-for="option in LINK_EXPIRY_OPTIONS" :key="option.value" :value="option.value">
@@ -232,7 +232,7 @@ onBeforeUnmount(clearImagePreview)
                 </option>
               </select>
             </label>
-            <label class="text-sm font-black">
+            <label class="min-w-0 text-sm font-black">
               <span class="flex items-center justify-between gap-3">
                 <span>{{ t('links.fields.password') }}</span>
                 <span class="text-xs text-ink/45">{{ characterCount(password, LINK_FORM_LIMITS.password) }}</span>
@@ -284,10 +284,10 @@ onBeforeUnmount(clearImagePreview)
                 <img v-if="created.favicon_url" :src="created.favicon_url" alt="" class="size-5" @error="($event.target as HTMLImageElement).style.display = 'none'">
                 <span>{{ createdHostname }}</span>
               </div>
-              <h2 class="mt-2 line-clamp-2 break-words text-xl font-black">
+              <h2 class="mt-2 line-clamp-2 break-all text-xl font-black [overflow-wrap:anywhere]">
                 {{ created.title || created.target_url }}
               </h2>
-              <p v-if="created.description" class="mt-2 line-clamp-3 break-words text-sm leading-6 text-ink/70">
+              <p v-if="created.description" class="mt-2 line-clamp-3 break-all text-sm leading-6 text-ink/70 [overflow-wrap:anywhere]">
                 {{ created.description }}
               </p>
             </div>
@@ -315,10 +315,10 @@ onBeforeUnmount(clearImagePreview)
             <p class="text-xs font-black tracking-[.2em]">
               {{ t('links.preview.imageEyebrow') }}
             </p>
-            <h2 class="mt-3 line-clamp-2 break-words text-3xl font-black tracking-tight">
+            <h2 class="mt-3 line-clamp-2 break-all text-3xl font-black tracking-tight [overflow-wrap:anywhere]">
               {{ imageTitle || t('image.fallbackTitle') }}
             </h2>
-            <p class="mt-3 line-clamp-3 break-words leading-7 text-ink/70">
+            <p class="mt-3 line-clamp-3 break-all leading-7 text-ink/70 [overflow-wrap:anywhere]">
               {{ imageDescription || t('links.preview.imageDescription') }}
             </p>
           </div>

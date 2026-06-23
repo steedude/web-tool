@@ -22,9 +22,9 @@ export const LINK_QR_CONFIG = {
 } as const
 
 export const LINK_FORM_LIMITS = {
-  description: 100,
+  description: 50,
   password: 16,
-  title: 50,
+  title: 20,
 } as const
 
 export const LINK_SCREENSHOT_CONFIG = {

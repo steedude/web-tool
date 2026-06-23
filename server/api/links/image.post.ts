@@ -35,10 +35,9 @@ export default defineEventHandler(async (event) => {
     throwApiError(400, ApiErrorCode.ImageTooLarge)
 
   const imageData = image.data
-  const imageName = image.filename || 'image'
   const field = (name: string) => form?.find(item => item.name === name)?.data.toString('utf8')
   const days = Number(field('expiresInDays') || 0)
-  const title = sanitizeText(field('title') || imageName, LINK_CONFIG.maxTitleLength)
+  const title = sanitizeText(field('title'), LINK_CONFIG.maxTitleLength)
   const description = sanitizeText(field('description'), LINK_CONFIG.maxDescriptionLength)
   const expiresAt = getExpiresAt(days, now)
   const imagePassword = sanitizePassword(field('password'))
