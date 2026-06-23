@@ -79,7 +79,14 @@
       "leaveOpen": "Keep this page open while controlling"
     }
   },
+  "drop": {
+    "eyebrow": "EXPERIMENT 02 / PEER TO PEER"
+  },
+  "links": {
+    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT"
+  },
   "placeholder": {
+    "experiment": "EXPERIMENT {index}",
     "dropTitle": "Web AirDrop",
     "dropDescription": "The next phase will add peer-to-peer text and file transfer with WebRTC.",
     "linksTitle": "Short Links & Thumbnails",

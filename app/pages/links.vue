@@ -15,6 +15,7 @@ const loadingPreview = ref(false)
 const creating = ref(false)
 const errorMessage = ref('')
 const copied = ref(false)
+const { t } = useI18n()
 const previewHostname = computed(() => preview.value ? getHostname(preview.value.url) : '')
 const createdHostname = computed(() => created.value ? getHostname(created.value.target_url) : '')
 
@@ -86,7 +87,7 @@ async function copyShortUrl() {
     <div class="mt-10 grid gap-10 lg:grid-cols-[.9fr_1.1fr]">
       <section>
         <p class="text-sm font-black tracking-[.24em]">
-          EXPERIMENT 03 / LINK TOOLKIT
+          {{ t('links.eyebrow') }}
         </p>
         <h1 class="mt-5 text-5xl leading-[.95] font-black tracking-[-.055em] sm:text-7xl">
           一條網址，變得更好分享。

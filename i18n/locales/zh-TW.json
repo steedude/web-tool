@@ -79,7 +79,14 @@
       "leaveOpen": "控制時請保持此頁開啟"
     }
   },
+  "drop": {
+    "eyebrow": "EXPERIMENT 02 / PEER TO PEER"
+  },
+  "links": {
+    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT"
+  },
   "placeholder": {
+    "experiment": "EXPERIMENT {index}",
     "dropTitle": "網頁版 AirDrop",
     "dropDescription": "下一階段會在這裡加入 WebRTC 點對點文字與檔案傳輸。",
     "linksTitle": "短網址與縮圖",

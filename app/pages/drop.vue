@@ -34,6 +34,7 @@ const transferProgress = ref<number | null>(null)
 const messages = ref<ChatItem[]>([])
 const connectionState = ref<RTCPeerConnectionState>('new')
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput')
+const { t } = useI18n()
 
 const room = useRealtimeRoom(roomId, role)
 let peer: RTCPeerConnection | null = null
@@ -239,7 +240,7 @@ onBeforeUnmount(() => {
     <section v-if="!started" class="mt-10 grid gap-8 lg:grid-cols-[1.2fr_.8fr]">
       <div>
         <p class="text-sm font-black tracking-[.24em]">
-          EXPERIMENT 02 / PEER TO PEER
+          {{ t('drop.eyebrow') }}
         </p>
         <h1 class="mt-5 max-w-4xl text-5xl leading-[.95] font-black tracking-[-.055em] sm:text-7xl">
           檔案不繞路，直接送到你手上。

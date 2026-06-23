@@ -15,7 +15,7 @@ const localePath = useLocalePath()
     <section class="relative w-full overflow-hidden rounded-[2.5rem] border-2 border-ink bg-white p-8 shadow-[9px_9px_0_#171714] sm:p-14">
       <div :class="accent" class="absolute -top-32 -right-24 size-80 rounded-full border-2 border-ink" />
       <p class="relative font-mono text-xs font-black tracking-[0.2em]">
-        EXPERIMENT {{ index }}
+        {{ t('placeholder.experiment', { index }) }}
       </p>
       <h1 class="relative mt-8 max-w-3xl text-5xl leading-none font-black tracking-[-0.06em] sm:text-7xl">
         {{ title }}
