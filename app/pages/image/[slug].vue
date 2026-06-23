@@ -86,7 +86,7 @@ onMounted(async () => {
           <p v-if="image?.description" class="mt-5 text-lg leading-8 text-ink/70">
             {{ image.description }}
           </p>
-          <p class="mt-6 border-l-4 border-sky bg-sky/20 px-4 py-3 text-sm font-bold">
+          <p v-if="image?.password_required" class="mt-6 border-l-4 border-sky bg-sky/20 px-4 py-3 text-sm font-bold">
             重新整理頁面後會重新要求密碼。
           </p>
         </div>
