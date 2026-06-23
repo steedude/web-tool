@@ -80,10 +80,83 @@
     }
   },
   "drop": {
-    "eyebrow": "EXPERIMENT 02 / PEER TO PEER"
+    "eyebrow": "EXPERIMENT 02 / PEER TO PEER",
+    "system": {
+      "connected": "裝置已建立點對點連線",
+      "offline": "另一台裝置已離線"
+    }
   },
   "links": {
-    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT"
+    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT",
+    "title": "一條連結，變得更好分享。",
+    "description": "產生短網址、頁面截圖、QR Code，也可以上傳圖片做成有密碼保護的分享頁。",
+    "mode": {
+      "url": "短網址",
+      "image": "圖片分享"
+    },
+    "fields": {
+      "targetUrl": "目標網址",
+      "uploadImage": "上傳圖片",
+      "imageTitle": "圖片標題",
+      "imageDescription": "圖片描述",
+      "expiry": "有效期限",
+      "password": "密碼保護（選填）"
+    },
+    "placeholders": {
+      "imageDescription": "留給接收者看的說明",
+      "password": "留空代表任何人都能開啟"
+    },
+    "hints": {
+      "imageTypes": "支援 JPG、PNG、WebP、GIF，單檔上限 5 MB。"
+    },
+    "expiry": {
+      "forever": "永久",
+      "oneDay": "1 天",
+      "oneWeek": "7 天",
+      "oneMonth": "30 天"
+    },
+    "actions": {
+      "loadingPreview": "讀取中…",
+      "getPreview": "取得截圖",
+      "creating": "正在建立…",
+      "createUrl": "建立短網址",
+      "createImage": "建立圖片分享頁",
+      "copied": "已複製！",
+      "copyShortUrl": "複製短網址"
+    },
+    "result": {
+      "eyebrow": "YOUR SHORT LINK",
+      "qrAlt": "短網址 QR Code",
+      "passwordProtected": "已啟用密碼保護"
+    },
+    "preview": {
+      "imageEyebrow": "IMAGE PREVIEW",
+      "imageDescription": "圖片分享頁建立後，可以搭配密碼保護分享。",
+      "noDescription": "這個頁面沒有提供描述。",
+      "uploadAlt": "上傳圖片預覽"
+    },
+    "empty": {
+      "title": "預覽會出現在這裡",
+      "description": "短網址會顯示頁面截圖，圖片分享會顯示上傳圖片。"
+    }
+  },
+  "image": {
+    "backToLinks": "← 回到短網址工具",
+    "eyebrow": "PROTECTED IMAGE SHARE",
+    "loading": "讀取圖片資訊中…",
+    "unlocked": "IMAGE UNLOCKED",
+    "fallbackTitle": "圖片分享",
+    "refreshNote": "重新整理頁面後會重新要求密碼。",
+    "protectedTitle": "這張圖片受到保護",
+    "protectedDescription": "輸入密碼後，圖片會直接顯示在這個頁面。",
+    "passwordPlaceholder": "輸入密碼",
+    "verifying": "驗證中…",
+    "viewImage": "查看圖片",
+    "notFoundTitle": "找不到圖片",
+    "notFoundDescription": "這個圖片連結不存在或已過期。",
+    "errors": {
+      "wrongPassword": "密碼不正確，請再試一次。"
+    }
   },
   "errors": {
     "ALIAS_TAKEN": "這個自訂代碼已經被使用，請換一個。",
@@ -94,7 +167,7 @@
     "INVALID_ALIAS": "自訂代碼需為 3–24 個字元，只能使用英數字、- 或 _。",
     "INVALID_IMAGE_TYPE": "目前只支援 JPG、PNG、WebP、GIF 圖片。",
     "INVALID_URL": "請輸入有效網址。",
-    "PASSWORD_TOO_LONG": "密碼太長了。",
+    "PASSWORD_TOO_LONG": "密碼最多 16 字。",
     "PASSWORD_TOO_SHORT": "密碼至少需要 4 個字元。",
     "PREVIEW_FETCH_FAILED": "讀取預覽失敗。",
     "RATE_LIMITED": "建立太頻繁，請稍後再試。",

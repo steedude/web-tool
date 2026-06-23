@@ -72,8 +72,8 @@ function setupChannel(nextChannel: RTCDataChannel) {
     channelState.value = nextChannel.readyState
   })
 
-  channel.addEventListener('open', () => addSystem('裝置已建立點對點連線'))
-  channel.addEventListener('close', () => addSystem('另一台裝置已離線'))
+  channel.addEventListener('open', () => addSystem(t('drop.system.connected')))
+  channel.addEventListener('close', () => addSystem(t('drop.system.offline')))
   channel.addEventListener('message', (event) => {
     if (typeof event.data === 'string') {
       const data = JSON.parse(event.data) as { kind: string, name?: string, size?: number, text?: string, type?: string }

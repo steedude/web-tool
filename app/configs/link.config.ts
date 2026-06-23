@@ -6,10 +6,10 @@ export enum LinkExpiryDay {
 }
 
 export const LINK_EXPIRY_OPTIONS = [
-  { label: '永久', value: LinkExpiryDay.Forever },
-  { label: '1 天', value: LinkExpiryDay.OneDay },
-  { label: '7 天', value: LinkExpiryDay.OneWeek },
-  { label: '30 天', value: LinkExpiryDay.OneMonth },
+  { labelKey: 'links.expiry.forever', value: LinkExpiryDay.Forever },
+  { labelKey: 'links.expiry.oneDay', value: LinkExpiryDay.OneDay },
+  { labelKey: 'links.expiry.oneWeek', value: LinkExpiryDay.OneWeek },
+  { labelKey: 'links.expiry.oneMonth', value: LinkExpiryDay.OneMonth },
 ] as const
 
 export const LINK_QR_CONFIG = {
@@ -23,6 +23,6 @@ export const LINK_QR_CONFIG = {
 
 export const LINK_FORM_LIMITS = {
   description: 100,
-  password: 128,
+  password: 16,
   title: 50,
 } as const

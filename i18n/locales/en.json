@@ -80,10 +80,83 @@
     }
   },
   "drop": {
-    "eyebrow": "EXPERIMENT 02 / PEER TO PEER"
+    "eyebrow": "EXPERIMENT 02 / PEER TO PEER",
+    "system": {
+      "connected": "Devices are connected peer-to-peer",
+      "offline": "The other device went offline"
+    }
   },
   "links": {
-    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT"
+    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT",
+    "title": "One link, easier to share.",
+    "description": "Create short links, page screenshots, QR codes, or upload images as password-protected share pages.",
+    "mode": {
+      "url": "Short link",
+      "image": "Image share"
+    },
+    "fields": {
+      "targetUrl": "Target URL",
+      "uploadImage": "Upload image",
+      "imageTitle": "Image title",
+      "imageDescription": "Image description",
+      "expiry": "Expiration",
+      "password": "Password protection (optional)"
+    },
+    "placeholders": {
+      "imageDescription": "A note for the receiver",
+      "password": "Leave empty to let anyone open it"
+    },
+    "hints": {
+      "imageTypes": "Supports JPG, PNG, WebP, and GIF. Maximum size: 5 MB."
+    },
+    "expiry": {
+      "forever": "Forever",
+      "oneDay": "1 day",
+      "oneWeek": "7 days",
+      "oneMonth": "30 days"
+    },
+    "actions": {
+      "loadingPreview": "Loading…",
+      "getPreview": "Get screenshot",
+      "creating": "Creating…",
+      "createUrl": "Create short link",
+      "createImage": "Create image share page",
+      "copied": "Copied!",
+      "copyShortUrl": "Copy short URL"
+    },
+    "result": {
+      "eyebrow": "YOUR SHORT LINK",
+      "qrAlt": "Short link QR Code",
+      "passwordProtected": "Password protection enabled"
+    },
+    "preview": {
+      "imageEyebrow": "IMAGE PREVIEW",
+      "imageDescription": "After creating the image share page, you can protect it with a password.",
+      "noDescription": "This page does not provide a description.",
+      "uploadAlt": "Uploaded image preview"
+    },
+    "empty": {
+      "title": "Preview appears here",
+      "description": "Short links show a page screenshot. Image shares show the uploaded image."
+    }
+  },
+  "image": {
+    "backToLinks": "← Back to link toolkit",
+    "eyebrow": "PROTECTED IMAGE SHARE",
+    "loading": "Loading image information…",
+    "unlocked": "IMAGE UNLOCKED",
+    "fallbackTitle": "Image share",
+    "refreshNote": "Refreshing the page will ask for the password again.",
+    "protectedTitle": "This image is protected",
+    "protectedDescription": "Enter the password and the image will appear on this page.",
+    "passwordPlaceholder": "Enter password",
+    "verifying": "Verifying…",
+    "viewImage": "View image",
+    "notFoundTitle": "Image not found",
+    "notFoundDescription": "This image link does not exist or has expired.",
+    "errors": {
+      "wrongPassword": "Password is incorrect. Please try again."
+    }
   },
   "errors": {
     "ALIAS_TAKEN": "This custom code is already in use. Try another one.",
@@ -94,7 +167,7 @@
     "INVALID_ALIAS": "Custom code must be 3–24 characters and can only use letters, numbers, - or _.",
     "INVALID_IMAGE_TYPE": "Only JPG, PNG, WebP, and GIF images are supported.",
     "INVALID_URL": "Please enter a valid URL.",
-    "PASSWORD_TOO_LONG": "Password is too long.",
+    "PASSWORD_TOO_LONG": "Password can be at most 16 characters.",
     "PASSWORD_TOO_SHORT": "Password must be at least 4 characters.",
     "PREVIEW_FETCH_FAILED": "Could not read the page preview.",
     "RATE_LIMITED": "You are creating links too quickly. Please try again later.",

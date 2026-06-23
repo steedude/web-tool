@@ -17,7 +17,7 @@ export const LINK_CONFIG = {
   htmlPreviewMaxBytes: 1_000_000,
   maxDescriptionLength: 100,
   maxImageUploadBytes: 5 * 1024 * 1024,
-  maxPasswordLength: 128,
+  maxPasswordLength: 16,
   maxRedirects: 4,
   maxSlugAttempts: 4,
   maxTitleLength: 50,
