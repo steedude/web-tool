@@ -2,7 +2,7 @@ import type { NewShortLink } from '../../types/link.type'
 import { randomUUID } from 'node:crypto'
 import { LINK_CONFIG } from '../../configs/link.config'
 import { buildShortLinkResponse, enforceCreateRateLimit, getExpiresAt, normalizeAlias, randomSlug, sanitizePassword, sanitizeText } from '../../utils/link.util'
-import { createShortLink } from '../../utils/supabase-rest.util'
+import { createImageLink, createShortLink } from '../../utils/supabase-rest.util'
 import { uploadPublicImage } from '../../utils/supabase-storage.util'
 
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
@@ -32,28 +32,39 @@ export default defineEventHandler(async (event) => {
   if (image.data.byteLength > LINK_CONFIG.maxImageUploadBytes)
     throw createError({ statusCode: 400, statusMessage: '圖片不能超過 5 MB' })
 
+  const imageData = image.data
+  const imageName = image.filename || 'image'
   const field = (name: string) => form?.find(item => item.name === name)?.data.toString('utf8')
   const alias = normalizeAlias(field('alias'))
   const days = Number(field('expiresInDays') || 0)
-  const path = `${randomUUID()}.${extensionFor(contentType)}`
-  const imageUrl = await uploadPublicImage(path, image.data, contentType)
-  const title = sanitizeText(field('title') || image.filename, LINK_CONFIG.maxTitleLength)
+  const title = sanitizeText(field('title') || imageName, LINK_CONFIG.maxTitleLength)
   const description = sanitizeText(field('description'), LINK_CONFIG.maxDescriptionLength)
-
-  const payload: Omit<NewShortLink, 'slug'> = {
-    description,
-    expires_at: getExpiresAt(days, now),
-    favicon_url: null,
-    image_url: imageUrl,
-    password: sanitizePassword(field('password')),
-    screenshot_url: imageUrl,
-    target_url: imageUrl,
-    title,
-  }
+  const expiresAt = getExpiresAt(days, now)
+  const imagePassword = sanitizePassword(field('password'))
 
   async function createWithSlug(slug: string) {
+    const path = `${slug}/${randomUUID()}.${extensionFor(contentType)}`
+    const imageUrl = await uploadPublicImage(path, imageData, contentType)
+    await createImageLink({
+      description,
+      expires_at: expiresAt,
+      image_url: imageUrl,
+      password: imagePassword,
+      slug,
+      title,
+    })
+    const payload: Omit<NewShortLink, 'slug'> = {
+      description,
+      expires_at: expiresAt,
+      favicon_url: null,
+      image_url: imageUrl,
+      password: null,
+      screenshot_url: imageUrl,
+      target_url: `${getRequestURL(event).origin}/image/${slug}`,
+      title,
+    }
     const created = await createShortLink({ ...payload, slug })
-    return buildShortLinkResponse(event, created, Boolean(payload.password))
+    return buildShortLinkResponse(event, created, Boolean(imagePassword))
   }
 
   try {

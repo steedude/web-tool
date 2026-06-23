@@ -43,3 +43,20 @@ export interface ShortLinkResponse extends Omit<NewShortLink, 'password'> {
   password_required: boolean
   shortUrl: string
 }
+
+export interface NewImageLink {
+  description: string | null
+  expires_at: string | null
+  image_url: string
+  password: string | null
+  slug: string
+  title: string | null
+}
+
+export interface ResolvedImageLink {
+  description: string | null
+  image_url: string | null
+  password_required: boolean
+  status: LinkResolveStatus
+  title: string | null
+}
