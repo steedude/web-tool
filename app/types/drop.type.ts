@@ -40,6 +40,11 @@ export interface IncomingDropFile {
   type: string
 }
 
+export interface OutgoingDropFileProgress {
+  lastProgressAt: number
+  lastReceived: number
+}
+
 export interface DropDataMessage {
   id?: string
   kind: DropMessageKind

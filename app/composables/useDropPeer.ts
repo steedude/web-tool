@@ -1,4 +1,4 @@
-import type { DropChatItem, DropDataMessage, DropDebugStats, IncomingDropFile } from '~/types/drop.type'
+import type { DropChatItem, DropDataMessage, DropDebugStats, IncomingDropFile, OutgoingDropFileProgress } from '~/types/drop.type'
 import type { RealtimeMessage } from '~/types/realtime.type'
 import { DROP_FILE_TRANSFER_CONFIG, DROP_RTC_CONFIG } from '~/configs/realtime.config'
 import { DropFileTransferStatus, DropMessageKind } from '~/types/drop.type'
@@ -34,6 +34,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   let lastProgressAt = 0
   let statsTimer: ReturnType<typeof setInterval> | null = null
   let lastStatsSnapshot = { bytesReceived: 0, bytesSent: 0, timestamp: 0 }
+  const outgoingProgressMap = new Map<string, OutgoingDropFileProgress>()
 
   const isReady = computed(() => channelState.value === 'open' && connectionState.value === 'connected')
 
@@ -114,11 +115,21 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       }, false)
     }
     else if (data.kind === DropMessageKind.FileProgress && data.id && data.received !== undefined && data.size) {
+      const now = Date.now()
+      const progressSnapshot = outgoingProgressMap.get(data.id) ?? { lastProgressAt: now, lastReceived: 0 }
+      const elapsedSeconds = Math.max((now - progressSnapshot.lastProgressAt) / 1000, 0.001)
+      const speedBytesPerSecond = Math.max(0, (data.received - progressSnapshot.lastReceived) / elapsedSeconds)
+      outgoingProgressMap.set(data.id, { lastProgressAt: now, lastReceived: data.received })
+
       updateFileMessage(data.id, {
         progress: Math.min(100, Math.round((data.received / data.size) * 100)),
         receivedBytes: data.received,
+        speedBytesPerSecond: data.received >= data.size ? 0 : speedBytesPerSecond,
         status: data.received >= data.size ? DropFileTransferStatus.Complete : DropFileTransferStatus.Sending,
       })
+
+      if (data.received >= data.size)
+        outgoingProgressMap.delete(data.id)
     }
     else if (data.kind === DropMessageKind.FileEnd) {
       finishIncomingFile()
@@ -261,12 +272,45 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   function waitForBuffer() {
     if (!channel || channel.bufferedAmount < DROP_FILE_TRANSFER_CONFIG.maxBufferedAmount)
       return Promise.resolve()
+
     return new Promise<void>((resolve) => {
       const activeChannel = channel
-      const finish = () => resolve()
-      activeChannel?.addEventListener('bufferedamountlow', finish, { once: true })
-      activeChannel?.addEventListener('close', finish, { once: true })
-      activeChannel?.addEventListener('error', finish, { once: true })
+      if (!activeChannel) {
+        resolve()
+        return
+      }
+
+      let settled = false
+      let pollTimer: ReturnType<typeof setInterval> | null = null
+
+      const cleanup = () => {
+        if (pollTimer)
+          clearInterval(pollTimer)
+        activeChannel.removeEventListener('bufferedamountlow', finish)
+        activeChannel.removeEventListener('close', finish)
+        activeChannel.removeEventListener('error', finish)
+      }
+
+      const hasRoomToSend = () =>
+        activeChannel.readyState !== 'open'
+        || activeChannel.bufferedAmount <= DROP_FILE_TRANSFER_CONFIG.bufferLowThreshold
+
+      function finish() {
+        if (settled)
+          return
+        settled = true
+        cleanup()
+        resolve()
+      }
+
+      pollTimer = setInterval(() => {
+        if (hasRoomToSend())
+          finish()
+      }, DROP_FILE_TRANSFER_CONFIG.bufferPollIntervalMs)
+
+      activeChannel.addEventListener('bufferedamountlow', finish)
+      activeChannel.addEventListener('close', finish)
+      activeChannel.addEventListener('error', finish)
     })
   }
 
@@ -298,6 +342,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   function cleanup() {
     if (statsTimer)
       clearInterval(statsTimer)
+    outgoingProgressMap.clear()
     peer?.close()
     messages.value.forEach((message) => {
       if (message.url)
