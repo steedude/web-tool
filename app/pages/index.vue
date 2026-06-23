@@ -1,4 +1,36 @@
 <script setup lang="ts">
+type LocalePath = (path: string) => string
+type Translate = (key: string) => string
+
+function createHomeFeatures(t: Translate, localePath: LocalePath) {
+  return [
+    {
+      accent: 'bg-coral',
+      badge: t('features.remote.badge'),
+      description: t('features.remote.description'),
+      index: t('features.remote.index'),
+      title: t('features.remote.title'),
+      to: localePath('/remote'),
+    },
+    {
+      accent: 'bg-sky',
+      badge: t('features.drop.badge'),
+      description: t('features.drop.description'),
+      index: t('features.drop.index'),
+      title: t('features.drop.title'),
+      to: localePath('/drop'),
+    },
+    {
+      accent: 'bg-violet',
+      badge: t('features.links.badge'),
+      description: t('features.links.description'),
+      index: t('features.links.index'),
+      title: t('features.links.title'),
+      to: localePath('/links'),
+    },
+  ]
+}
+
 const { t } = useI18n()
 const localePath = useLocalePath()
 
@@ -7,32 +39,7 @@ useSeoMeta({
   description: () => t('home.description'),
 })
 
-const features = computed(() => [
-  {
-    accent: 'bg-coral',
-    badge: t('features.remote.badge'),
-    description: t('features.remote.description'),
-    index: t('features.remote.index'),
-    title: t('features.remote.title'),
-    to: localePath('/remote'),
-  },
-  {
-    accent: 'bg-sky',
-    badge: t('features.drop.badge'),
-    description: t('features.drop.description'),
-    index: t('features.drop.index'),
-    title: t('features.drop.title'),
-    to: localePath('/drop'),
-  },
-  {
-    accent: 'bg-violet',
-    badge: t('features.links.badge'),
-    description: t('features.links.description'),
-    index: t('features.links.index'),
-    title: t('features.links.title'),
-    to: localePath('/links'),
-  },
-])
+const features = computed(() => createHomeFeatures(t, localePath))
 </script>
 
 <template>

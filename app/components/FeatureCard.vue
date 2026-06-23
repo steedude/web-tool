@@ -7,6 +7,8 @@ defineProps<{
   title: string
   to: string
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -32,7 +34,7 @@ defineProps<{
       </p>
       <div class="mt-6 inline-flex items-center gap-2 text-xs font-black tracking-wider uppercase">
         <slot name="action" />
-        <span class="grid size-8 place-items-center rounded-full border-2 border-ink transition group-hover:translate-x-1 group-hover:bg-ink group-hover:text-white">→</span>
+        <span class="grid size-8 place-items-center rounded-full border-2 border-ink transition group-hover:translate-x-1 group-hover:bg-ink group-hover:text-white">{{ t('common.arrowRight') }}</span>
       </div>
     </div>
   </NuxtLink>

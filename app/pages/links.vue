@@ -34,6 +34,19 @@ function limitText(value: string, maxLength: number) {
   return value.trim().slice(0, maxLength)
 }
 
+function isLikelyUrlInput(value: string) {
+  const input = value.trim()
+  if (!input)
+    return false
+  try {
+    const candidate = new URL(input.includes('://') ? input : `https://${input}`)
+    return ['http:', 'https:'].includes(candidate.protocol) && candidate.hostname.includes('.')
+  }
+  catch {
+    return false
+  }
+}
+
 function clearImagePreview() {
   if (selectedImagePreview.value)
     URL.revokeObjectURL(selectedImagePreview.value)
@@ -65,6 +78,12 @@ function setMode(nextMode: LinkMode) {
 async function loadPreview() {
   if (!url.value.trim())
     return
+  if (!isLikelyUrlInput(url.value)) {
+    preview.value = null
+    created.value = null
+    errorMessage.value = getApiErrorMessage({ data: { code: 'INVALID_URL' } }, t, 'errors.INVALID_URL')
+    return
+  }
   loadingPreview.value = true
   errorMessage.value = ''
   created.value = null
@@ -201,12 +220,7 @@ onBeforeUnmount(clearImagePreview)
 
           <template v-if="mode === 'url'">
             <label class="mt-5 block text-sm font-black" for="target-url">{{ t('links.fields.targetUrl') }}</label>
-            <div class="mt-2 flex flex-col gap-2 sm:flex-row">
-              <input id="target-url" v-model="url" required type="text" placeholder="example.com/article" class="focus-ring min-w-0 flex-1 border-2 border-ink bg-paper px-4 py-4">
-              <button type="button" class="focus-ring border-2 border-ink bg-sky px-5 py-3 font-black disabled:opacity-40" :disabled="loadingPreview || !url" @click="loadPreview">
-                {{ loadingPreview ? t('links.actions.loadingPreview') : t('links.actions.getPreview') }}
-              </button>
-            </div>
+            <input id="target-url" v-model="url" required type="text" placeholder="example.com/article" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-4 py-4">
           </template>
 
           <template v-else>
@@ -242,7 +256,7 @@ onBeforeUnmount(clearImagePreview)
             {{ errorMessage }}
           </p>
 
-          <button class="focus-ring mt-6 w-full border-2 border-ink bg-ink px-5 py-4 text-lg font-black text-white disabled:opacity-40" :disabled="creating || !canCreate">
+          <button class="focus-ring mt-6 w-full border-2 border-ink bg-ink px-5 py-4 text-lg font-black text-white disabled:opacity-40" :disabled="creating || loadingPreview || !canCreate">
             {{ creating ? t('links.actions.creating') : mode === 'url' ? t('links.actions.createUrl') : t('links.actions.createImage') }}
           </button>
         </form>
@@ -323,7 +337,7 @@ onBeforeUnmount(clearImagePreview)
         <div v-else class="grid min-h-[470px] place-items-center border-2 border-dashed border-ink/40 bg-white/45 p-8 text-center">
           <div>
             <div class="text-6xl">
-              ▧
+              {{ t('common.previewIcon') }}
             </div>
             <h2 class="mt-5 text-2xl font-black">
               {{ t('links.empty.title') }}

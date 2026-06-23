@@ -95,11 +95,11 @@ useSeoMeta({
     <div class="mt-6 grid grid-cols-3 gap-3">
       <span />
       <button class="remote-button bg-sky" type="button" :aria-label="t('remote.controller.scrollUp')" @click="command('scroll-up')">
-        ↑
+        {{ t('common.arrowUp') }}
       </button>
       <span />
       <button class="remote-button bg-white" type="button" :aria-label="t('remote.controller.previous')" @click="command('previous')">
-        ←
+        {{ t('common.arrowLeft') }}
       </button>
       <button
         class="remote-button text-[10px]!"
@@ -110,11 +110,11 @@ useSeoMeta({
         {{ t('remote.controller.spotlight') }}
       </button>
       <button class="remote-button bg-white" type="button" :aria-label="t('remote.controller.next')" @click="command('next')">
-        →
+        {{ t('common.arrowRight') }}
       </button>
       <span />
       <button class="remote-button bg-sky" type="button" :aria-label="t('remote.controller.scrollDown')" @click="command('scroll-down')">
-        ↓
+        {{ t('common.arrowDown') }}
       </button>
       <span />
     </div>

@@ -4,7 +4,20 @@
   "common": {
     "backHome": "Back to the lab",
     "comingSoon": "Coming soon",
-    "openFeature": "Open experiment"
+    "openFeature": "Open experiment",
+    "logoMark": "38",
+    "switchToEnglish": "EN",
+    "switchToChinese": "中",
+    "arrowRight": "→",
+    "arrowLeft": "←",
+    "arrowUp": "↑",
+    "arrowDown": "↓",
+    "openExternal": "↗",
+    "plus": "＋",
+    "previewIcon": "▧",
+    "download": "↓",
+    "upload": "↑",
+    "percent": "%"
   },
   "home": {
     "eyebrow": "FRONTEND EXPERIMENTS / 2026",
@@ -47,6 +60,7 @@
     "desktopHint": "Keep this page open on your desktop",
     "slideCounter": "Slide {current} / {total}",
     "keyboardHint": "Arrow keys work too",
+    "techStack": "WebSocket · QR pairing · Reconnect · Responsive controller · Pointer events",
     "slides": {
       "one": {
         "kicker": "HELLO, SECOND SCREEN",
@@ -81,9 +95,34 @@
   },
   "drop": {
     "eyebrow": "EXPERIMENT 02 / PEER TO PEER",
+    "title": "Files take the direct route.",
+    "description": "Create a temporary room and let another device scan to join. Text and files move peer-to-peer over WebRTC; the server only helps both sides find each other.",
+    "joinDivider": "or enter a room code",
+    "room": "ROOM",
+    "qrAlt": "QR Code for joining the transfer room",
+    "privacyHint": "Files only live in the two browsers' memory and are never uploaded to this site. Maximum file size: 50 MB.",
+    "chatEyebrow": "WEB AIRDROP",
+    "chatTitle": "Realtime transfer",
+    "dataChannel": "WebRTC DataChannel",
+    "empty": "Send text or files here after connecting",
+    "transfering": "Transferring",
+    "messagePlaceholder": "Type a message…",
+    "actions": {
+      "createRoom": "Create new room",
+      "join": "Join",
+      "copied": "Copied",
+      "copyInvite": "Copy invite link",
+      "chooseFile": "Choose file",
+      "send": "Send"
+    },
+    "status": {
+      "ready": "Peer-to-peer connection ready",
+      "waiting": "Waiting for another device"
+    },
     "system": {
       "connected": "Devices are connected peer-to-peer",
-      "offline": "The other device went offline"
+      "offline": "The other device went offline",
+      "signalFailed": "Pairing signal failed. Please refresh."
     }
   },
   "links": {

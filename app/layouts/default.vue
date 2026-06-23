@@ -13,7 +13,7 @@ function toggleLocale() {
     <header class="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
       <NuxtLink :to="localePath('/')" class="focus-ring group inline-flex items-center gap-3 rounded-full">
         <span class="grid size-10 rotate-3 place-items-center rounded-xl border-2 border-ink bg-acid text-sm font-black shadow-[3px_3px_0_#171714] transition group-hover:-rotate-3">
-          38
+          {{ t('common.logoMark') }}
         </span>
         <span class="hidden text-sm font-black tracking-[0.16em] uppercase sm:block">{{ t('brand') }}</span>
       </NuxtLink>
@@ -28,7 +28,7 @@ function toggleLocale() {
           class="focus-ring rounded-full border-2 border-ink bg-white px-4 py-2 text-xs font-black shadow-[3px_3px_0_#171714] transition hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#171714]"
           @click="toggleLocale"
         >
-          {{ locale === 'zh-TW' ? 'EN' : '中' }}
+          {{ locale === 'zh-TW' ? t('common.switchToEnglish') : t('common.switchToChinese') }}
         </button>
       </div>
     </header>

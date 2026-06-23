@@ -1,6 +1,31 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
 
+type Translate = (key: string) => string
+
+function createRemoteSlides(t: Translate) {
+  return [
+    {
+      accent: 'bg-coral',
+      body: t('remote.slides.one.body'),
+      kicker: t('remote.slides.one.kicker'),
+      title: t('remote.slides.one.title'),
+    },
+    {
+      accent: 'bg-sky',
+      body: t('remote.slides.two.body'),
+      kicker: t('remote.slides.two.kicker'),
+      title: t('remote.slides.two.title'),
+    },
+    {
+      accent: 'bg-violet',
+      body: t('remote.slides.three.body'),
+      kicker: t('remote.slides.three.kicker'),
+      title: t('remote.slides.three.title'),
+    },
+  ]
+}
+
 const { locale, t } = useI18n()
 const localePath = useLocalePath()
 const roomId = ref('')
@@ -16,26 +41,7 @@ let pointerTimer: ReturnType<typeof setTimeout> | null = null
 
 const { latestMessage, peerConnected, status } = useRealtimeRoom(roomId, 'desktop')
 
-const slides = computed(() => [
-  {
-    accent: 'bg-coral',
-    body: t('remote.slides.one.body'),
-    kicker: t('remote.slides.one.kicker'),
-    title: t('remote.slides.one.title'),
-  },
-  {
-    accent: 'bg-sky',
-    body: t('remote.slides.two.body'),
-    kicker: t('remote.slides.two.kicker'),
-    title: t('remote.slides.two.title'),
-  },
-  {
-    accent: 'bg-violet',
-    body: t('remote.slides.three.body'),
-    kicker: t('remote.slides.three.kicker'),
-    title: t('remote.slides.three.title'),
-  },
-])
+const slides = computed(() => createRemoteSlides(t))
 
 const connectionLabel = computed(() => {
   if (peerConnected.value)
@@ -140,7 +146,7 @@ useSeoMeta({
 <template>
   <div class="mx-auto w-full max-w-7xl px-5 pt-8 pb-16 sm:px-8 lg:px-12">
     <NuxtLink :to="localePath('/')" class="focus-ring inline-flex rounded-full py-2 text-xs font-black underline decoration-2 underline-offset-4">
-      ← {{ t('common.backHome') }}
+      {{ t('common.arrowLeft') }} {{ t('common.backHome') }}
     </NuxtLink>
 
     <section class="mt-8 grid items-end gap-8 lg:grid-cols-[1fr_21rem]">
@@ -217,7 +223,7 @@ useSeoMeta({
                   {{ slides[currentSlide]?.body }}
                 </p>
                 <p class="mt-6 text-sm leading-7 text-white/45">
-                  WebSocket · QR pairing · Reconnect · Responsive controller · Pointer events
+                  {{ t('remote.techStack') }}
                 </p>
               </div>
             </article>

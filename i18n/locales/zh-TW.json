@@ -4,7 +4,20 @@
   "common": {
     "backHome": "回到實驗室",
     "comingSoon": "準備中",
-    "openFeature": "開啟功能"
+    "openFeature": "開啟功能",
+    "logoMark": "38",
+    "switchToEnglish": "EN",
+    "switchToChinese": "中",
+    "arrowRight": "→",
+    "arrowLeft": "←",
+    "arrowUp": "↑",
+    "arrowDown": "↓",
+    "openExternal": "↗",
+    "plus": "＋",
+    "previewIcon": "▧",
+    "download": "↓",
+    "upload": "↑",
+    "percent": "%"
   },
   "home": {
     "eyebrow": "FRONTEND EXPERIMENTS / 2026",
@@ -47,6 +60,7 @@
     "desktopHint": "請在桌機上保留這個頁面",
     "slideCounter": "第 {current} / {total} 頁",
     "keyboardHint": "也可以使用鍵盤方向鍵",
+    "techStack": "WebSocket · QR pairing · Reconnect · Responsive controller · Pointer events",
     "slides": {
       "one": {
         "kicker": "HELLO, SECOND SCREEN",
@@ -81,9 +95,34 @@
   },
   "drop": {
     "eyebrow": "EXPERIMENT 02 / PEER TO PEER",
+    "title": "檔案不繞路，直接送到你手上。",
+    "description": "建立臨時房間，讓另一台裝置掃描加入。文字與檔案透過 WebRTC 點對點傳輸，伺服器只負責讓雙方找到彼此。",
+    "joinDivider": "或輸入房間代碼",
+    "room": "ROOM",
+    "qrAlt": "加入傳輸房間的 QR Code",
+    "privacyHint": "檔案只存在兩台裝置的瀏覽器記憶體，不會上傳到本站。單檔上限 50 MB。",
+    "chatEyebrow": "WEB AIRDROP",
+    "chatTitle": "即時傳輸",
+    "dataChannel": "WebRTC DataChannel",
+    "empty": "連線後，從這裡傳送文字或檔案",
+    "transfering": "傳輸中",
+    "messagePlaceholder": "輸入訊息…",
+    "actions": {
+      "createRoom": "建立新房間",
+      "join": "加入",
+      "copied": "已複製",
+      "copyInvite": "複製邀請連結",
+      "chooseFile": "選擇檔案",
+      "send": "傳送"
+    },
+    "status": {
+      "ready": "點對點連線完成",
+      "waiting": "等待另一台裝置"
+    },
     "system": {
       "connected": "裝置已建立點對點連線",
-      "offline": "另一台裝置已離線"
+      "offline": "另一台裝置已離線",
+      "signalFailed": "配對訊號處理失敗，請重新整理"
     }
   },
   "links": {

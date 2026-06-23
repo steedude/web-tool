@@ -26,7 +26,7 @@ const localePath = useLocalePath()
       <div class="relative mt-10 flex flex-wrap items-center gap-4">
         <span class="rounded-full border-2 border-ink bg-paper px-5 py-3 text-sm font-black">{{ t('common.comingSoon') }}</span>
         <NuxtLink :to="localePath('/')" class="focus-ring rounded-full px-3 py-2 text-sm font-black underline decoration-2 underline-offset-4">
-          ← {{ t('common.backHome') }}
+          {{ t('common.arrowLeft') }} {{ t('common.backHome') }}
         </NuxtLink>
       </div>
     </section>
