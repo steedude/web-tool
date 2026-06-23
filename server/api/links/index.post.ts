@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
   async function createWithSlug(slug: string) {
     const created = await createShortLink({ ...payload, slug })
-    return buildShortLinkResponse(event, created)
+    return buildShortLinkResponse(event, created, Boolean(payload.password))
   }
 
   try {

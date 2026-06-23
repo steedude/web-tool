@@ -63,13 +63,13 @@ export function enforceCreateRateLimit(event: H3Event) {
   return now
 }
 
-export function buildShortLinkResponse(event: H3Event, link: NewShortLink): ShortLinkResponse {
+export function buildShortLinkResponse(event: H3Event, link: NewShortLink, passwordRequired = Boolean(link.password)): ShortLinkResponse {
   return {
     description: link.description,
     expires_at: link.expires_at,
     favicon_url: link.favicon_url,
     image_url: link.image_url,
-    password_required: Boolean(link.password),
+    password_required: passwordRequired,
     screenshot_url: link.screenshot_url,
     shortUrl: `${getRequestURL(event).origin}/s/${link.slug}`,
     slug: link.slug,
