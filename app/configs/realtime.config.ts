@@ -28,14 +28,15 @@ export const DROP_QR_CONFIG = {
 } as const
 
 export const DROP_FILE_TRANSFER_CONFIG = {
-  // Keep the DataChannel queue shallow. iOS can stall when several MB are buffered at once.
-  bufferLowThreshold: 128 * 1024,
-  chunkSize: 32 * 1024,
-  maxBufferedAmount: 512 * 1024,
+  // Keep the DataChannel queue shallow. Safari/WebKit can become extremely latent when SCTP
+  // has to fragment larger binary messages or when too many chunks are queued at once.
+  bufferLowThreshold: 64 * 1024,
+  chunkSize: 16 * 1024,
+  maxBufferedAmount: 256 * 1024,
   maxFileSize: 50 * 1024 * 1024,
   // Some mobile browsers do not fire `bufferedamountlow` consistently, so we also poll.
   bufferPollIntervalMs: 40,
-  progressIntervalMs: 120,
+  progressIntervalMs: 200,
 } as const
 
 export const DROP_RTC_CONFIG = {

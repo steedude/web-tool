@@ -116,9 +116,9 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     }
     else if (data.kind === DropMessageKind.FileProgress && data.id && data.received !== undefined && data.size) {
       const now = Date.now()
-      const progressSnapshot = outgoingProgressMap.get(data.id) ?? { lastProgressAt: now, lastReceived: 0 }
-      const elapsedSeconds = Math.max((now - progressSnapshot.lastProgressAt) / 1000, 0.001)
-      const speedBytesPerSecond = Math.max(0, (data.received - progressSnapshot.lastReceived) / elapsedSeconds)
+      const progressSnapshot = outgoingProgressMap.get(data.id)
+      const elapsedSeconds = progressSnapshot ? Math.max((now - progressSnapshot.lastProgressAt) / 1000, 0.001) : 0
+      const speedBytesPerSecond = progressSnapshot ? Math.max(0, (data.received - progressSnapshot.lastReceived) / elapsedSeconds) : 0
       outgoingProgressMap.set(data.id, { lastProgressAt: now, lastReceived: data.received })
 
       updateFileMessage(data.id, {
