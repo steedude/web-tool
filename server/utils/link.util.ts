@@ -58,6 +58,8 @@ export function safeOptionalUrl(value: string | null | undefined, baseUrl: URL) 
 export function enforceCreateRateLimit(event: H3Event) {
   const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
   const now = Date.now()
+  // Serverless instances may reset this in-memory map, but it still prevents rapid repeated clicks
+  // on the same warm instance without introducing another database table.
   const recent = (attempts.get(ip) || []).filter(time => now - time < LINK_CONFIG.rateLimit.windowMs)
   if (recent.length >= LINK_CONFIG.rateLimit.maxAttempts)
     throwApiError(429, ApiErrorCode.RateLimited)

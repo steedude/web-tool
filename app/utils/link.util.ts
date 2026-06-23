@@ -16,6 +16,8 @@ export function getPreviewImage(image?: string | null, screenshot?: string | nul
 export function getWebsiteScreenshotUrl(value: string) {
   try {
     const url = new URL(value)
+    // Microlink is used as an image source only. The app backend still only stores URLs;
+    // it does not fetch arbitrary user-provided pages during short-link creation.
     return `${LINK_SCREENSHOT_CONFIG.provider}/?url=${encodeURIComponent(url.toString())}&screenshot=true&meta=false&embed=screenshot.url`
   }
   catch {

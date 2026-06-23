@@ -57,6 +57,7 @@ export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole
 
       status.value = RealtimeStatus.Offline
       peerConnected.value = false
+      // Exponential backoff keeps reconnects quick at first without hammering the VM.
       const delay = Math.min(REALTIME_RETRY_CONFIG.baseDelayMs * 2 ** retryCount, REALTIME_RETRY_CONFIG.maxDelayMs)
       retryCount += 1
       retryTimer = setTimeout(connect, delay)
