@@ -102,6 +102,54 @@ const { t } = useI18n()
           {{ t('drop.debug.file') }}{{ debug.fileChannelState }}
         </dd>
         <dt class="font-bold text-black/55">
+          {{ t('drop.debug.buffer') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.bufferedAmount }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.rtt') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.roundTripTime }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.sendRate') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.sendRate }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.receiveRate') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.receiveRate }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.availableOutgoing') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.availableOutgoingBitrate }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.candidatePath') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.candidatePath }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.packets') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.packetsSummary }}
+        </dd>
+        <dt class="font-bold text-black/55">
+          {{ t('drop.debug.bytes') }}
+        </dt>
+        <dd class="break-all">
+          {{ debug.bytesSummary }}
+        </dd>
+        <dt class="font-bold text-black/55">
           {{ t('drop.debug.lastSignal') }}
         </dt>
         <dd class="break-all">

@@ -47,6 +47,10 @@ export interface OutgoingDropFileProgress {
 }
 
 export interface DropConnectionDebug {
+  availableOutgoingBitrate: string
+  bufferedAmount: string
+  bytesSummary: string
+  candidatePath: string
   connectionState: string
   controlChannelState: string
   fileChannelState: string
@@ -57,8 +61,12 @@ export interface DropConnectionDebug {
   localCandidateSummary: string
   localDescriptionSet: boolean
   pendingIceCount: number
+  packetsSummary: string
   remoteCandidateSummary: string
   remoteDescriptionSet: boolean
+  receiveRate: string
+  roundTripTime: string
+  sendRate: string
   signalingState: string
 }
 

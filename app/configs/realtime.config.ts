@@ -42,6 +42,10 @@ export const DROP_FILE_TRANSFER_CONFIG = {
   stallThresholdMs: 1000,
 } as const
 
+export const DROP_DEBUG_CONFIG = {
+  statsIntervalMs: 1000,
+} as const
+
 export const DROP_CHANNEL_CONFIG = {
   controlLabel: 'drop-control',
   fileLabel: 'drop-file',
