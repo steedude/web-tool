@@ -23,7 +23,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   // sender can avoid getting too far ahead of the device that is actually receiving.
   const outgoingProgressMap = new Map<string, OutgoingDropFileProgress>()
 
-  const isReady = computed(() => channelState.value === 'open' && connectionState.value === 'connected')
+  // The DataChannels are the actual transport this feature uses. Some browsers can keep
+  // RTCPeerConnection.connectionState at "connecting" longer than the channels themselves,
+  // so the UI should become ready as soon as both channels are open.
+  const isReady = computed(() => channelState.value === 'open')
 
   function addSystem(text: string) {
     messages.value.push({ id: crypto.randomUUID(), kind: DropMessageKind.System, mine: false, text })
@@ -496,6 +499,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   return {
     isReady,
     messages,
+    peerConnected: room.peerConnected,
     roomFull: room.roomFull,
     sendFile,
     sendText,

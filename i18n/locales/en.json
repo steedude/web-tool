@@ -147,7 +147,8 @@
     "status": {
       "ready": "Peer-to-peer connection ready",
       "waiting": "Waiting for another device",
-      "full": "This room already has two devices. Please create a new transfer room."
+      "full": "This room already has two devices. Please create a new transfer room.",
+      "connectingPeer": "Building peer-to-peer connection"
     },
     "system": {
       "connected": "Devices are connected peer-to-peer",

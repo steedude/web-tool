@@ -4,6 +4,7 @@ import { RealtimeRole } from '~/types/realtime.type'
 defineProps<{
   copied: boolean
   isReady: boolean
+  peerConnected: boolean
   qrCode: string
   role: RealtimeRole.DropHost | RealtimeRole.DropGuest
   roomId: string
@@ -14,6 +15,14 @@ defineEmits<{
 }>()
 
 const { t } = useI18n()
+
+function statusLabel(isReady: boolean, peerConnected: boolean) {
+  if (isReady)
+    return t('drop.status.ready')
+  if (peerConnected)
+    return t('drop.status.connectingPeer')
+  return t('drop.status.waiting')
+}
 </script>
 
 <template>
@@ -26,7 +35,7 @@ const { t } = useI18n()
     </div>
     <div class="mt-4 inline-flex items-center gap-2 border border-ink bg-white px-3 py-2 text-sm font-bold">
       <span class="size-2 rounded-full" :class="isReady ? 'bg-green-500' : 'animate-pulse bg-coral'" />
-      {{ isReady ? t('drop.status.ready') : t('drop.status.waiting') }}
+      {{ statusLabel(isReady, peerConnected) }}
     </div>
 
     <template v-if="role === RealtimeRole.DropHost">
