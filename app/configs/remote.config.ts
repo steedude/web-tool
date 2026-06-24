@@ -1,20 +1,25 @@
-export const REMOTE_SLIDES = [
-  {
-    accent: 'bg-coral',
-    bodyKey: 'remote.slides.one.body',
-    kickerKey: 'remote.slides.one.kicker',
-    titleKey: 'remote.slides.one.title',
-  },
-  {
-    accent: 'bg-sky',
-    bodyKey: 'remote.slides.two.body',
-    kickerKey: 'remote.slides.two.kicker',
-    titleKey: 'remote.slides.two.title',
-  },
-  {
-    accent: 'bg-violet',
-    bodyKey: 'remote.slides.three.body',
-    kickerKey: 'remote.slides.three.kicker',
-    titleKey: 'remote.slides.three.title',
-  },
+import { RemotePromptCategory } from '~/types/remote.type'
+
+export const REMOTE_DRAWING_PROMPTS = [
+  { answerKey: 'cat', category: RemotePromptCategory.Animal },
+  { answerKey: 'dog', category: RemotePromptCategory.Animal },
+  { answerKey: 'rabbit', category: RemotePromptCategory.Animal },
+  { answerKey: 'fish', category: RemotePromptCategory.Animal },
+  { answerKey: 'bird', category: RemotePromptCategory.Animal },
+  { answerKey: 'apple', category: RemotePromptCategory.Fruit },
+  { answerKey: 'banana', category: RemotePromptCategory.Fruit },
+  { answerKey: 'grape', category: RemotePromptCategory.Fruit },
+  { answerKey: 'watermelon', category: RemotePromptCategory.Fruit },
+  { answerKey: 'carrot', category: RemotePromptCategory.Vegetable },
+  { answerKey: 'tomato', category: RemotePromptCategory.Vegetable },
+  { answerKey: 'corn', category: RemotePromptCategory.Vegetable },
 ] as const
+
+export const REMOTE_CANVAS_CONFIG = {
+  lineColor: '#171714',
+  lineWidth: 5,
+} as const
+
+export const REMOTE_GAME_CONFIG = {
+  initialPromptIndex: 0,
+} as const

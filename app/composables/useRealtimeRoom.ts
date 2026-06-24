@@ -6,6 +6,7 @@ export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole
   const config = useRuntimeConfig()
   const status = ref<RealtimeStatus>(RealtimeStatus.Idle)
   const peerConnected = ref(false)
+  const roomFull = ref(false)
   const latestMessage = shallowRef<RealtimeMessage | null>(null)
   let socket: WebSocket | null = null
   let retryTimer: ReturnType<typeof setTimeout> | null = null
@@ -39,7 +40,13 @@ export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole
       }
       else if (message.type === RealtimeMessageType.RoomJoined) {
         status.value = RealtimeStatus.Connected
+        roomFull.value = false
         retryCount = 0
+      }
+      else if (message.type === RealtimeMessageType.RoomFull) {
+        status.value = RealtimeStatus.Offline
+        roomFull.value = true
+        peerConnected.value = false
       }
       else if (message.type === RealtimeMessageType.PeerJoined) {
         peerConnected.value = true
@@ -90,6 +97,7 @@ export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole
     connect,
     latestMessage: readonly(latestMessage),
     peerConnected: readonly(peerConnected),
+    roomFull: readonly(roomFull),
     send,
     status: readonly(status),
   }

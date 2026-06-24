@@ -19,7 +19,8 @@
     "upload": "↑",
     "percent": "%",
     "showPassword": "顯示",
-    "hidePassword": "隱藏"
+    "hidePassword": "隱藏",
+    "colon": "："
   },
   "home": {
     "eyebrow": "FRONTEND EXPERIMENTS / 2026",
@@ -30,8 +31,8 @@
   "features": {
     "remote": {
       "index": "01",
-      "title": "手機遙控器",
-      "description": "掃描 QR Code，讓手機成為簡報遙控器、雷射筆與觸控板。",
+      "title": "你畫我猜",
+      "description": "掃描 QR Code 加入房間，兩台裝置即時同步畫畫、猜答案與交換回合。",
       "badge": "LIVE"
     },
     "drop": {
@@ -48,51 +49,69 @@
     }
   },
   "remote": {
-    "eyebrow": "EXPERIMENT 01 / SECOND SCREEN",
-    "title": "讓手機接管這個畫面。",
-    "description": "桌機建立一次性房間，手機掃描後即可切換投影片、捲動內容與移動雷射點。所有控制訊號都透過 WebSocket 即時轉送。",
+    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
+    "title": "一邊畫，一邊猜，猜對就換人。",
+    "description": "一台裝置建立房間，另一台掃描 QR Code 加入。筆畫、猜答案、放棄與交換回合都透過 WebSocket 即時同步。",
     "room": "房間代碼",
-    "scan": "用手機掃描加入",
+    "scan": "掃描加入遊戲",
     "copyLink": "複製手機連結",
     "copied": "已複製",
     "waiting": "等待手機加入",
     "connected": "手機已連線",
     "connecting": "正在連接",
     "offline": "連線中斷",
-    "desktopHint": "請在桌機上保留這個頁面",
-    "slideCounter": "第 {current} / {total} 頁",
-    "keyboardHint": "也可以使用鍵盤方向鍵",
-    "techStack": "WebSocket · QR pairing · Reconnect · Responsive controller · Pointer events",
-    "slides": {
-      "one": {
-        "kicker": "HELLO, SECOND SCREEN",
-        "title": "一支手機，兩個螢幕。",
-        "body": "掃描 QR Code 後，手機與桌機會加入同一個暫時房間。控制訊號不需要重新整理，畫面會立即回應。"
-      },
-      "two": {
-        "kicker": "WEBSOCKET / REALTIME",
-        "title": "每一次操作，都是一則事件。",
-        "body": "左右切換內容、上下捲動文字，觸控板則持續傳送正規化座標。服務端只負責房間與事件轉送。"
-      },
-      "three": {
-        "kicker": "BUILT FOR THE WEB",
-        "title": "不用安裝 App，也能成為遙控器。",
-        "body": "QR Code 本身就是邀請連結。只要有現代瀏覽器與網路，手機和桌機不必連上同一個 Wi-Fi。"
-      }
-    },
+    "desktopHint": "保持這個頁面開啟，作為遊戲的一方",
+    "techStack": "WebSocket · QR pairing · Canvas · Reconnect · Realtime game state",
     "controller": {
-      "eyebrow": "REMOTE CONTROL",
-      "title": "控制桌面",
+      "eyebrow": "DRAW & GUESS",
+      "title": "你畫我猜",
       "room": "房間 {room}",
-      "touchpad": "在這裡滑動雷射點",
-      "previous": "上一頁",
-      "next": "下一頁",
-      "scrollUp": "向上",
-      "scrollDown": "向下",
-      "spotlight": "聚光燈",
       "connected": "已連上桌面",
       "waiting": "等待桌面回應",
-      "leaveOpen": "控制時請保持此頁開啟"
+      "leaveOpen": "遊玩時請保持此頁開啟",
+      "roomFull": "房間已滿",
+      "roomFullDescription": "這個遊戲房間已經有兩台裝置，請回到桌機建立新的 QR Code。"
+    },
+    "categories": {
+      "animal": "動物",
+      "fruit": "水果",
+      "vegetable": "蔬菜"
+    },
+    "prompts": {
+      "cat": "貓",
+      "dog": "狗",
+      "rabbit": "兔子",
+      "fish": "魚",
+      "bird": "鳥",
+      "apple": "蘋果",
+      "banana": "香蕉",
+      "grape": "葡萄",
+      "watermelon": "西瓜",
+      "carrot": "紅蘿蔔",
+      "tomato": "番茄",
+      "corn": "玉米"
+    },
+    "game": {
+      "round": "第 {round} 回合",
+      "drawTitle": "輪到你畫",
+      "guessTitle": "猜猜看畫的是什麼",
+      "yourTurn": "你的回合",
+      "partnerTurn": "對方回合",
+      "prompt": "題目",
+      "category": "分類",
+      "drawerHint": "把題目畫出來，不要直接寫答案。",
+      "guesserHint": "看對方畫的內容，輸入你猜的答案。",
+      "panelEyebrow": "GAME PANEL",
+      "panelTitle": "雙人畫猜",
+      "guessLabel": "你的答案",
+      "guessPlaceholder": "輸入答案",
+      "submitGuess": "送出答案",
+      "waitForGuess": "對方正在猜，繼續畫吧！",
+      "waitingForPeer": "等待另一位玩家加入。",
+      "giveUp": "放棄 / 跳過",
+      "ruleHint": "猜對或放棄後會自動清空畫布、交換畫畫的人。",
+      "correctResult": "答對了！答案是「{answer}」。",
+      "skipResult": "已跳過，答案是「{answer}」。"
     }
   },
   "drop": {
@@ -116,31 +135,6 @@
       "progressStats": "{received} / {total}",
       "speedStats": "・{speed}/s"
     },
-    "debug": {
-      "title": "傳輸除錯資訊",
-      "connection": "連線",
-      "channel": "Channel",
-      "controlChannel": "Control",
-      "fileChannel": "File",
-      "buffer": "Buffer",
-      "rtt": "RTT",
-      "sendRate": "送出速率",
-      "receiveRate": "接收速率",
-      "availableOutgoing": "可用上傳",
-      "candidate": "路徑",
-      "packets": "封包",
-      "lost": "遺失",
-      "bytesSent": "已送出",
-      "bytesReceived": "已接收",
-      "elapsed": "耗時",
-      "averageSpeed": "平均",
-      "peakSpeed": "峰值",
-      "lastGap": "間隔",
-      "stalls": "停頓",
-      "empty": "—",
-      "candidatePair": "{local} → {remote}",
-      "packetStats": "{sent} / {received}"
-    },
     "messagePlaceholder": "輸入訊息…",
     "actions": {
       "createRoom": "建立新房間",
@@ -152,7 +146,8 @@
     },
     "status": {
       "ready": "點對點連線完成",
-      "waiting": "等待另一台裝置"
+      "waiting": "等待另一台裝置",
+      "full": "這個房間已經有兩台裝置，請建立新的傳輸房間。"
     },
     "system": {
       "connected": "裝置已建立點對點連線",

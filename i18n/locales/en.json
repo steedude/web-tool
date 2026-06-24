@@ -19,7 +19,8 @@
     "upload": "↑",
     "percent": "%",
     "showPassword": "Show",
-    "hidePassword": "Hide"
+    "hidePassword": "Hide",
+    "colon": ": "
   },
   "home": {
     "eyebrow": "FRONTEND EXPERIMENTS / 2026",
@@ -30,8 +31,8 @@
   "features": {
     "remote": {
       "index": "01",
-      "title": "Phone Remote",
-      "description": "Scan a QR code and turn your phone into a slide remote, laser pointer, and touchpad.",
+      "title": "Draw & Guess",
+      "description": "Scan a QR code and play a two-player drawing guessing game in real time.",
       "badge": "LIVE"
     },
     "drop": {
@@ -48,51 +49,69 @@
     }
   },
   "remote": {
-    "eyebrow": "EXPERIMENT 01 / SECOND SCREEN",
-    "title": "Let your phone take over this screen.",
-    "description": "The desktop creates a disposable room. Scan to control slides, scroll content, and move a laser pointer. Every command is relayed in real time over WebSocket.",
+    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
+    "title": "Draw it. Guess it. Swap turns.",
+    "description": "Create a room on one device, scan the QR code on another, and play a tiny real-time drawing game. Strokes, guesses, skips, and turn changes are synced through WebSocket.",
     "room": "Room code",
-    "scan": "Scan with your phone",
+    "scan": "Scan to join the game",
     "copyLink": "Copy phone link",
     "copied": "Copied",
     "waiting": "Waiting for phone",
     "connected": "Phone connected",
     "connecting": "Connecting",
     "offline": "Connection lost",
-    "desktopHint": "Keep this page open on your desktop",
-    "slideCounter": "Slide {current} / {total}",
-    "keyboardHint": "Arrow keys work too",
-    "techStack": "WebSocket · QR pairing · Reconnect · Responsive controller · Pointer events",
-    "slides": {
-      "one": {
-        "kicker": "HELLO, SECOND SCREEN",
-        "title": "One phone. Two screens.",
-        "body": "After scanning the QR code, phone and desktop join the same temporary room. Commands arrive instantly without a refresh."
-      },
-      "two": {
-        "kicker": "WEBSOCKET / REALTIME",
-        "title": "Every interaction is an event.",
-        "body": "Left and right change slides, up and down scroll, while the touchpad streams normalized pointer coordinates. The server only handles rooms and relays."
-      },
-      "three": {
-        "kicker": "BUILT FOR THE WEB",
-        "title": "A remote without an app install.",
-        "body": "The QR code is the invitation. With a modern browser and internet access, your phone and desktop do not need to share the same Wi-Fi."
-      }
-    },
+    "desktopHint": "Keep this page open as one side of the game",
+    "techStack": "WebSocket · QR pairing · Canvas · Reconnect · Realtime game state",
     "controller": {
-      "eyebrow": "REMOTE CONTROL",
-      "title": "Control desktop",
+      "eyebrow": "DRAW & GUESS",
+      "title": "Draw & guess",
       "room": "Room {room}",
-      "touchpad": "Move the laser pointer here",
-      "previous": "Previous",
-      "next": "Next",
-      "scrollUp": "Scroll up",
-      "scrollDown": "Scroll down",
-      "spotlight": "Spotlight",
       "connected": "Desktop connected",
       "waiting": "Waiting for desktop",
-      "leaveOpen": "Keep this page open while controlling"
+      "leaveOpen": "Keep this page open while playing",
+      "roomFull": "Room full",
+      "roomFullDescription": "This remote room already has a phone connected. Create a new QR code from the desktop."
+    },
+    "categories": {
+      "animal": "Animal",
+      "fruit": "Fruit",
+      "vegetable": "Vegetable"
+    },
+    "prompts": {
+      "cat": "Cat",
+      "dog": "Dog",
+      "rabbit": "Rabbit",
+      "fish": "Fish",
+      "bird": "Bird",
+      "apple": "Apple",
+      "banana": "Banana",
+      "grape": "Grape",
+      "watermelon": "Watermelon",
+      "carrot": "Carrot",
+      "tomato": "Tomato",
+      "corn": "Corn"
+    },
+    "game": {
+      "round": "ROUND {round}",
+      "drawTitle": "Your turn to draw",
+      "guessTitle": "Guess the drawing",
+      "yourTurn": "Your turn",
+      "partnerTurn": "Partner turn",
+      "prompt": "Prompt",
+      "category": "Category",
+      "drawerHint": "Draw the prompt without typing the answer.",
+      "guesserHint": "Look at the drawing and type your answer.",
+      "panelEyebrow": "GAME PANEL",
+      "panelTitle": "Two-player sketch",
+      "guessLabel": "Your guess",
+      "guessPlaceholder": "Type the answer",
+      "submitGuess": "Submit guess",
+      "waitForGuess": "The other player is guessing. Keep drawing!",
+      "waitingForPeer": "Waiting for the other player to join.",
+      "giveUp": "Give up / skip",
+      "ruleHint": "Correct guesses or skips automatically clear the board and swap turns.",
+      "correctResult": "Correct! The answer was {answer}.",
+      "skipResult": "Skipped. The answer was {answer}."
     }
   },
   "drop": {
@@ -116,31 +135,6 @@
       "progressStats": "{received} / {total}",
       "speedStats": "・{speed}/s"
     },
-    "debug": {
-      "title": "Transfer debug info",
-      "connection": "Connection",
-      "channel": "Channel",
-      "controlChannel": "Control",
-      "fileChannel": "File",
-      "buffer": "Buffer",
-      "rtt": "RTT",
-      "sendRate": "Send rate",
-      "receiveRate": "Receive rate",
-      "availableOutgoing": "Available upload",
-      "candidate": "Path",
-      "packets": "Packets",
-      "lost": "Lost",
-      "bytesSent": "Bytes sent",
-      "bytesReceived": "Bytes received",
-      "elapsed": "Elapsed",
-      "averageSpeed": "Average",
-      "peakSpeed": "Peak",
-      "lastGap": "Last gap",
-      "stalls": "Stalls",
-      "empty": "—",
-      "candidatePair": "{local} → {remote}",
-      "packetStats": "{sent} / {received}"
-    },
     "messagePlaceholder": "Type a message…",
     "actions": {
       "createRoom": "Create new room",
@@ -152,7 +146,8 @@
     },
     "status": {
       "ready": "Peer-to-peer connection ready",
-      "waiting": "Waiting for another device"
+      "waiting": "Waiting for another device",
+      "full": "This room already has two devices. Please create a new transfer room."
     },
     "system": {
       "connected": "Devices are connected peer-to-peer",

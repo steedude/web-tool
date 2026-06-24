@@ -7,6 +7,7 @@ const port = Number(process.env.PORT ?? 3001)
 const roomPattern = /^[A-Z0-9]{6}$/
 const heartbeatIntervalMs = 30_000
 const maxPayloadBytes = 64 * 1024
+const maxRoomClients = 2
 
 enum RealtimeRole {
   Desktop = 'desktop',
@@ -20,6 +21,7 @@ enum RealtimeMessageType {
   Error = 'error',
   PeerJoined = 'peer:joined',
   PeerLeft = 'peer:left',
+  RoomFull = 'room:full',
   RoomJoin = 'room:join',
   RoomJoined = 'room:joined',
 }
@@ -99,6 +101,14 @@ function joinRoom(client: Client, message: ClientMessage) {
 
   leaveRoom(client)
   const room = rooms.get(roomId) ?? new Set<Client>()
+
+  // The current WebRTC features are designed as one-to-one rooms. Rejecting the third
+  // socket here prevents offer / answer / ICE messages from multiple peers mixing together.
+  if (room.size >= maxRoomClients) {
+    send(client, { type: RealtimeMessageType.RoomFull, roomId })
+    return
+  }
+
   const existingPeers = [...room]
   room.add(client)
   rooms.set(roomId, room)

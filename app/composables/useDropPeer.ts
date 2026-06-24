@@ -1,8 +1,9 @@
-import type { DropChatItem, DropDataMessage, DropDebugStats, IncomingDropFile, OutgoingDropFileProgress } from '~/types/drop.type'
+import type { DropChatItem, DropDataMessage, IncomingDropFile, OutgoingDropFileProgress } from '~/types/drop.type'
 import type { RealtimeMessage } from '~/types/realtime.type'
 import { DROP_CHANNEL_CONFIG, DROP_FILE_TRANSFER_CONFIG, DROP_RTC_CONFIG } from '~/configs/realtime.config'
 import { DropFileTransferStatus, DropMessageKind } from '~/types/drop.type'
 import { RealtimeMessageType, RealtimeRole } from '~/types/realtime.type'
+import { createDropFileMessage, getDropFileProgress, getTransferSpeed } from '~/utils/drop.util'
 
 export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost | RealtimeRole.DropGuest>) {
   const { t } = useI18n()
@@ -10,35 +11,15 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   const messages = ref<DropChatItem[]>([])
   const connectionState = ref<RTCPeerConnectionState>('new')
   const channelState = ref<RTCDataChannelState>('closed')
-  const debugStats = ref<DropDebugStats>({
-    availableOutgoingBitrate: null,
-    bufferedAmount: 0,
-    bytesReceived: 0,
-    bytesSent: 0,
-    channelState: 'closed',
-    connectionState: 'new',
-    controlBufferedAmount: 0,
-    controlChannelState: 'missing',
-    currentRoundTripTime: null,
-    fileBufferedAmount: 0,
-    fileChannelState: 'missing',
-    localCandidateType: '',
-    packetsLost: 0,
-    packetsReceived: 0,
-    packetsSent: 0,
-    receiveBytesPerSecond: 0,
-    remoteCandidateType: '',
-    selectedCandidatePairState: '',
-    sendBytesPerSecond: 0,
-  })
 
   let peer: RTCPeerConnection | null = null
   let controlChannel: RTCDataChannel | null = null
   let fileChannel: RTCDataChannel | null = null
   let incomingFile: IncomingDropFile | null = null
   let lastProgressAt = 0
-  let statsTimer: ReturnType<typeof setInterval> | null = null
-  let lastStatsSnapshot = { bytesReceived: 0, bytesSent: 0, timestamp: 0 }
+
+  // Sender-side state keyed by file id. We keep the latest receiver ACK here so the
+  // sender can avoid getting too far ahead of the device that is actually receiving.
   const outgoingProgressMap = new Map<string, OutgoingDropFileProgress>()
 
   const isReady = computed(() => channelState.value === 'open' && connectionState.value === 'connected')
@@ -51,8 +32,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     messages.value.push({ id: crypto.randomUUID(), kind: DropMessageKind.Text, mine, text })
   }
 
-  function addFile(file: Pick<DropChatItem, 'averageBytesPerSecond' | 'elapsedMs' | 'id' | 'lastProgressGapMs' | 'name' | 'peakBytesPerSecond' | 'progress' | 'receivedBytes' | 'size' | 'speedBytesPerSecond' | 'stalledCount' | 'startedAt' | 'status' | 'url'>, mine: boolean) {
-    messages.value.push({ kind: DropMessageKind.File, mine, ...file })
+  function addFile(file: DropChatItem) {
+    messages.value.push(file)
   }
 
   function updateFileMessage(id: string, patch: Partial<DropChatItem>) {
@@ -78,117 +59,138 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     if (!incomingFile)
       return
 
-    const completedAt = Date.now()
-    const elapsedMs = completedAt - incomingFile.startedAt
     const blob = new Blob(incomingFile.chunks, { type: incomingFile.type })
     updateFileMessage(incomingFile.id, {
-      averageBytesPerSecond: incomingFile.size / Math.max(elapsedMs / 1000, 0.001),
-      completedAt,
-      elapsedMs,
       progress: 100,
       receivedBytes: incomingFile.size,
       speedBytesPerSecond: 0,
       status: DropFileTransferStatus.Complete,
       url: URL.createObjectURL(blob),
     })
-    sendControlMessage({ id: incomingFile.id, kind: DropMessageKind.FileProgress, received: incomingFile.size, size: incomingFile.size })
+
+    // Send one final ACK even if FileEnd is delayed or dropped behind binary chunks.
+    // The sender waits for a full ACK before marking its own file as completed.
+    sendFileProgressAck(incomingFile)
     incomingFile = null
   }
 
   function sendFileProgressAck(file: IncomingDropFile) {
+    // This is application-level progress, not WebRTC reliability. DataChannel already
+    // handles reliable delivery; this ACK tells our UI and pacing logic how much the
+    // receiver's JavaScript has actually assembled.
     sendControlMessage({ id: file.id, kind: DropMessageKind.FileProgress, received: file.received, size: file.size })
   }
 
-  function updateTransferProgress(file: IncomingDropFile, force = false) {
+  function updateIncomingFileProgress(file: IncomingDropFile, force = false) {
     const now = Date.now()
+
+    // UI rendering is throttled, but ACKs are not. Keeping these separate prevents the
+    // sender from stalling while waiting for a progress message that the UI throttle held back.
     if (!force && now - lastProgressAt < DROP_FILE_TRANSFER_CONFIG.progressIntervalMs)
       return
 
-    const progressGapMs = now - file.lastProgressAt
-    const elapsedSeconds = Math.max(progressGapMs / 1000, 0.001)
-    const bytesDelta = file.received - file.lastReceived
-    file.speedBytesPerSecond = bytesDelta / elapsedSeconds
-    file.peakBytesPerSecond = Math.max(file.peakBytesPerSecond, file.speedBytesPerSecond)
-    file.averageBytesPerSecond = file.received / Math.max((now - file.startedAt) / 1000, 0.001)
-    file.lastProgressGapMs = progressGapMs
-    if (progressGapMs >= DROP_FILE_TRANSFER_CONFIG.stallThresholdMs && bytesDelta > 0)
-      file.stalledCount += 1
+    const speedBytesPerSecond = getTransferSpeed({
+      currentBytes: file.received,
+      currentTime: now,
+      previousBytes: file.lastReceived,
+      previousTime: file.lastProgressAt,
+    })
+
+    file.speedBytesPerSecond = speedBytesPerSecond
     file.lastProgressAt = now
     file.lastReceived = file.received
     lastProgressAt = now
+
     updateFileMessage(file.id, {
-      averageBytesPerSecond: file.averageBytesPerSecond,
-      elapsedMs: now - file.startedAt,
-      lastProgressGapMs: file.lastProgressGapMs,
-      peakBytesPerSecond: file.peakBytesPerSecond,
-      progress: Math.min(100, Math.round((file.received / file.size) * 100)),
+      progress: getDropFileProgress(file.received, file.size),
       receivedBytes: file.received,
-      speedBytesPerSecond: file.speedBytesPerSecond,
-      stalledCount: file.stalledCount,
+      speedBytesPerSecond,
+    })
+  }
+
+  function createIncomingFile(data: DropDataMessage) {
+    const now = Date.now()
+    const file: IncomingDropFile = {
+      chunks: [],
+      id: data.id!,
+      lastProgressAt: now,
+      lastReceived: 0,
+      name: data.name!,
+      received: 0,
+      size: data.size!,
+      speedBytesPerSecond: 0,
+      type: data.type || 'application/octet-stream',
+    }
+
+    incomingFile = file
+    lastProgressAt = 0
+    addFile(createDropFileMessage({
+      id: file.id,
+      mine: false,
+      name: file.name,
+      size: file.size,
+      status: DropFileTransferStatus.Receiving,
+    }))
+
+    // File chunks travel on a different DataChannel from FileStart. There is no ordering
+    // guarantee between channels, so the sender waits for FileReady before sending binary data.
+    sendControlMessage({ id: file.id, kind: DropMessageKind.FileReady })
+  }
+
+  function updateOutgoingFileProgress(data: DropDataMessage) {
+    if (!data.id || data.received === undefined || !data.size)
+      return
+
+    const now = Date.now()
+    const snapshot = outgoingProgressMap.get(data.id)
+    const speedBytesPerSecond = snapshot
+      ? getTransferSpeed({
+          currentBytes: data.received,
+          currentTime: now,
+          previousBytes: snapshot.lastReceived,
+          previousTime: snapshot.lastProgressAt,
+        })
+      : 0
+
+    outgoingProgressMap.set(data.id, {
+      lastProgressAt: now,
+      lastReceived: data.received,
+      ready: snapshot?.ready ?? false,
+    })
+
+    updateFileMessage(data.id, {
+      progress: getDropFileProgress(data.received, data.size),
+      receivedBytes: data.received,
+      speedBytesPerSecond: data.received >= data.size ? 0 : speedBytesPerSecond,
+      status: data.received >= data.size ? DropFileTransferStatus.Complete : DropFileTransferStatus.Sending,
     })
   }
 
   function handleDataMessage(data: DropDataMessage) {
     if (data.kind === DropMessageKind.Text && data.text) {
       addText(data.text, false)
+      return
     }
-    else if (data.kind === DropMessageKind.FileStart && data.id && data.name && data.size !== undefined) {
-      const now = Date.now()
-      incomingFile = { averageBytesPerSecond: 0, chunks: [], id: data.id, lastProgressAt: now, lastProgressGapMs: 0, lastReceived: 0, name: data.name, peakBytesPerSecond: 0, received: 0, size: data.size, speedBytesPerSecond: 0, stalledCount: 0, startedAt: now, type: data.type || 'application/octet-stream' }
-      lastProgressAt = 0
-      addFile({
-        averageBytesPerSecond: 0,
-        id: data.id,
-        lastProgressGapMs: 0,
-        name: data.name,
-        peakBytesPerSecond: 0,
-        progress: 0,
-        receivedBytes: 0,
-        size: data.size,
-        speedBytesPerSecond: 0,
-        stalledCount: 0,
-        startedAt: now,
-        status: DropFileTransferStatus.Receiving,
-      }, false)
-      sendControlMessage({ id: data.id, kind: DropMessageKind.FileReady })
+
+    if (data.kind === DropMessageKind.FileStart && data.id && data.name && data.size !== undefined) {
+      createIncomingFile(data)
+      return
     }
-    else if (data.kind === DropMessageKind.FileReady && data.id) {
+
+    if (data.kind === DropMessageKind.FileReady && data.id) {
       const snapshot = outgoingProgressMap.get(data.id)
       if (snapshot)
         outgoingProgressMap.set(data.id, { ...snapshot, ready: true })
+      return
     }
-    else if (data.kind === DropMessageKind.FileProgress && data.id && data.received !== undefined && data.size) {
-      const now = Date.now()
-      const progressSnapshot = outgoingProgressMap.get(data.id)
-      const elapsedSeconds = progressSnapshot ? Math.max((now - progressSnapshot.lastProgressAt) / 1000, 0.001) : 0
-      const speedBytesPerSecond = progressSnapshot ? Math.max(0, (data.received - progressSnapshot.lastReceived) / elapsedSeconds) : 0
-      const startedAt = progressSnapshot?.startedAt ?? now
-      const lastProgressGapMs = progressSnapshot ? now - progressSnapshot.lastProgressAt : 0
-      const stalledCount = progressSnapshot
-        ? progressSnapshot.stalledCount + (lastProgressGapMs >= DROP_FILE_TRANSFER_CONFIG.stallThresholdMs && data.received > progressSnapshot.lastReceived ? 1 : 0)
-        : 0
-      const averageBytesPerSecond = data.received / Math.max((now - startedAt) / 1000, 0.001)
-      const peakBytesPerSecond = Math.max(progressSnapshot?.peakBytesPerSecond ?? 0, speedBytesPerSecond)
 
-      outgoingProgressMap.set(data.id, { averageBytesPerSecond, lastProgressAt: now, lastProgressGapMs, lastReceived: data.received, peakBytesPerSecond, ready: progressSnapshot?.ready ?? false, stalledCount, startedAt })
+    if (data.kind === DropMessageKind.FileProgress) {
+      updateOutgoingFileProgress(data)
+      return
+    }
 
-      updateFileMessage(data.id, {
-        averageBytesPerSecond,
-        completedAt: data.received >= data.size ? now : undefined,
-        elapsedMs: now - startedAt,
-        lastProgressGapMs,
-        peakBytesPerSecond,
-        progress: Math.min(100, Math.round((data.received / data.size) * 100)),
-        receivedBytes: data.received,
-        speedBytesPerSecond: data.received >= data.size ? 0 : speedBytesPerSecond,
-        stalledCount,
-        status: data.received >= data.size ? DropFileTransferStatus.Complete : DropFileTransferStatus.Sending,
-      })
-    }
-    else if (data.kind === DropMessageKind.FileEnd) {
-      if (!data.id || incomingFile?.id === data.id)
-        finishIncomingFile()
-    }
+    if (data.kind === DropMessageKind.FileEnd && (!data.id || incomingFile?.id === data.id))
+      finishIncomingFile()
   }
 
   function updateChannelState() {
@@ -219,9 +221,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     controlChannel.addEventListener('open', () => addSystem(t('drop.system.connected')))
     controlChannel.addEventListener('close', () => addSystem(t('drop.system.offline')))
     controlChannel.addEventListener('message', (event) => {
-      if (typeof event.data === 'string') {
+      if (typeof event.data === 'string')
         handleDataMessage(JSON.parse(event.data) as DropDataMessage)
-      }
     })
   }
 
@@ -237,68 +238,21 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     fileChannel.addEventListener('message', (event) => {
       if (!incomingFile || typeof event.data === 'string')
         return
+
       const chunk = event.data as ArrayBuffer
       incomingFile.chunks.push(chunk)
       incomingFile.received += chunk.byteLength
+
       const file = incomingFile
+
+      // ACK every chunk immediately. The UI may update only every 100ms, but pacing depends
+      // on timely ACKs so the sender can continue as soon as the receiver has caught up.
       sendFileProgressAck(file)
-      updateTransferProgress(file, file.received >= file.size)
+      updateIncomingFileProgress(file, file.received >= file.size)
+
       if (file.received >= file.size)
         finishIncomingFile()
     })
-  }
-
-  async function updateDebugStats() {
-    if (!peer)
-      return
-
-    const report = await peer.getStats()
-    const stats = [...report.values()] as Array<Record<string, any>>
-    const selectedPair = stats.find(item => item.type === 'candidate-pair' && (item.selected || item.nominated || item.state === 'succeeded'))
-    const dataChannelStats = stats.filter(item => item.type === 'data-channel')
-    const localCandidate = selectedPair?.localCandidateId ? report.get(selectedPair.localCandidateId) as Record<string, any> | undefined : undefined
-    const remoteCandidate = selectedPair?.remoteCandidateId ? report.get(selectedPair.remoteCandidateId) as Record<string, any> | undefined : undefined
-    const dataChannelBytesSent = dataChannelStats.reduce((sum, item) => sum + Number(item.bytesSent ?? 0), 0)
-    const dataChannelBytesReceived = dataChannelStats.reduce((sum, item) => sum + Number(item.bytesReceived ?? 0), 0)
-    const dataChannelTimestamp = dataChannelStats.reduce((latest, item) => Math.max(latest, Number(item.timestamp ?? 0)), 0)
-    const bytesSent = Number(dataChannelStats.length ? dataChannelBytesSent : (selectedPair?.bytesSent ?? debugStats.value.bytesSent))
-    const bytesReceived = Number(dataChannelStats.length ? dataChannelBytesReceived : (selectedPair?.bytesReceived ?? debugStats.value.bytesReceived))
-    const timestamp = Number(dataChannelTimestamp || selectedPair?.timestamp || Date.now())
-    const elapsedSeconds = Math.max((timestamp - lastStatsSnapshot.timestamp) / 1000, 0.001)
-    const sendBytesPerSecond = lastStatsSnapshot.timestamp ? Math.max(0, (bytesSent - lastStatsSnapshot.bytesSent) / elapsedSeconds) : 0
-    const receiveBytesPerSecond = lastStatsSnapshot.timestamp ? Math.max(0, (bytesReceived - lastStatsSnapshot.bytesReceived) / elapsedSeconds) : 0
-
-    lastStatsSnapshot = { bytesReceived, bytesSent, timestamp }
-    debugStats.value = {
-      availableOutgoingBitrate: selectedPair?.availableOutgoingBitrate ?? null,
-      bufferedAmount: (controlChannel?.bufferedAmount ?? 0) + (fileChannel?.bufferedAmount ?? 0),
-      bytesReceived,
-      bytesSent,
-      channelState: channelState.value,
-      connectionState: connectionState.value,
-      controlBufferedAmount: controlChannel?.bufferedAmount ?? 0,
-      controlChannelState: controlChannel?.readyState ?? 'missing',
-      currentRoundTripTime: selectedPair?.currentRoundTripTime ?? null,
-      fileBufferedAmount: fileChannel?.bufferedAmount ?? 0,
-      fileChannelState: fileChannel?.readyState ?? 'missing',
-      localCandidateType: localCandidate?.candidateType || '',
-      packetsLost: Number(selectedPair?.packetsLost ?? 0),
-      packetsReceived: Number(selectedPair?.packetsReceived ?? 0),
-      packetsSent: Number(selectedPair?.packetsSent ?? 0),
-      receiveBytesPerSecond,
-      remoteCandidateType: remoteCandidate?.candidateType || '',
-      selectedCandidatePairState: selectedPair?.state || '',
-      sendBytesPerSecond,
-    }
-  }
-
-  function startDebugStats() {
-    if (statsTimer)
-      clearInterval(statsTimer)
-    lastStatsSnapshot = { bytesReceived: 0, bytesSent: 0, timestamp: 0 }
-    statsTimer = setInterval(() => {
-      updateDebugStats().catch(() => {})
-    }, 1000)
   }
 
   function createPeer() {
@@ -308,7 +262,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     channelState.value = 'closed'
     peer = new RTCPeerConnection(DROP_RTC_CONFIG)
     connectionState.value = peer.connectionState
-    startDebugStats()
     peer.addEventListener('connectionstatechange', () => {
       connectionState.value = peer?.connectionState ?? 'closed'
     })
@@ -327,6 +280,9 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
   async function createOffer() {
     const pc = createPeer()
+
+    // The offerer creates both negotiated channels. The answerer receives them through
+    // the peer connection's `datachannel` event.
     setupControlChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.controlLabel, { ordered: true }))
     setupFileChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.fileLabel, { ordered: true }))
     const offer = await pc.createOffer()
@@ -337,20 +293,25 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   async function handleSignal(message: RealtimeMessage) {
     if (message.type === RealtimeMessageType.PeerJoined && role.value === RealtimeRole.DropHost) {
       await createOffer()
+      return
     }
-    else if (message.type === RealtimeMessageType.SignalOffer) {
+
+    if (message.type === RealtimeMessageType.SignalOffer) {
       const pc = createPeer()
       await pc.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
       const answer = await pc.createAnswer()
       await pc.setLocalDescription(answer)
       room.send(RealtimeMessageType.SignalAnswer, { sdp: answer })
+      return
     }
-    else if (message.type === RealtimeMessageType.SignalAnswer && peer) {
+
+    if (message.type === RealtimeMessageType.SignalAnswer && peer) {
       await peer.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      return
     }
-    else if (message.type === RealtimeMessageType.SignalIce && peer && message.payload?.candidate) {
+
+    if (message.type === RealtimeMessageType.SignalIce && peer && message.payload?.candidate)
       await peer.addIceCandidate(message.payload.candidate as RTCIceCandidateInit)
-    }
   }
 
   function sendText(text: string) {
@@ -368,22 +329,20 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       return Promise.resolve()
 
     return new Promise<void>((resolve) => {
-      const activeChannel = targetChannel
-
       let settled = false
       let pollTimer: ReturnType<typeof setInterval> | null = null
 
       const cleanup = () => {
         if (pollTimer)
           clearInterval(pollTimer)
-        activeChannel.removeEventListener('bufferedamountlow', finish)
-        activeChannel.removeEventListener('close', finish)
-        activeChannel.removeEventListener('error', finish)
+        targetChannel.removeEventListener('bufferedamountlow', finish)
+        targetChannel.removeEventListener('close', finish)
+        targetChannel.removeEventListener('error', finish)
       }
 
       const hasRoomToSend = () =>
-        activeChannel.readyState !== 'open'
-        || activeChannel.bufferedAmount <= DROP_FILE_TRANSFER_CONFIG.bufferLowThreshold
+        targetChannel.readyState !== 'open'
+        || targetChannel.bufferedAmount <= DROP_FILE_TRANSFER_CONFIG.bufferLowThreshold
 
       function finish() {
         if (settled)
@@ -398,9 +357,11 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
           finish()
       }, DROP_FILE_TRANSFER_CONFIG.bufferPollIntervalMs)
 
-      activeChannel.addEventListener('bufferedamountlow', finish)
-      activeChannel.addEventListener('close', finish)
-      activeChannel.addEventListener('error', finish)
+      // Some mobile browsers do not fire `bufferedamountlow` consistently, so we listen
+      // for the event and also poll as a fallback.
+      targetChannel.addEventListener('bufferedamountlow', finish)
+      targetChannel.addEventListener('close', finish)
+      targetChannel.addEventListener('error', finish)
     })
   }
 
@@ -409,6 +370,9 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       const acknowledgedBytes = getAcknowledgedBytes(fileId)
       if (waitForFullAck)
         return acknowledgedBytes >= sentBytes
+
+      // Receiver-driven pacing: keep only a small amount of unacknowledged data in flight.
+      // This avoids flooding Safari/WebKit with a large DataChannel queue.
       return sentBytes - acknowledgedBytes <= DROP_FILE_TRANSFER_CONFIG.maxUnackedBytes
     }
 
@@ -458,49 +422,39 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       return
 
     const id = crypto.randomUUID()
-    const startedAt = Date.now()
+    const now = Date.now()
     outgoingProgressMap.set(id, {
-      averageBytesPerSecond: 0,
-      lastProgressAt: startedAt,
-      lastProgressGapMs: 0,
+      lastProgressAt: now,
       lastReceived: 0,
-      peakBytesPerSecond: 0,
       ready: false,
-      stalledCount: 0,
-      startedAt,
     })
-    addFile({
-      averageBytesPerSecond: 0,
+    addFile(createDropFileMessage({
       id,
-      lastProgressGapMs: 0,
+      mine: true,
       name: file.name,
-      peakBytesPerSecond: 0,
-      progress: 0,
-      receivedBytes: 0,
       size: file.size,
-      speedBytesPerSecond: 0,
-      stalledCount: 0,
-      startedAt,
       status: DropFileTransferStatus.Sending,
-    }, true)
+    }))
     controlChannel.send(JSON.stringify({ id, kind: DropMessageKind.FileStart, name: file.name, size: file.size, type: file.type }))
+
+    // Wait until the receiver has created its incoming-file state before binary chunks
+    // start moving on the file channel.
     await waitForRemoteReady(id)
+
     const chunkSize = DROP_FILE_TRANSFER_CONFIG.chunkSize
-    lastProgressAt = 0
     for (let offset = 0; offset < file.size; offset += chunkSize) {
       const nextOffset = Math.min(offset + chunkSize, file.size)
       fileChannel.send(await file.slice(offset, nextOffset).arrayBuffer())
       await waitForBuffer(fileChannel)
       await waitForRemoteWindow(id, nextOffset)
     }
+
     await waitForRemoteWindow(id, file.size, true)
     controlChannel.send(JSON.stringify({ id, kind: DropMessageKind.FileEnd }))
     outgoingProgressMap.delete(id)
   }
 
   function cleanup() {
-    if (statsTimer)
-      clearInterval(statsTimer)
     outgoingProgressMap.clear()
     peer?.close()
     messages.value.forEach((message) => {
@@ -518,8 +472,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
   return {
     isReady,
-    debugStats,
     messages,
+    roomFull: room.roomFull,
     sendFile,
     sendText,
   }

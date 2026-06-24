@@ -10,8 +10,11 @@ export enum RealtimeMessageType {
   Error = 'error',
   PeerJoined = 'peer:joined',
   PeerLeft = 'peer:left',
-  RemoteCommand = 'remote:command',
-  RemotePointer = 'remote:pointer',
+  RoomFull = 'room:full',
+  RemoteDraw = 'remote:draw',
+  RemoteGameState = 'remote:game-state',
+  RemoteGiveUp = 'remote:give-up',
+  RemoteGuess = 'remote:guess',
   RoomJoin = 'room:join',
   RoomJoined = 'room:joined',
   SignalAnswer = 'signal:answer',
@@ -24,14 +27,6 @@ export enum RealtimeStatus {
   Connecting = 'connecting',
   Idle = 'idle',
   Offline = 'offline',
-}
-
-export enum RemoteCommand {
-  Next = 'next',
-  Previous = 'previous',
-  ScrollDown = 'scroll-down',
-  ScrollUp = 'scroll-up',
-  SpotlightToggle = 'spotlight-toggle',
 }
 
 export interface RealtimeMessage {

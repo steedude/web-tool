@@ -16,7 +16,7 @@ const textInput = ref('')
 const { t } = useI18n()
 const localePath = useLocalePath()
 
-const { debugStats, isReady, messages, sendFile, sendText: sendDropText } = useDropPeer(roomId, role)
+const { isReady, messages, roomFull, sendFile, sendText: sendDropText } = useDropPeer(roomId, role)
 const joinUrl = computed(() => import.meta.client && roomId.value
   ? `${window.location.origin}/drop?room=${roomId.value}`
   : '')
@@ -72,7 +72,12 @@ onMounted(() => {
 
     <section v-else class="mt-10 grid min-h-[670px] gap-6 lg:grid-cols-[360px_1fr]">
       <DropRoomSidebar :copied="copied" :is-ready="isReady" :qr-code="qrCode" :role="role" :room-id="roomId" @copy-invite="copyJoinUrl" />
-      <DropChatPanel v-model:text-input="textInput" :debug-stats="debugStats" :is-ready="isReady" :messages="messages" @choose-file="onFileChange" @send-text="sendText" />
+      <div class="space-y-4">
+        <p v-if="roomFull" class="border-2 border-ink bg-red-100 px-5 py-4 font-black shadow-[6px_6px_0_#171714]">
+          {{ t('drop.status.full') }}
+        </p>
+        <DropChatPanel v-model:text-input="textInput" :is-ready="isReady" :messages="messages" @choose-file="onFileChange" @send-text="sendText" />
+      </div>
     </section>
   </main>
 </template>

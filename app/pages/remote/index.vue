@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
 import { REMOTE_QR_CONFIG } from '~/configs/realtime.config'
-import { REMOTE_SLIDES } from '~/configs/remote.config'
-import { RealtimeMessageType, RealtimeRole, RealtimeStatus, RemoteCommand } from '~/types/realtime.type'
+import { RealtimeRole, RealtimeStatus } from '~/types/realtime.type'
 import { createRoomCode } from '~/utils/realtime.util'
 
 const { locale, t } = useI18n()
@@ -11,21 +10,8 @@ const roomId = ref('')
 const phoneUrl = ref('')
 const qrCode = ref('')
 const copied = ref(false)
-const currentSlide = ref(0)
-const slideStage = useTemplateRef<{ scrollBy: (top: number) => void, scrollToTop: () => void }>('slideStage')
-const pointer = reactive({ x: 50, y: 50 })
-const pointerVisible = ref(false)
-const spotlight = ref(false)
-let pointerTimer: ReturnType<typeof setTimeout> | null = null
 
-const { latestMessage, peerConnected, status } = useRealtimeRoom(roomId, RealtimeRole.Desktop)
-
-const slides = computed(() => REMOTE_SLIDES.map(slide => ({
-  accent: slide.accent,
-  body: t(slide.bodyKey),
-  kicker: t(slide.kickerKey),
-  title: t(slide.titleKey),
-})))
+const { latestMessage, peerConnected, send, status } = useRealtimeRoom(roomId, RealtimeRole.Desktop)
 
 const connectionLabel = computed(() => {
   if (peerConnected.value)
@@ -37,78 +23,17 @@ const connectionLabel = computed(() => {
   return t('remote.waiting')
 })
 
-function changeSlide(direction: number) {
-  currentSlide.value = (currentSlide.value + direction + slides.value.length) % slides.value.length
-  slideStage.value?.scrollToTop()
-}
-
-function handleCommand(command: unknown) {
-  if (command === RemoteCommand.Previous)
-    changeSlide(-1)
-  else if (command === RemoteCommand.Next)
-    changeSlide(1)
-  else if (command === RemoteCommand.ScrollUp)
-    slideStage.value?.scrollBy(-160)
-  else if (command === RemoteCommand.ScrollDown)
-    slideStage.value?.scrollBy(160)
-  else if (command === RemoteCommand.SpotlightToggle)
-    spotlight.value = !spotlight.value
-}
-
-function handleKeydown(event: KeyboardEvent) {
-  const commandMap: Record<string, RemoteCommand> = {
-    ArrowDown: RemoteCommand.ScrollDown,
-    ArrowLeft: RemoteCommand.Previous,
-    ArrowRight: RemoteCommand.Next,
-    ArrowUp: RemoteCommand.ScrollUp,
-  }
-  const command = commandMap[event.key]
-  if (command) {
-    event.preventDefault()
-    handleCommand(command)
-  }
-}
-
 async function copyPhoneUrl() {
   await navigator.clipboard.writeText(phoneUrl.value)
   copied.value = true
   setTimeout(() => copied.value = false, 1600)
 }
 
-watch(latestMessage, (message) => {
-  if (!message)
-    return
-
-  if (message.type === RealtimeMessageType.RemoteCommand)
-    handleCommand(message.payload?.command)
-
-  if (message.type === RealtimeMessageType.RemotePointer) {
-    const x = Number(message.payload?.x)
-    const y = Number(message.payload?.y)
-    if (!Number.isFinite(x) || !Number.isFinite(y))
-      return
-
-    pointer.x = Math.min(100, Math.max(0, x))
-    pointer.y = Math.min(100, Math.max(0, y))
-    pointerVisible.value = true
-    if (pointerTimer)
-      clearTimeout(pointerTimer)
-    pointerTimer = setTimeout(() => pointerVisible.value = false, 2200)
-  }
-})
-
 onMounted(async () => {
   roomId.value = createRoomCode()
   const localePrefix = locale.value === 'en' ? '/en' : ''
   phoneUrl.value = `${window.location.origin}${localePrefix}/remote/control/${roomId.value}`
   qrCode.value = await QRCode.toDataURL(phoneUrl.value, REMOTE_QR_CONFIG)
-  window.addEventListener('keydown', handleKeydown)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeydown)
-  if (pointerTimer)
-    clearTimeout(pointerTimer)
 })
 
 useSeoMeta({
@@ -160,25 +85,12 @@ useSeoMeta({
         @copy-link="copyPhoneUrl"
       />
 
-      <div class="min-w-0">
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p class="font-mono text-xs font-black">
-            {{ t('remote.slideCounter', { current: currentSlide + 1, total: slides.length }) }}
-          </p>
-          <p class="text-xs font-bold text-black/45">
-            {{ t('remote.keyboardHint') }}
-          </p>
-        </div>
-
-        <RemoteSlideStage
-          ref="slideStage"
-          :current-slide="currentSlide"
-          :pointer="pointer"
-          :pointer-visible="pointerVisible"
-          :slides="slides"
-          :spotlight="spotlight"
-        />
-      </div>
+      <RemoteDrawingGame
+        :latest-message="latestMessage"
+        :peer-connected="peerConnected"
+        :role="RealtimeRole.Desktop"
+        :send="send"
+      />
     </section>
   </div>
 </template>
