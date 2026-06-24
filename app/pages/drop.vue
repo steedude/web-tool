@@ -7,6 +7,7 @@ import { createRoomCode, isRoomCode, normalizeRoomCode } from '~/utils/realtime.
 const route = useRoute()
 const router = useRouter()
 const roomInput = ref(typeof route.query.room === 'string' ? route.query.room.toUpperCase() : '')
+const roleInput = ref(typeof route.query.role === 'string' ? route.query.role : '')
 const roomId = ref('')
 const role = ref<RealtimeRole.DropHost | RealtimeRole.DropGuest>(RealtimeRole.DropHost)
 const started = ref(false)
@@ -29,7 +30,12 @@ async function start(nextRole: RealtimeRole.DropHost | RealtimeRole.DropGuest, c
   role.value = nextRole
   roomId.value = normalized
   started.value = true
-  await router.replace({ query: nextRole === RealtimeRole.DropGuest ? { room: normalized } : {} })
+  await router.replace({
+    query: {
+      role: nextRole === RealtimeRole.DropHost ? 'host' : 'guest',
+      room: normalized,
+    },
+  })
 
   if (nextRole === RealtimeRole.DropHost) {
     await nextTick()
@@ -57,8 +63,11 @@ async function copyJoinUrl() {
 }
 
 onMounted(() => {
-  if (isRoomCode(roomInput.value))
-    start(RealtimeRole.DropGuest, roomInput.value)
+  if (!isRoomCode(roomInput.value))
+    return
+
+  const nextRole = roleInput.value === 'host' ? RealtimeRole.DropHost : RealtimeRole.DropGuest
+  start(nextRole, roomInput.value)
 })
 </script>
 
