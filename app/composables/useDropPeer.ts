@@ -17,6 +17,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   let fileChannel: RTCDataChannel | null = null
   let incomingFile: IncomingDropFile | null = null
   let lastProgressAt = 0
+  let pendingIceCandidates: RTCIceCandidateInit[] = []
 
   // Sender-side state keyed by file id. We keep the latest receiver ACK here so the
   // sender can avoid getting too far ahead of the device that is actually receiving.
@@ -278,6 +279,25 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     return peer
   }
 
+  async function addIceCandidate(candidate: RTCIceCandidateInit) {
+    if (!peer || !peer.remoteDescription) {
+      pendingIceCandidates.push(candidate)
+      return
+    }
+
+    await peer.addIceCandidate(candidate)
+  }
+
+  async function flushPendingIceCandidates() {
+    if (!peer || !peer.remoteDescription)
+      return
+
+    const candidates = pendingIceCandidates
+    pendingIceCandidates = []
+    for (const candidate of candidates)
+      await peer.addIceCandidate(candidate)
+  }
+
   async function createOffer() {
     const pc = createPeer()
 
@@ -299,6 +319,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     if (message.type === RealtimeMessageType.SignalOffer) {
       const pc = createPeer()
       await pc.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      await flushPendingIceCandidates()
       const answer = await pc.createAnswer()
       await pc.setLocalDescription(answer)
       room.send(RealtimeMessageType.SignalAnswer, { sdp: answer })
@@ -307,11 +328,12 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
     if (message.type === RealtimeMessageType.SignalAnswer && peer) {
       await peer.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      await flushPendingIceCandidates()
       return
     }
 
-    if (message.type === RealtimeMessageType.SignalIce && peer && message.payload?.candidate)
-      await peer.addIceCandidate(message.payload.candidate as RTCIceCandidateInit)
+    if (message.type === RealtimeMessageType.SignalIce && message.payload?.candidate)
+      await addIceCandidate(message.payload.candidate as RTCIceCandidateInit)
   }
 
   function sendText(text: string) {
@@ -456,6 +478,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
   function cleanup() {
     outgoingProgressMap.clear()
+    pendingIceCandidates = []
     peer?.close()
     messages.value.forEach((message) => {
       if (message.url)
