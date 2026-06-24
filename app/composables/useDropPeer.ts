@@ -95,6 +95,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     incomingFile = null
   }
 
+  function sendFileProgressAck(file: IncomingDropFile) {
+    sendControlMessage({ id: file.id, kind: DropMessageKind.FileProgress, received: file.received, size: file.size })
+  }
+
   function updateTransferProgress(file: IncomingDropFile, force = false) {
     const now = Date.now()
     if (!force && now - lastProgressAt < DROP_FILE_TRANSFER_CONFIG.progressIntervalMs)
@@ -122,7 +126,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       speedBytesPerSecond: file.speedBytesPerSecond,
       stalledCount: file.stalledCount,
     })
-    sendControlMessage({ id: file.id, kind: DropMessageKind.FileProgress, received: file.received, size: file.size })
   }
 
   function handleDataMessage(data: DropDataMessage) {
@@ -237,8 +240,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       const chunk = event.data as ArrayBuffer
       incomingFile.chunks.push(chunk)
       incomingFile.received += chunk.byteLength
-      updateTransferProgress(incomingFile, incomingFile.received >= incomingFile.size)
-      if (incomingFile.received >= incomingFile.size)
+      const file = incomingFile
+      sendFileProgressAck(file)
+      updateTransferProgress(file, file.received >= file.size)
+      if (file.received >= file.size)
         finishIncomingFile()
     })
   }
