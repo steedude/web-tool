@@ -46,6 +46,20 @@ export interface OutgoingDropFileProgress {
   ready: boolean
 }
 
+export interface DropConnectionDebug {
+  connectionState: string
+  controlChannelState: string
+  fileChannelState: string
+  iceConnectionState: string
+  iceGatheringState: string
+  lastError: string
+  lastSignal: string
+  localDescriptionSet: boolean
+  pendingIceCount: number
+  remoteDescriptionSet: boolean
+  signalingState: string
+}
+
 export interface DropDataMessage {
   id?: string
   kind: DropMessageKind

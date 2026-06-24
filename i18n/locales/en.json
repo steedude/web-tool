@@ -154,6 +154,26 @@
       "connected": "Devices are connected peer-to-peer",
       "offline": "The other device went offline",
       "signalFailed": "Pairing signal failed. Please refresh."
+    },
+    "debug": {
+      "title": "Transfer diagnostics",
+      "peer": "Peer",
+      "yes": "yes",
+      "no": "no",
+      "connection": "RTC",
+      "ice": "ICE",
+      "signaling": "Signal",
+      "sdp": "SDP",
+      "channels": "Channels",
+      "lastSignal": "Last msg",
+      "pendingIce": "Queue ICE",
+      "error": "Error",
+      "empty": "?",
+      "control": "C:",
+      "file": "F:",
+      "local": "L:",
+      "remote": "R:",
+      "separator": "/"
     }
   },
   "links": {

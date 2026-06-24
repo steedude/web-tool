@@ -154,6 +154,26 @@
       "connected": "裝置已建立點對點連線",
       "offline": "另一台裝置已離線",
       "signalFailed": "配對訊號處理失敗，請重新整理"
+    },
+    "debug": {
+      "title": "傳輸診斷",
+      "peer": "對方",
+      "yes": "是",
+      "no": "否",
+      "connection": "RTC",
+      "ice": "ICE",
+      "signaling": "信令",
+      "sdp": "SDP",
+      "channels": "通道",
+      "lastSignal": "最後訊息",
+      "pendingIce": "ICE 佇列",
+      "error": "錯誤",
+      "empty": "?",
+      "control": "C:",
+      "file": "F:",
+      "local": "L:",
+      "remote": "R:",
+      "separator": "/"
     }
   },
   "links": {

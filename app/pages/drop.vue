@@ -16,7 +16,7 @@ const textInput = ref('')
 const { t } = useI18n()
 const localePath = useLocalePath()
 
-const { isReady, messages, peerConnected, roomFull, sendFile, sendText: sendDropText } = useDropPeer(roomId, role)
+const { debug, isReady, messages, peerConnected, roomFull, sendFile, sendText: sendDropText } = useDropPeer(roomId, role)
 const joinUrl = computed(() => import.meta.client && roomId.value
   ? `${window.location.origin}/drop?room=${roomId.value}`
   : '')
@@ -71,7 +71,7 @@ onMounted(() => {
     <DropStartPanel v-if="!started" v-model:room-input="roomInput" @start="start" />
 
     <section v-else class="mt-10 grid min-h-[670px] gap-6 lg:grid-cols-[360px_1fr]">
-      <DropRoomSidebar :copied="copied" :is-ready="isReady" :peer-connected="peerConnected" :qr-code="qrCode" :role="role" :room-id="roomId" @copy-invite="copyJoinUrl" />
+      <DropRoomSidebar :copied="copied" :debug="debug" :is-ready="isReady" :peer-connected="peerConnected" :qr-code="qrCode" :role="role" :room-id="roomId" @copy-invite="copyJoinUrl" />
       <div class="space-y-4">
         <p v-if="roomFull" class="border-2 border-ink bg-red-100 px-5 py-4 font-black shadow-[6px_6px_0_#171714]">
           {{ t('drop.status.full') }}

@@ -1,4 +1,4 @@
-import type { DropChatItem, DropDataMessage, IncomingDropFile, OutgoingDropFileProgress } from '~/types/drop.type'
+import type { DropChatItem, DropConnectionDebug, DropDataMessage, IncomingDropFile, OutgoingDropFileProgress } from '~/types/drop.type'
 import type { RealtimeMessage } from '~/types/realtime.type'
 import { DROP_CHANNEL_CONFIG, DROP_FILE_TRANSFER_CONFIG, DROP_RTC_CONFIG } from '~/configs/realtime.config'
 import { DropFileTransferStatus, DropMessageKind } from '~/types/drop.type'
@@ -11,6 +11,19 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   const messages = ref<DropChatItem[]>([])
   const connectionState = ref<RTCPeerConnectionState>('new')
   const channelState = ref<RTCDataChannelState>('closed')
+  const debug = reactive<DropConnectionDebug>({
+    connectionState: 'new',
+    controlChannelState: 'closed',
+    fileChannelState: 'closed',
+    iceConnectionState: 'new',
+    iceGatheringState: 'new',
+    lastError: '',
+    lastSignal: '',
+    localDescriptionSet: false,
+    pendingIceCount: 0,
+    remoteDescriptionSet: false,
+    signalingState: 'stable',
+  })
 
   let peer: RTCPeerConnection | null = null
   let controlChannel: RTCDataChannel | null = null
@@ -200,6 +213,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   function updateChannelState() {
     const controlState = controlChannel?.readyState ?? 'closed'
     const fileState = fileChannel?.readyState ?? 'closed'
+    debug.controlChannelState = controlState
+    debug.fileChannelState = fileState
 
     if (controlState === 'open' && fileState === 'open') {
       channelState.value = 'open'
@@ -214,13 +229,26 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     channelState.value = controlState === 'closing' || fileState === 'closing' ? 'closing' : 'closed'
   }
 
+  function updatePeerDebug() {
+    debug.connectionState = peer?.connectionState ?? 'closed'
+    debug.iceConnectionState = peer?.iceConnectionState ?? 'closed'
+    debug.iceGatheringState = peer?.iceGatheringState ?? 'complete'
+    debug.localDescriptionSet = !!peer?.localDescription
+    debug.remoteDescriptionSet = !!peer?.remoteDescription
+    debug.pendingIceCount = pendingIceCandidates.length
+    debug.signalingState = peer?.signalingState ?? 'closed'
+  }
+
   function setupControlChannel(nextChannel: RTCDataChannel) {
     controlChannel = nextChannel
     updateChannelState()
 
     controlChannel.addEventListener('open', updateChannelState)
     controlChannel.addEventListener('close', updateChannelState)
-    controlChannel.addEventListener('error', updateChannelState)
+    controlChannel.addEventListener('error', (event) => {
+      debug.lastError = `control channel error: ${event.type}`
+      updateChannelState()
+    })
 
     controlChannel.addEventListener('open', () => addSystem(t('drop.system.connected')))
     controlChannel.addEventListener('close', () => addSystem(t('drop.system.offline')))
@@ -238,7 +266,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
     fileChannel.addEventListener('open', updateChannelState)
     fileChannel.addEventListener('close', updateChannelState)
-    fileChannel.addEventListener('error', updateChannelState)
+    fileChannel.addEventListener('error', (event) => {
+      debug.lastError = `file channel error: ${event.type}`
+      updateChannelState()
+    })
     fileChannel.addEventListener('message', (event) => {
       if (!incomingFile || typeof event.data === 'string')
         return
@@ -266,8 +297,17 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     channelState.value = 'closed'
     peer = new RTCPeerConnection(DROP_RTC_CONFIG)
     connectionState.value = peer.connectionState
+    updatePeerDebug()
     peer.addEventListener('connectionstatechange', () => {
       connectionState.value = peer?.connectionState ?? 'closed'
+      updatePeerDebug()
+    })
+    peer.addEventListener('iceconnectionstatechange', updatePeerDebug)
+    peer.addEventListener('icegatheringstatechange', updatePeerDebug)
+    peer.addEventListener('signalingstatechange', updatePeerDebug)
+    peer.addEventListener('icecandidateerror', (event) => {
+      debug.lastError = `ice candidate error: ${event.errorCode} ${event.errorText}`
+      updatePeerDebug()
     })
     peer.addEventListener('icecandidate', (event) => {
       if (event.candidate)
@@ -285,10 +325,12 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   async function addIceCandidate(candidate: RTCIceCandidateInit) {
     if (!peer || !peer.remoteDescription) {
       pendingIceCandidates.push(candidate)
+      debug.pendingIceCount = pendingIceCandidates.length
       return
     }
 
     await peer.addIceCandidate(candidate)
+    updatePeerDebug()
   }
 
   async function flushPendingIceCandidates() {
@@ -297,8 +339,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
     const candidates = pendingIceCandidates
     pendingIceCandidates = []
+    debug.pendingIceCount = 0
     for (const candidate of candidates)
       await peer.addIceCandidate(candidate)
+    updatePeerDebug()
   }
 
   async function createOffer() {
@@ -310,10 +354,13 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     setupFileChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.fileLabel, { ordered: true }))
     const offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
+    updatePeerDebug()
     room.send(RealtimeMessageType.SignalOffer, { sdp: offer })
   }
 
   async function handleSignal(message: RealtimeMessage) {
+    debug.lastSignal = message.type
+
     if (message.type === RealtimeMessageType.PeerJoined && role.value === RealtimeRole.DropHost) {
       await createOffer()
       return
@@ -322,15 +369,18 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     if (message.type === RealtimeMessageType.SignalOffer) {
       const pc = createPeer()
       await pc.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      updatePeerDebug()
       await flushPendingIceCandidates()
       const answer = await pc.createAnswer()
       await pc.setLocalDescription(answer)
+      updatePeerDebug()
       room.send(RealtimeMessageType.SignalAnswer, { sdp: answer })
       return
     }
 
     if (message.type === RealtimeMessageType.SignalAnswer && peer) {
       await peer.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      updatePeerDebug()
       await flushPendingIceCandidates()
       return
     }
@@ -482,22 +532,29 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   function cleanup() {
     outgoingProgressMap.clear()
     pendingIceCandidates = []
+    debug.pendingIceCount = 0
     peer?.close()
     messages.value.forEach((message) => {
-      if (message.url)
+      if (message.url) {
         URL.revokeObjectURL(message.url)
+      }
     })
   }
 
   watch(room.latestMessage, (message) => {
-    if (message)
-      handleSignal(message).catch(() => addSystem(t('drop.system.signalFailed')))
+    if (message) {
+      handleSignal(message).catch((error) => {
+        debug.lastError = error instanceof Error ? error.message : String(error)
+        addSystem(t('drop.system.signalFailed'))
+      })
+    }
   })
 
   onBeforeUnmount(cleanup)
 
   return {
     isReady,
+    debug: readonly(debug),
     messages,
     peerConnected: room.peerConnected,
     roomFull: room.roomFull,
