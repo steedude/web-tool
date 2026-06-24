@@ -32,7 +32,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   let fileChannel: RTCDataChannel | null = null
   let incomingFile: IncomingDropFile | null = null
   let lastProgressAt = 0
-  let pendingIceCandidates: RTCIceCandidateInit[] = []
   const localCandidateCounts = new Map<string, number>()
   const remoteCandidateCounts = new Map<string, number>()
 
@@ -40,10 +39,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   // sender can avoid getting too far ahead of the device that is actually receiving.
   const outgoingProgressMap = new Map<string, OutgoingDropFileProgress>()
 
-  // The DataChannels are the actual transport this feature uses. Some browsers can keep
-  // RTCPeerConnection.connectionState at "connecting" longer than the channels themselves,
-  // so the UI should become ready as soon as both channels are open.
-  const isReady = computed(() => channelState.value === 'open')
+  const isReady = computed(() => channelState.value === 'open' && connectionState.value === 'connected')
 
   function addSystem(text: string) {
     messages.value.push({ id: crypto.randomUUID(), kind: DropMessageKind.System, mine: false, text })
@@ -258,7 +254,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     debug.iceGatheringState = peer?.iceGatheringState ?? 'complete'
     debug.localDescriptionSet = !!peer?.localDescription
     debug.remoteDescriptionSet = !!peer?.remoteDescription
-    debug.pendingIceCount = pendingIceCandidates.length
+    debug.pendingIceCount = 0
     debug.signalingState = peer?.signalingState ?? 'closed'
   }
 
@@ -350,25 +346,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   async function addIceCandidate(candidate: RTCIceCandidateInit) {
     debug.remoteCandidateSummary = trackCandidate(remoteCandidateCounts, candidate.candidate)
 
-    if (!peer || !peer.remoteDescription) {
-      pendingIceCandidates.push(candidate)
-      debug.pendingIceCount = pendingIceCandidates.length
-      return
-    }
-
-    await peer.addIceCandidate(candidate)
-    updatePeerDebug()
-  }
-
-  async function flushPendingIceCandidates() {
     if (!peer || !peer.remoteDescription)
       return
 
-    const candidates = pendingIceCandidates
-    pendingIceCandidates = []
-    debug.pendingIceCount = 0
-    for (const candidate of candidates)
-      await peer.addIceCandidate(candidate)
+    await peer.addIceCandidate(candidate)
     updatePeerDebug()
   }
 
@@ -397,7 +378,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       const pc = createPeer()
       await pc.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
       updatePeerDebug()
-      await flushPendingIceCandidates()
       const answer = await pc.createAnswer()
       await pc.setLocalDescription(answer)
       updatePeerDebug()
@@ -408,7 +388,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     if (message.type === RealtimeMessageType.SignalAnswer && peer) {
       await peer.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
       updatePeerDebug()
-      await flushPendingIceCandidates()
       return
     }
 
@@ -560,7 +539,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     localCandidateCounts.clear()
     remoteCandidateCounts.clear()
     outgoingProgressMap.clear()
-    pendingIceCandidates = []
     debug.localCandidateSummary = '0'
     debug.pendingIceCount = 0
     debug.remoteCandidateSummary = '0'

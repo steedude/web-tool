@@ -17,14 +17,6 @@ defineEmits<{
 }>()
 
 const { t } = useI18n()
-
-function statusLabel(isReady: boolean, peerConnected: boolean) {
-  if (isReady)
-    return t('drop.status.ready')
-  if (peerConnected)
-    return t('drop.status.connectingPeer')
-  return t('drop.status.waiting')
-}
 </script>
 
 <template>
@@ -37,7 +29,7 @@ function statusLabel(isReady: boolean, peerConnected: boolean) {
     </div>
     <div class="mt-4 inline-flex items-center gap-2 border border-ink bg-white px-3 py-2 text-sm font-bold">
       <span class="size-2 rounded-full" :class="isReady ? 'bg-green-500' : 'animate-pulse bg-coral'" />
-      {{ statusLabel(isReady, peerConnected) }}
+      {{ isReady ? t('drop.status.ready') : t('drop.status.waiting') }}
     </div>
 
     <template v-if="role === RealtimeRole.DropHost">
