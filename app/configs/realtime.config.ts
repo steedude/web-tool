@@ -9,7 +9,7 @@ export const REALTIME_RETRY_CONFIG = {
   maxDelayMs: 10_000,
 } as const
 
-export const REMOTE_QR_CONFIG = {
+export const DRAW_QR_CONFIG = {
   color: {
     dark: '#171714',
     light: '#ffffff',

@@ -59,8 +59,8 @@ export interface DropConnectionDebug {
   lastSignal: string
   localCandidateSummary: string
   localDescriptionSet: boolean
-  remoteCandidateSummary: string
-  remoteDescriptionSet: boolean
+  peerCandidateSummary: string
+  peerDescriptionSet: boolean
   receiveRate: string
   roundTripTime: string
   sendRate: string

@@ -1,8 +1,8 @@
 export enum RealtimeRole {
-  Desktop = 'desktop',
+  DrawGuest = 'draw-guest',
+  DrawHost = 'draw-host',
   DropGuest = 'drop-guest',
   DropHost = 'drop-host',
-  Remote = 'remote',
 }
 
 export enum RealtimeMessageType {
@@ -11,11 +11,11 @@ export enum RealtimeMessageType {
   PeerJoined = 'peer:joined',
   PeerLeft = 'peer:left',
   RoomFull = 'room:full',
-  RemoteDraw = 'remote:draw',
-  RemoteGameState = 'remote:game-state',
-  RemoteGiveUp = 'remote:give-up',
-  RemoteGuess = 'remote:guess',
-  RemoteUndo = 'remote:undo',
+  DrawGiveUp = 'draw:give-up',
+  DrawGuess = 'draw:guess',
+  DrawState = 'draw:state',
+  DrawStroke = 'draw:stroke',
+  DrawUndo = 'draw:undo',
   RoomJoin = 'room:join',
   RoomJoined = 'room:joined',
   SignalAnswer = 'signal:answer',

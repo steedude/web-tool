@@ -25,16 +25,10 @@
   "home": {
     "eyebrow": "FRONTEND EXPERIMENTS / 2026",
     "title": "Turning the browser into a playground.",
-    "description": "Three frontend experiments grown from real needs: cross-device control, peer-to-peer transfer, and smarter short links.",
+    "description": "Three frontend tools grown from real needs: a two-player drawing game, peer-to-peer transfer, and smarter short links with image pages.",
     "choose": "Choose an experiment"
   },
   "features": {
-    "remote": {
-      "index": "01",
-      "title": "Draw & Guess",
-      "description": "Scan a QR code and play a two-player drawing guessing game in real time.",
-      "badge": "LIVE"
-    },
     "drop": {
       "index": "02",
       "title": "Web AirDrop",
@@ -46,73 +40,12 @@
       "title": "Short Links & Thumbnails",
       "description": "Create short links, QR codes, and password-protected image share pages.",
       "badge": "LIVE"
-    }
-  },
-  "remote": {
-    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
-    "title": "Draw it. Guess it. Swap turns.",
-    "description": "Create a room on one device, scan the QR code on another, and play a tiny real-time drawing game. Strokes, guesses, skips, and turn changes are synced through WebSocket.",
-    "room": "Room code",
-    "scan": "Scan to join the game",
-    "copyLink": "Copy phone link",
-    "copied": "Copied",
-    "waiting": "Waiting for phone",
-    "connected": "Phone connected",
-    "connecting": "Connecting",
-    "offline": "Connection lost",
-    "desktopHint": "Keep this page open as one side of the game",
-    "networkHint": "If pairing keeps failing, turn off iCloud Private Relay, VPN, or proxy and try again.",
-    "techStack": "WebSocket · QR pairing · Canvas · Reconnect · Realtime game state",
-    "controller": {
-      "eyebrow": "DRAW & GUESS",
-      "title": "Draw & guess",
-      "room": "Room {room}",
-      "connected": "Desktop connected",
-      "waiting": "Waiting for desktop",
-      "leaveOpen": "Keep this page open while playing",
-      "roomFull": "Room full",
-      "roomFullDescription": "This remote room already has a phone connected. Create a new QR code from the desktop."
     },
-    "categories": {
-      "animal": "Animal",
-      "fruit": "Fruit",
-      "vegetable": "Vegetable"
-    },
-    "prompts": {
-      "cat": "Cat",
-      "dog": "Dog",
-      "rabbit": "Rabbit",
-      "fish": "Fish",
-      "bird": "Bird",
-      "apple": "Apple",
-      "banana": "Banana",
-      "grape": "Grape",
-      "watermelon": "Watermelon",
-      "carrot": "Carrot",
-      "tomato": "Tomato",
-      "corn": "Corn"
-    },
-    "game": {
-      "drawTitle": "Your turn to draw",
-      "guessTitle": "Guess the drawing",
-      "yourTurn": "Your turn",
-      "partnerTurn": "Partner turn",
-      "prompt": "Prompt",
-      "category": "Category",
-      "drawerHint": "Draw the prompt without typing the answer.",
-      "guesserHint": "Look at the drawing and type your answer.",
-      "panelEyebrow": "GAME PANEL",
-      "panelTitle": "Two-player sketch",
-      "guessLabel": "Your guess",
-      "guessPlaceholder": "Type the answer",
-      "submitGuess": "Submit guess",
-      "waitForGuess": "The other player is guessing. Keep drawing!",
-      "waitingForPeer": "Waiting for the other player to join.",
-      "undo": "Undo last stroke",
-      "giveUp": "Give up / skip",
-      "ruleHint": "Correct guesses or skips automatically clear the board and swap turns.",
-      "correctResult": "Correct! The answer was {answer}.",
-      "skipResult": "Skipped. The answer was {answer}."
+    "draw": {
+      "index": "01",
+      "title": "Draw & Guess",
+      "description": "Scan a QR code, join a room, and sync drawings, guesses, and turn swaps in real time.",
+      "badge": "LIVE"
     }
   },
   "drop": {
@@ -164,7 +97,7 @@
       "connection": "RTC",
       "ice": "ICE",
       "localIce": "Local ICE",
-      "remoteIce": "Remote ICE",
+      "peerIce": "Peer ICE",
       "signaling": "Signal",
       "sdp": "SDP",
       "channels": "Channels",
@@ -180,7 +113,7 @@
       "control": "C:",
       "file": "F:",
       "local": "L:",
-      "remote": "R:",
+      "peerLabel": "P:",
       "separator": "/"
     }
   },
@@ -300,5 +233,72 @@
     "dropDescription": "The next phase will add peer-to-peer text and file transfer with WebRTC.",
     "linksTitle": "Short Links & Thumbnails",
     "linksDescription": "Supabase is wired up. Next comes the short-link schema, redirects, and thumbnail pipeline."
+  },
+  "draw": {
+    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
+    "title": "Draw it. Guess it. Swap turns.",
+    "description": "Create a room on one device and scan the QR code on another. Strokes, guesses, skips, and turn swaps stay synced in real time.",
+    "room": "Room code",
+    "scan": "Scan to join the drawing room",
+    "copyLink": "Copy invite link",
+    "copied": "Copied",
+    "waiting": "Waiting for another player",
+    "connected": "Player connected",
+    "connecting": "Connecting",
+    "offline": "Connection lost",
+    "desktopHint": "Keep this page open as one side of the game",
+    "networkHint": "If pairing keeps failing, turn off iCloud Private Relay, VPN, or proxy and try again.",
+    "techStack": "WebSocket · QR pairing · Canvas · Reconnect · Realtime game state",
+    "player": {
+      "eyebrow": "DRAW & GUESS",
+      "title": "Draw & Guess",
+      "room": "Room {room}",
+      "connected": "Connected to the game room",
+      "waiting": "Waiting for the other player",
+      "leaveOpen": "Keep this page open while playing",
+      "roomFull": "Room full",
+      "roomFullDescription": "This drawing room already has two devices. Go back and create a new QR code."
+    },
+    "categories": {
+      "animal": "Animal",
+      "fruit": "Fruit",
+      "vegetable": "Vegetable"
+    },
+    "prompts": {
+      "cat": "Cat",
+      "dog": "Dog",
+      "rabbit": "Rabbit",
+      "fish": "Fish",
+      "bird": "Bird",
+      "apple": "Apple",
+      "banana": "Banana",
+      "grape": "Grape",
+      "watermelon": "Watermelon",
+      "carrot": "Carrot",
+      "tomato": "Tomato",
+      "corn": "Corn"
+    },
+    "game": {
+      "drawTitle": "Your turn to draw",
+      "guessTitle": "Guess the drawing",
+      "yourTurn": "Your turn",
+      "partnerTurn": "Partner turn",
+      "prompt": "Prompt",
+      "category": "Category",
+      "drawerHint": "Draw the prompt without typing the answer.",
+      "guesserHint": "Look at the drawing and type your answer.",
+      "panelEyebrow": "GAME PANEL",
+      "panelTitle": "Two-player sketch",
+      "guessLabel": "Your guess",
+      "guessPlaceholder": "Type the answer",
+      "submitGuess": "Submit guess",
+      "waitForGuess": "The other player is guessing. Keep drawing!",
+      "waitingForPeer": "Waiting for the other player to join.",
+      "undo": "Undo last stroke",
+      "giveUp": "Give up / skip",
+      "ruleHint": "Correct guesses or skips automatically clear the board and swap turns.",
+      "correctResult": "Correct! The answer was {answer}.",
+      "skipResult": "Skipped. The answer was {answer}."
+    }
   }
 }

@@ -1,10 +1,10 @@
 import type { WebSocket } from 'ws'
 
 export enum RealtimeRole {
-  Desktop = 'desktop',
+  DrawGuest = 'draw-guest',
+  DrawHost = 'draw-host',
   DropGuest = 'drop-guest',
   DropHost = 'drop-host',
-  Remote = 'remote',
 }
 
 export enum RealtimeMessageType {

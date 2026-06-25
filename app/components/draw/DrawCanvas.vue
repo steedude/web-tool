@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { RemoteDrawStroke } from '~/types/remote.type'
-import { REMOTE_CANVAS_CONFIG } from '~/configs/remote.config'
+import type { DrawStroke } from '~/types/draw.type'
+import { DRAW_CANVAS_CONFIG } from '~/configs/draw.config'
 
 const props = defineProps<{
   disabled: boolean
   resetKey: number
-  strokes: RemoteDrawStroke[]
+  strokes: DrawStroke[]
 }>()
 
 const emit = defineEmits<{
-  stroke: [stroke: RemoteDrawStroke]
+  stroke: [stroke: DrawStroke]
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -39,7 +39,7 @@ function resizeCanvas() {
   redraw()
 }
 
-function drawStroke(stroke: RemoteDrawStroke) {
+function drawStroke(stroke: DrawStroke) {
   const canvas = canvasRef.value
   const context = getContext()
   if (!canvas || !context)
@@ -48,8 +48,8 @@ function drawStroke(stroke: RemoteDrawStroke) {
   const rect = canvas.getBoundingClientRect()
   context.lineCap = 'round'
   context.lineJoin = 'round'
-  context.lineWidth = REMOTE_CANVAS_CONFIG.lineWidth
-  context.strokeStyle = REMOTE_CANVAS_CONFIG.lineColor
+  context.lineWidth = DRAW_CANVAS_CONFIG.lineWidth
+  context.strokeStyle = DRAW_CANVAS_CONFIG.lineColor
   context.beginPath()
   context.moveTo(stroke.x0 * rect.width, stroke.y0 * rect.height)
   context.lineTo(stroke.x1 * rect.width, stroke.y1 * rect.height)
@@ -98,7 +98,7 @@ function moveDrawing(event: PointerEvent) {
   if (!point || !previous)
     return
 
-  const stroke: RemoteDrawStroke = {
+  const stroke: DrawStroke = {
     id: activeStrokeId.value,
     x0: previous.x,
     x1: point.x,

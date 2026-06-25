@@ -40,10 +40,10 @@ const { t } = useI18n()
         {{ debug.localCandidateSummary }}
       </dd>
       <dt class="font-bold text-black/55">
-        {{ t('drop.debug.remoteIce') }}
+        {{ t('drop.debug.peerIce') }}
       </dt>
       <dd class="break-all">
-        {{ debug.remoteCandidateSummary }}
+        {{ debug.peerCandidateSummary }}
       </dd>
       <dt class="font-bold text-black/55">
         {{ t('drop.debug.signaling') }}
@@ -57,7 +57,7 @@ const { t } = useI18n()
       <dd class="break-all">
         {{ t('drop.debug.local') }}{{ debug.localDescriptionSet ? t('drop.debug.yes') : t('drop.debug.no') }}
         {{ t('drop.debug.separator') }}
-        {{ t('drop.debug.remote') }}{{ debug.remoteDescriptionSet ? t('drop.debug.yes') : t('drop.debug.no') }}
+        {{ t('drop.debug.peerLabel') }}{{ debug.peerDescriptionSet ? t('drop.debug.yes') : t('drop.debug.no') }}
       </dd>
       <dt class="font-bold text-black/55">
         {{ t('drop.debug.channels') }}

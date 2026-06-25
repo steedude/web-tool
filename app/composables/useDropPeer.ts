@@ -22,7 +22,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   let statsTimer: ReturnType<typeof setInterval> | null = null
   let lastStatsSnapshot: DropStatsSnapshot = createDropStatsSnapshot()
   const localCandidateCounts = new Map<string, number>()
-  const remoteCandidateCounts = new Map<string, number>()
+  const peerCandidateCounts = new Map<string, number>()
 
   // 以檔案 id 記錄傳送端狀態。這裡保存接收端最新 ACK，
   // 避免傳送端跑得太快，超過接收端實際處理進度太多。
@@ -113,7 +113,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     return outgoingProgressMap.get(fileId)?.lastReceived ?? 0
   }
 
-  function isRemoteReadyForFile(fileId: string) {
+  function isPeerReadyForFile(fileId: string) {
     return outgoingProgressMap.get(fileId)?.ready ?? false
   }
 
@@ -283,7 +283,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     debug.iceConnectionState = nextIceConnectionState
     debug.iceGatheringState = peer?.iceGatheringState ?? 'complete'
     debug.localDescriptionSet = !!peer?.localDescription
-    debug.remoteDescriptionSet = !!peer?.remoteDescription
+    debug.peerDescriptionSet = !!peer?.remoteDescription
     debug.signalingState = peer?.signalingState ?? 'closed'
 
     if (nextConnectionState === 'connected' && ['connected', 'completed'].includes(nextIceConnectionState))
@@ -380,7 +380,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   }
 
   async function addIceCandidate(candidate: RTCIceCandidateInit) {
-    debug.remoteCandidateSummary = trackDropCandidate(remoteCandidateCounts, candidate.candidate)
+    debug.peerCandidateSummary = trackDropCandidate(peerCandidateCounts, candidate.candidate)
 
     if (!peer || !peer.remoteDescription)
       return
@@ -482,7 +482,7 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     })
   }
 
-  function waitForRemoteWindow(fileId: string, sentBytes: number, waitForFullAck = false) {
+  function waitForPeerWindow(fileId: string, sentBytes: number, waitForFullAck = false) {
     const hasEnoughAcknowledgement = () => {
       const acknowledgedBytes = getAcknowledgedBytes(fileId)
       if (waitForFullAck)
@@ -496,8 +496,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     return waitUntil(() => hasEnoughAcknowledgement() || areTransferChannelsClosed())
   }
 
-  function waitForRemoteReady(fileId: string) {
-    return waitUntil(() => isRemoteReadyForFile(fileId) || areTransferChannelsClosed())
+  function waitForPeerReady(fileId: string) {
+    return waitUntil(() => isPeerReadyForFile(fileId) || areTransferChannelsClosed())
   }
 
   async function sendFile(file: File) {
@@ -522,17 +522,17 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
     // 等接收端建立好 incoming-file 狀態後，
     // 才開始在 file channel 上傳送 binary chunks。
-    await waitForRemoteReady(id)
+    await waitForPeerReady(id)
 
     const chunkSize = DROP_FILE_TRANSFER_CONFIG.chunkSize
     for (let offset = 0; offset < file.size; offset += chunkSize) {
       const nextOffset = Math.min(offset + chunkSize, file.size)
       fileChannel.send(await file.slice(offset, nextOffset).arrayBuffer())
       await waitForBuffer(fileChannel)
-      await waitForRemoteWindow(id, nextOffset)
+      await waitForPeerWindow(id, nextOffset)
     }
 
-    await waitForRemoteWindow(id, file.size, true)
+    await waitForPeerWindow(id, file.size, true)
     controlChannel.send(JSON.stringify({ id, kind: DropMessageKind.FileEnd }))
     outgoingProgressMap.delete(id)
   }
@@ -540,10 +540,10 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   function cleanup() {
     stopStatsPolling()
     localCandidateCounts.clear()
-    remoteCandidateCounts.clear()
+    peerCandidateCounts.clear()
     outgoingProgressMap.clear()
     debug.localCandidateSummary = '0'
-    debug.remoteCandidateSummary = '0'
+    debug.peerCandidateSummary = '0'
     resetDropTransportDebug(debug)
     peer?.close()
     messages.value.forEach((message) => {

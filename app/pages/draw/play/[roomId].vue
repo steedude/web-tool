@@ -5,23 +5,23 @@ const route = useRoute()
 const { t } = useI18n()
 const localePath = useLocalePath()
 const roomId = ref(String(route.params.roomId ?? '').toUpperCase())
-const { connect, latestMessage, peerConnected, roomFull, send, status } = useRealtimeRoom(roomId, RealtimeRole.Remote)
+const { connect, latestMessage, peerConnected, roomFull, send, status } = useRealtimeRoom(roomId, RealtimeRole.DrawGuest)
 
 const connected = computed(() => status.value === RealtimeStatus.Connected)
 const statusLabel = computed(() => {
   if (roomFull.value)
-    return t('remote.controller.roomFull')
+    return t('draw.player.roomFull')
   if (peerConnected.value)
-    return t('remote.connected')
+    return t('draw.connected')
   if (connected.value)
-    return t('remote.waiting')
-  return t('remote.connecting')
+    return t('draw.waiting')
+  return t('draw.connecting')
 })
 
 onMounted(connect)
 
 useSeoMeta({
-  title: () => `${t('remote.controller.title')} — ${roomId.value}`,
+  title: () => `${t('draw.player.title')} — ${roomId.value}`,
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
 })
 </script>
@@ -37,10 +37,10 @@ useSeoMeta({
 
     <section class="mt-6">
       <p class="font-mono text-[10px] font-black tracking-[0.2em] text-black/45">
-        {{ t('remote.controller.eyebrow') }}
+        {{ t('draw.player.eyebrow') }}
       </p>
       <h1 class="mt-2 text-[clamp(2.6rem,14vw,4.5rem)] leading-[0.9] font-black tracking-[-0.065em]">
-        {{ t('remote.controller.title') }}
+        {{ t('draw.player.title') }}
       </h1>
     </section>
 
@@ -50,14 +50,14 @@ useSeoMeta({
     </div>
 
     <div v-if="roomFull" class="mt-4 rounded-2xl border-2 border-ink bg-red-100 px-4 py-3 text-sm font-black shadow-[4px_4px_0_#171714]">
-      {{ t('remote.controller.roomFullDescription') }}
+      {{ t('draw.player.roomFullDescription') }}
     </div>
 
-    <RemoteDrawingGame
+    <DrawGame
       class="mt-6"
       :latest-message="latestMessage"
       :peer-connected="peerConnected"
-      :role="RealtimeRole.Remote"
+      :role="RealtimeRole.DrawGuest"
       :room-full="roomFull"
       :send="send"
     />

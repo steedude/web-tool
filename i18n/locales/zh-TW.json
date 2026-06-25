@@ -25,16 +25,10 @@
   "home": {
     "eyebrow": "FRONTEND EXPERIMENTS / 2026",
     "title": "把瀏覽器，玩成一座遊樂場。",
-    "description": "三個從真實需求長出來的前端實驗：跨裝置遙控、點對點傳檔，以及更聰明的短網址。",
+    "description": "三個從實際需求長出來的前端工具：雙人畫猜、點對點傳檔，以及更好分享的短網址與圖片頁。",
     "choose": "選一個實驗開始"
   },
   "features": {
-    "remote": {
-      "index": "01",
-      "title": "你畫我猜",
-      "description": "掃描 QR Code 加入房間，兩台裝置即時同步畫畫、猜答案與交換回合。",
-      "badge": "LIVE"
-    },
     "drop": {
       "index": "02",
       "title": "網頁版 AirDrop",
@@ -46,73 +40,12 @@
       "title": "短網址與縮圖",
       "description": "建立短連結、QR Code 與有密碼保護的圖片分享頁。",
       "badge": "LIVE"
-    }
-  },
-  "remote": {
-    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
-    "title": "一邊畫，一邊猜，猜對就換人。",
-    "description": "一台裝置建立房間，另一台掃描 QR Code 加入。筆畫、猜答案、放棄與交換回合都透過 WebSocket 即時同步。",
-    "room": "房間代碼",
-    "scan": "掃描加入遊戲",
-    "copyLink": "複製手機連結",
-    "copied": "已複製",
-    "waiting": "等待手機加入",
-    "connected": "手機已連線",
-    "connecting": "正在連接",
-    "offline": "連線中斷",
-    "desktopHint": "保持這個頁面開啟，作為遊戲的一方",
-    "networkHint": "如果一直連不上，請先關閉 iCloud 私密傳送、VPN 或代理後再試。",
-    "techStack": "WebSocket · QR pairing · Canvas · Reconnect · Realtime game state",
-    "controller": {
-      "eyebrow": "DRAW & GUESS",
+    },
+    "draw": {
+      "index": "01",
       "title": "你畫我猜",
-      "room": "房間 {room}",
-      "connected": "已連上桌面",
-      "waiting": "等待桌面回應",
-      "leaveOpen": "遊玩時請保持此頁開啟",
-      "roomFull": "房間已滿",
-      "roomFullDescription": "這個遊戲房間已經有兩台裝置，請回到桌機建立新的 QR Code。"
-    },
-    "categories": {
-      "animal": "動物",
-      "fruit": "水果",
-      "vegetable": "蔬菜"
-    },
-    "prompts": {
-      "cat": "貓",
-      "dog": "狗",
-      "rabbit": "兔子",
-      "fish": "魚",
-      "bird": "鳥",
-      "apple": "蘋果",
-      "banana": "香蕉",
-      "grape": "葡萄",
-      "watermelon": "西瓜",
-      "carrot": "紅蘿蔔",
-      "tomato": "番茄",
-      "corn": "玉米"
-    },
-    "game": {
-      "drawTitle": "輪到你畫",
-      "guessTitle": "猜猜看畫的是什麼",
-      "yourTurn": "你的回合",
-      "partnerTurn": "對方回合",
-      "prompt": "題目",
-      "category": "分類",
-      "drawerHint": "把題目畫出來，不要直接寫答案。",
-      "guesserHint": "看對方畫的內容，輸入你猜的答案。",
-      "panelEyebrow": "GAME PANEL",
-      "panelTitle": "雙人畫猜",
-      "guessLabel": "你的答案",
-      "guessPlaceholder": "輸入答案",
-      "submitGuess": "送出答案",
-      "waitForGuess": "對方正在猜，繼續畫吧！",
-      "waitingForPeer": "等待另一位玩家加入。",
-      "undo": "上一步",
-      "giveUp": "放棄 / 跳過",
-      "ruleHint": "猜對或放棄後會自動清空畫布、交換畫畫的人。",
-      "correctResult": "答對了！答案是「{answer}」。",
-      "skipResult": "已跳過，答案是「{answer}」。"
+      "description": "掃描 QR Code 加入房間，兩台裝置即時同步畫畫、猜答案與交換畫畫的人。",
+      "badge": "LIVE"
     }
   },
   "drop": {
@@ -164,7 +97,7 @@
       "connection": "RTC",
       "ice": "ICE",
       "localIce": "本機 ICE",
-      "remoteIce": "對方 ICE",
+      "peerIce": "對方 ICE",
       "signaling": "信令",
       "sdp": "SDP",
       "channels": "通道",
@@ -180,7 +113,7 @@
       "control": "C:",
       "file": "F:",
       "local": "L:",
-      "remote": "R:",
+      "peerLabel": "P:",
       "separator": "/"
     }
   },
@@ -300,5 +233,72 @@
     "dropDescription": "下一階段會在這裡加入 WebRTC 點對點文字與檔案傳輸。",
     "linksTitle": "短網址與縮圖",
     "linksDescription": "Supabase 已接好，下一階段會建立短網址資料表、redirect 與縮圖工作流程。"
+  },
+  "draw": {
+    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
+    "title": "一邊畫，一邊猜，猜對就換人。",
+    "description": "一台裝置建立房間，另一台掃描 QR Code 加入。筆畫、猜答案、放棄與換人都會即時同步。",
+    "room": "房間代碼",
+    "scan": "掃描加入畫猜房間",
+    "copyLink": "複製邀請連結",
+    "copied": "已複製",
+    "waiting": "等待另一位玩家加入",
+    "connected": "玩家已連線",
+    "connecting": "正在連接",
+    "offline": "連線中斷",
+    "desktopHint": "保持這個頁面開啟，作為其中一位玩家",
+    "networkHint": "如果一直連不上，請先關閉 iCloud 私密傳送、VPN 或代理後再試。",
+    "techStack": "WebSocket · QR pairing · Canvas · Reconnect · Realtime game state",
+    "player": {
+      "eyebrow": "DRAW & GUESS",
+      "title": "你畫我猜",
+      "room": "房間 {room}",
+      "connected": "已連上遊戲房間",
+      "waiting": "等待另一位玩家回應",
+      "leaveOpen": "遊玩時請保持此頁開啟",
+      "roomFull": "房間已滿",
+      "roomFullDescription": "這個畫猜房間已經有兩台裝置，請回到主畫面建立新的 QR Code。"
+    },
+    "categories": {
+      "animal": "動物",
+      "fruit": "水果",
+      "vegetable": "蔬菜"
+    },
+    "prompts": {
+      "cat": "貓",
+      "dog": "狗",
+      "rabbit": "兔子",
+      "fish": "魚",
+      "bird": "鳥",
+      "apple": "蘋果",
+      "banana": "香蕉",
+      "grape": "葡萄",
+      "watermelon": "西瓜",
+      "carrot": "紅蘿蔔",
+      "tomato": "番茄",
+      "corn": "玉米"
+    },
+    "game": {
+      "drawTitle": "輪到你畫",
+      "guessTitle": "猜猜看畫的是什麼",
+      "yourTurn": "你的回合",
+      "partnerTurn": "對方回合",
+      "prompt": "題目",
+      "category": "分類",
+      "drawerHint": "把題目畫出來，不要直接寫答案。",
+      "guesserHint": "看對方畫的內容，輸入你猜的答案。",
+      "panelEyebrow": "GAME PANEL",
+      "panelTitle": "雙人畫猜",
+      "guessLabel": "你的答案",
+      "guessPlaceholder": "輸入答案",
+      "submitGuess": "送出答案",
+      "waitForGuess": "對方正在猜，繼續畫吧！",
+      "waitingForPeer": "等待另一位玩家加入。",
+      "undo": "上一步",
+      "giveUp": "放棄 / 跳過",
+      "ruleHint": "猜對或放棄後會自動清空畫布、交換畫畫的人。",
+      "correctResult": "答對了！答案是「{answer}」。",
+      "skipResult": "已跳過，答案是「{answer}」。"
+    }
   }
 }

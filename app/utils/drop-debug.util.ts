@@ -23,8 +23,8 @@ export function createDropConnectionDebug(): DropConnectionDebug {
     lastSignal: '',
     localCandidateSummary: '0',
     localDescriptionSet: false,
-    remoteCandidateSummary: '0',
-    remoteDescriptionSet: false,
+    peerCandidateSummary: '0',
+    peerDescriptionSet: false,
     receiveRate: '0 B/s',
     roundTripTime: '—',
     sendRate: '0 B/s',
@@ -125,12 +125,12 @@ function getSelectedCandidatePair(stats: RTCStatsReport) {
 
 function getCandidatePath(stats: RTCStatsReport, pair: RTCStats) {
   const localCandidate = stats.get(getStatsString(pair, 'localCandidateId'))
-  const remoteCandidate = stats.get(getStatsString(pair, 'remoteCandidateId'))
+  const peerCandidate = stats.get(getStatsString(pair, 'remoteCandidateId'))
   const localType = localCandidate ? getStatsString(localCandidate, 'candidateType') : ''
-  const remoteType = remoteCandidate ? getStatsString(remoteCandidate, 'candidateType') : ''
+  const peerType = peerCandidate ? getStatsString(peerCandidate, 'candidateType') : ''
 
-  if (!localType && !remoteType)
+  if (!localType && !peerType)
     return '—'
 
-  return `${localType || '?'} → ${remoteType || '?'}`
+  return `${localType || '?'} → ${peerType || '?'}`
 }

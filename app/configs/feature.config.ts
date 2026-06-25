@@ -1,26 +1,42 @@
-export const HOME_FEATURES = [
+type Translate = (key: string) => string
+
+const HOME_FEATURE_BASE = [
   {
     accent: 'bg-coral',
-    badgeKey: 'features.remote.badge',
-    descriptionKey: 'features.remote.description',
-    indexKey: 'features.remote.index',
-    titleKey: 'features.remote.title',
-    to: '/remote',
+    to: '/draw',
   },
   {
     accent: 'bg-sky',
-    badgeKey: 'features.drop.badge',
-    descriptionKey: 'features.drop.description',
-    indexKey: 'features.drop.index',
-    titleKey: 'features.drop.title',
     to: '/drop',
   },
   {
     accent: 'bg-violet',
-    badgeKey: 'features.links.badge',
-    descriptionKey: 'features.links.description',
-    indexKey: 'features.links.index',
-    titleKey: 'features.links.title',
     to: '/links',
   },
 ] as const
+
+export function createHomeFeatures(t: Translate) {
+  return [
+    {
+      ...HOME_FEATURE_BASE[0],
+      badge: t('features.draw.badge'),
+      description: t('features.draw.description'),
+      index: t('features.draw.index'),
+      title: t('features.draw.title'),
+    },
+    {
+      ...HOME_FEATURE_BASE[1],
+      badge: t('features.drop.badge'),
+      description: t('features.drop.description'),
+      index: t('features.drop.index'),
+      title: t('features.drop.title'),
+    },
+    {
+      ...HOME_FEATURE_BASE[2],
+      badge: t('features.links.badge'),
+      description: t('features.links.description'),
+      index: t('features.links.index'),
+      title: t('features.links.title'),
+    },
+  ]
+}

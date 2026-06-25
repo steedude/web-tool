@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { LinkExpiryDay } from '~/configs/link.config'
-import { LINK_EXPIRY_OPTIONS, LINK_FORM_LIMITS } from '~/configs/link.config'
+import { createLinkExpiryOptions, LINK_FORM_LIMITS } from '~/configs/link.config'
 import { LinkMode } from '~/types/link.type'
 import { getCharacterCount } from '~/utils/link.util'
 
@@ -25,6 +25,7 @@ const imageTitle = defineModel<string>('imageTitle', { required: true })
 const imageDescription = defineModel<string>('imageDescription', { required: true })
 const expiresInDays = defineModel<LinkExpiryDay>('expiresInDays', { required: true })
 const { t } = useI18n()
+const expiryOptions = computed(() => createLinkExpiryOptions(t))
 </script>
 
 <template>
@@ -70,8 +71,8 @@ const { t } = useI18n()
     <div class="mt-5 grid gap-4 md:grid-cols-2">
       <label class="text-sm font-black">{{ t('links.fields.expiry') }}
         <select v-model="expiresInDays" class="focus-ring mt-2 w-full border-2 border-ink bg-paper px-3 py-3">
-          <option v-for="option in LINK_EXPIRY_OPTIONS" :key="option.value" :value="option.value">
-            {{ t(option.labelKey) }}
+          <option v-for="option in expiryOptions" :key="option.value" :value="option.value">
+            {{ option.label }}
           </option>
         </select>
       </label>
