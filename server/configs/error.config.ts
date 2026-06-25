@@ -1,7 +1,5 @@
 /** API 統一錯誤代碼，前端會依代碼轉成對應的翻譯文案。 */
 export enum ApiErrorCode {
-  /** 自訂短碼已被使用。 */
-  AliasTaken = 'ALIAS_TAKEN',
   /** 建立短網址或圖片分享頁失敗。 */
   CreateLinkFailed = 'CREATE_LINK_FAILED',
   /** Supabase 資料庫尚未設定。 */
@@ -12,8 +10,6 @@ export enum ApiErrorCode {
   ImageTooLarge = 'IMAGE_TOO_LARGE',
   /** 圖片上傳到 Storage 失敗。 */
   ImageUploadFailed = 'IMAGE_UPLOAD_FAILED',
-  /** 自訂短碼格式不合法。 */
-  InvalidAlias = 'INVALID_ALIAS',
   /** 圖片 MIME type 不在允許清單內。 */
   InvalidImageType = 'INVALID_IMAGE_TYPE',
   /** URL 格式不合法。 */

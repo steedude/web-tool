@@ -23,7 +23,6 @@ export enum LinkResolveStatus {
 }
 
 export const LINK_CONFIG = {
-  aliasPattern: /^[a-z0-9_-]{3,24}$/,
   maxDescriptionLength: 50,
   maxImageUploadBytes: 5 * 1024 * 1024,
   maxPasswordLength: 16,
@@ -36,6 +35,7 @@ export const LINK_CONFIG = {
   },
   slugBytes: 5,
   slugLength: 7,
+  slugPattern: /^[a-z0-9_-]{3,24}$/,
   storage: {
     imageBucket: 'link-images',
   },

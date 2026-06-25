@@ -1,8 +1,7 @@
 {
-  "brand": "3854335 WEB LAB",
+  "brand": "3854335 WEB TOOL",
   "common": {
-    "backHome": "回到實驗室",
-    "comingSoon": "準備中",
+    "backHome": "回到工具箱",
     "openFeature": "開啟功能",
     "logoMark": "38",
     "switchToEnglish": "EN",
@@ -22,11 +21,11 @@
     "colon": "："
   },
   "home": {
-    "metaTitle": "{brand} — 前端實驗室",
-    "eyebrow": "FRONTEND EXPERIMENTS / 2026",
-    "title": "把瀏覽器，玩成一座遊樂場。",
-    "description": "三個從實際需求長出來的前端工具：雙人畫猜、點對點傳檔，以及更好分享的短網址與圖片頁。",
-    "choose": "選一個實驗開始"
+    "metaTitle": "{brand} — 網頁工具箱",
+    "eyebrow": "WEB TOOLS / 2026",
+    "title": "把常用工具，放進瀏覽器。",
+    "description": "提供雙人畫猜、點對點傳檔，以及短網址與圖片分享頁等常用網頁工具。",
+    "choose": "選一個工具開始"
   },
   "features": {
     "drop": {
@@ -49,8 +48,8 @@
     }
   },
   "drop": {
-    "eyebrow": "EXPERIMENT 02 / PEER TO PEER",
-    "title": "檔案不繞路，直接送到你手上。",
+    "eyebrow": "TOOL 02 / PEER TO PEER",
+    "title": "點對點傳送文字與檔案。",
     "description": "建立臨時房間，讓另一台裝置掃描加入。文字與檔案透過 WebRTC 點對點傳輸，伺服器只負責讓雙方找到彼此。",
     "joinDivider": "或輸入房間代碼",
     "room": "ROOM",
@@ -116,8 +115,8 @@
     }
   },
   "links": {
-    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT",
-    "title": "一條連結，變得更好分享。",
+    "eyebrow": "TOOL 03 / LINK TOOLKIT",
+    "title": "建立短網址與圖片分享頁。",
     "description": "產生短網址與 QR Code，也可以上傳圖片做成有密碼保護的分享頁。",
     "mode": {
       "url": "短網址",
@@ -195,12 +194,12 @@
   },
   "status": {
     "actions": {
-      "home": "回到實驗室"
+      "home": "回到工具箱"
     },
     "notFound": {
       "eyebrow": "PAGE NOT FOUND",
       "title": "這裡沒有這個頁面。",
-      "message": "可能是網址輸入錯誤，或這個實驗入口已經移動。"
+      "message": "可能是網址輸入錯誤，或這個工具入口已經移動。"
     },
     "error": {
       "eyebrow": "SYSTEM ERROR",
@@ -209,13 +208,11 @@
     }
   },
   "errors": {
-    "ALIAS_TAKEN": "這個自訂代碼已經被使用，請換一個。",
     "CREATE_LINK_FAILED": "建立短網址失敗，請再試一次。",
     "DATABASE_NOT_CONFIGURED": "資料庫尚未設定。",
     "IMAGE_REQUIRED": "請選擇要上傳的圖片。",
     "IMAGE_TOO_LARGE": "圖片不能超過 5 MB。",
     "IMAGE_UPLOAD_FAILED": "圖片上傳失敗，請換一張圖片或稍後再試。",
-    "INVALID_ALIAS": "自訂代碼需為 3–24 個字元，只能使用英數字、- 或 _。",
     "INVALID_IMAGE_TYPE": "目前只支援 JPG、PNG、WebP、GIF 圖片。",
     "INVALID_URL": "請輸入有效網址。",
     "PASSWORD_TOO_LONG": "密碼最多 16 字。",
@@ -226,15 +223,8 @@
     "UNKNOWN_ERROR": "發生錯誤，請再試一次。",
     "UNSUPPORTED_URL_PROTOCOL": "只支援 HTTP 或 HTTPS 網址。"
   },
-  "placeholder": {
-    "experiment": "EXPERIMENT {index}",
-    "dropTitle": "網頁版 AirDrop",
-    "dropDescription": "下一階段會在這裡加入 WebRTC 點對點文字與檔案傳輸。",
-    "linksTitle": "短網址與縮圖",
-    "linksDescription": "Supabase 已接好，下一階段會建立短網址資料表、redirect 與縮圖工作流程。"
-  },
   "draw": {
-    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
+    "eyebrow": "TOOL 01 / DRAW TOGETHER",
     "title": "一邊畫，一邊猜，猜對就換人。",
     "description": "一台裝置建立房間，另一台掃描 QR Code 加入。筆畫、猜答案、放棄與換人都會即時同步。",
     "room": "房間代碼",

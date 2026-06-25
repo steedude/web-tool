@@ -11,15 +11,6 @@ export function randomSlug() {
   return randomBytes(LINK_CONFIG.slugBytes).toString('base64url').slice(0, LINK_CONFIG.slugLength)
 }
 
-export function normalizeAlias(alias: string | undefined) {
-  const value = alias?.trim().toLowerCase()
-  if (!value)
-    return null
-  if (!LINK_CONFIG.aliasPattern.test(value))
-    throwApiError(400, ApiErrorCode.InvalidAlias)
-  return value
-}
-
 export function getExpiresAt(days: number, now = Date.now()) {
   if (days === LinkExpiryDay.Forever)
     return null

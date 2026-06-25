@@ -3,7 +3,7 @@ import { resolveImageLink } from '../../utils/supabase-rest.util'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')?.toLowerCase()
-  if (!slug || !LINK_CONFIG.aliasPattern.test(slug)) {
+  if (!slug || !LINK_CONFIG.slugPattern.test(slug)) {
     return {
       description: null,
       image_url: null,

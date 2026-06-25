@@ -1,7 +1,6 @@
 import type { LinkResolveStatus } from '../configs/link.config'
 
 export interface CreateLinkBody {
-  alias?: string
   description?: string
   expiresInDays?: number
   favicon?: string

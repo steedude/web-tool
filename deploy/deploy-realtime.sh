@@ -11,5 +11,5 @@ tar -xzf "${archive}" -C "${release_dir}"
 chown -R ubuntu:ubuntu "${release_dir}"
 ln -sfn "${release_dir}" /srv/web-tool/current
 
-systemctl restart web-lab-realtime
+systemctl restart web-tool-realtime
 rm -f "${archive}"

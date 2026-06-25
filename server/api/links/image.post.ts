@@ -89,7 +89,7 @@ export default defineEventHandler(async (event) => {
   }
   catch (error: unknown) {
     if (isDuplicateError(error))
-      throwApiError(409, ApiErrorCode.AliasTaken)
+      throwApiError(500, ApiErrorCode.CreateLinkFailed)
     throw error
   }
 })

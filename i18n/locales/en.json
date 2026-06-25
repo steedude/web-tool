@@ -1,9 +1,8 @@
 {
-  "brand": "3854335 WEB LAB",
+  "brand": "3854335 WEB TOOL",
   "common": {
-    "backHome": "Back to the lab",
-    "comingSoon": "Coming soon",
-    "openFeature": "Open experiment",
+    "backHome": "Back to tools",
+    "openFeature": "Open tool",
     "logoMark": "38",
     "switchToEnglish": "EN",
     "switchToChinese": "中",
@@ -22,11 +21,11 @@
     "colon": ": "
   },
   "home": {
-    "metaTitle": "{brand} — Frontend Experiments",
-    "eyebrow": "FRONTEND EXPERIMENTS / 2026",
-    "title": "Turning the browser into a playground.",
-    "description": "Three frontend tools grown from real needs: a two-player drawing game, peer-to-peer transfer, and smarter short links with image pages.",
-    "choose": "Choose an experiment"
+    "metaTitle": "{brand} — Web Tools",
+    "eyebrow": "WEB TOOLS / 2026",
+    "title": "Useful tools, right in the browser.",
+    "description": "A set of web tools for two-player drawing, peer-to-peer transfer, short links, and image share pages.",
+    "choose": "Choose a tool"
   },
   "features": {
     "drop": {
@@ -49,8 +48,8 @@
     }
   },
   "drop": {
-    "eyebrow": "EXPERIMENT 02 / PEER TO PEER",
-    "title": "Files take the direct route.",
+    "eyebrow": "TOOL 02 / PEER TO PEER",
+    "title": "Send text and files peer to peer.",
     "description": "Create a temporary room and let another device scan to join. Text and files move peer-to-peer over WebRTC; the server only helps both sides find each other.",
     "joinDivider": "or enter a room code",
     "room": "ROOM",
@@ -116,8 +115,8 @@
     }
   },
   "links": {
-    "eyebrow": "EXPERIMENT 03 / LINK TOOLKIT",
-    "title": "One link, easier to share.",
+    "eyebrow": "TOOL 03 / LINK TOOLKIT",
+    "title": "Create short links and image share pages.",
     "description": "Create short links and QR codes, or upload images as password-protected share pages.",
     "mode": {
       "url": "Short link",
@@ -195,12 +194,12 @@
   },
   "status": {
     "actions": {
-      "home": "Back to the lab"
+      "home": "Back to tools"
     },
     "notFound": {
       "eyebrow": "PAGE NOT FOUND",
       "title": "There is no page here.",
-      "message": "The URL may be mistyped, or this experiment entry has moved."
+      "message": "The URL may be mistyped, or this tool entry has moved."
     },
     "error": {
       "eyebrow": "SYSTEM ERROR",
@@ -209,13 +208,11 @@
     }
   },
   "errors": {
-    "ALIAS_TAKEN": "This custom code is already in use. Try another one.",
     "CREATE_LINK_FAILED": "Could not create the short link. Please try again.",
     "DATABASE_NOT_CONFIGURED": "Database is not configured yet.",
     "IMAGE_REQUIRED": "Please choose an image to upload.",
     "IMAGE_TOO_LARGE": "Image must be 5 MB or smaller.",
     "IMAGE_UPLOAD_FAILED": "Image upload failed. Try another image or try again later.",
-    "INVALID_ALIAS": "Custom code must be 3–24 characters and can only use letters, numbers, - or _.",
     "INVALID_IMAGE_TYPE": "Only JPG, PNG, WebP, and GIF images are supported.",
     "INVALID_URL": "Please enter a valid URL.",
     "PASSWORD_TOO_LONG": "Password can be at most 16 characters.",
@@ -226,15 +223,8 @@
     "UNKNOWN_ERROR": "Something went wrong. Please try again.",
     "UNSUPPORTED_URL_PROTOCOL": "Only HTTP and HTTPS URLs are supported."
   },
-  "placeholder": {
-    "experiment": "EXPERIMENT {index}",
-    "dropTitle": "Web AirDrop",
-    "dropDescription": "The next phase will add peer-to-peer text and file transfer with WebRTC.",
-    "linksTitle": "Short Links & Thumbnails",
-    "linksDescription": "Supabase is wired up. Next comes the short-link schema, redirects, and thumbnail pipeline."
-  },
   "draw": {
-    "eyebrow": "EXPERIMENT 01 / DRAW TOGETHER",
+    "eyebrow": "TOOL 01 / DRAW TOGETHER",
     "title": "Draw it. Guess it. Swap turns.",
     "description": "Create a room on one device and scan the QR code on another. Strokes, guesses, skips, and turn swaps stay synced in real time.",
     "room": "Room code",
