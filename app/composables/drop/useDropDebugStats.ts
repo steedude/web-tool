@@ -41,9 +41,7 @@ export function useDropDebugStats(options: UseDropDebugStatsOptions) {
     lastStatsSnapshot = createDropStatsSnapshot()
 
     statsTimer = setInterval(() => {
-      updateTransportStats().catch((error) => {
-        debug.lastError = error instanceof Error ? error.message : String(error)
-      })
+      updateTransportStats().catch(() => {})
     }, DROP_DEBUG_CONFIG.statsIntervalMs)
   }
 
@@ -54,10 +52,6 @@ export function useDropDebugStats(options: UseDropDebugStatsOptions) {
     debug.localCandidateSummary = '0'
     debug.peerCandidateSummary = '0'
     resetDropTransportDebug(debug)
-  }
-
-  function setLastError(message: string) {
-    debug.lastError = message
   }
 
   function trackLocalCandidate(candidate: string) {
@@ -79,15 +73,11 @@ export function useDropDebugStats(options: UseDropDebugStatsOptions) {
     debug.localDescriptionSet = !!peer?.localDescription
     debug.peerDescriptionSet = !!peer?.remoteDescription
     debug.signalingState = peer?.signalingState ?? 'closed'
-
-    if (nextConnectionState === 'connected' && ['connected', 'completed'].includes(nextIceConnectionState))
-      debug.lastError = ''
   }
 
   return {
     debug,
     resetDebug,
-    setLastError,
     startStatsPolling,
     stopStatsPolling,
     trackLocalCandidate,

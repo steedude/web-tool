@@ -59,7 +59,7 @@ useSeoMeta({
       :peer-connected="peerConnected"
       :role="RealtimeRole.DrawGuest"
       :room-full="roomFull"
-      :send="send"
+      :send-realtime-message="send"
     />
   </main>
 </template>

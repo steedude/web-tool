@@ -103,18 +103,6 @@ const { t } = useI18n()
       <dd class="break-all">
         {{ debug.bytesSummary }}
       </dd>
-      <dt class="font-bold text-black/55">
-        {{ t('drop.debug.lastSignal') }}
-      </dt>
-      <dd class="break-all">
-        {{ debug.lastSignal || t('drop.debug.empty') }}
-      </dd>
-      <dt class="font-bold text-black/55">
-        {{ t('drop.debug.error') }}
-      </dt>
-      <dd class="break-all">
-        {{ debug.lastError || t('drop.debug.empty') }}
-      </dd>
     </dl>
   </details>
 </template>

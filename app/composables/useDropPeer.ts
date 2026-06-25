@@ -10,37 +10,32 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
   let getControlChannel = () => null as RTCDataChannel | null
   let getFileChannel = () => null as RTCDataChannel | null
-  let setLastError = (_message: string) => {}
 
   const fileTransfer = useDropFileTransfer({
     addFile: dropMessages.addFile,
     addText: dropMessages.addText,
     getControlChannel: () => getControlChannel(),
     getFileChannel: () => getFileChannel(),
-    setLastError: message => setLastError(message),
     updateFileMessage: dropMessages.updateFileMessage,
   })
 
   const connection = useDropPeerConnection({
-    addSystem: dropMessages.addSystem,
+    addSystemMessage: dropMessages.addSystemMessage,
     handleDataMessage: fileTransfer.handleDataMessage,
     handleFileChunk: fileTransfer.handleFileChunk,
     role,
-    roomSend: room.send,
-    t,
+    sendRealtimeMessage: room.send,
   })
 
   getControlChannel = connection.getControlChannel
   getFileChannel = connection.getFileChannel
-  setLastError = connection.setLastError
 
   watch(room.latestMessage, (message) => {
     if (!message)
       return
 
-    connection.handleSignal(message).catch((error) => {
-      connection.setLastError(error instanceof Error ? error.message : String(error))
-      dropMessages.addSystem(t('drop.system.signalFailed'))
+    connection.handleSignal(message).catch(() => {
+      dropMessages.addSystemMessage(t('drop.system.signalFailed'))
     })
   })
 
@@ -50,6 +45,16 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     dropMessages.revokeFileUrls()
   })
 
+  function sendText(text: string) {
+    const trimmed = text.trim()
+    const sent = connection.sendText(trimmed)
+
+    if (sent)
+      dropMessages.addText(trimmed, true)
+
+    return sent
+  }
+
   return {
     debug: readonly(connection.debug),
     isReady: connection.isReady,
@@ -57,12 +62,6 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     peerConnected: room.peerConnected,
     roomFull: room.roomFull,
     sendFile: fileTransfer.sendFile,
-    sendText(text: string) {
-      const sent = connection.sendText(text)
-      if (sent)
-        dropMessages.addText(text.trim(), true)
-
-      return sent
-    },
+    sendText,
   }
 }

@@ -18,7 +18,7 @@ export interface UseDrawGameOptions {
   peerConnected: Ref<boolean>
   role: RealtimeRole
   roomFull: Ref<boolean | undefined>
-  send: RealtimeSend
+  sendRealtimeMessage: RealtimeSend
 }
 
 export function useDrawGame(options: UseDrawGameOptions) {
@@ -48,7 +48,7 @@ export function useDrawGame(options: UseDrawGameOptions) {
       return
 
     strokes.value.push(stroke)
-    options.send(RealtimeMessageType.DrawStroke, { stroke })
+    options.sendRealtimeMessage(RealtimeMessageType.DrawStroke, { stroke })
   }
 
   function undoLastStroke() {
@@ -60,14 +60,14 @@ export function useDrawGame(options: UseDrawGameOptions) {
       return
 
     removeStroke(strokeId)
-    options.send(RealtimeMessageType.DrawUndo, { strokeId })
+    options.sendRealtimeMessage(RealtimeMessageType.DrawUndo, { strokeId })
   }
 
   function submitGuess() {
     if (!canGuess.value || !guess.value.trim())
       return
 
-    options.send(RealtimeMessageType.DrawGuess, { guess: guess.value })
+    options.sendRealtimeMessage(RealtimeMessageType.DrawGuess, { guess: guess.value })
     guess.value = ''
   }
 
@@ -132,7 +132,7 @@ export function useDrawGame(options: UseDrawGameOptions) {
   }
 
   function sendState(result?: DrawTurnResult) {
-    options.send(RealtimeMessageType.DrawState, { result, state: state.value })
+    options.sendRealtimeMessage(RealtimeMessageType.DrawState, { result, state: state.value })
   }
 
   function resetBoard() {

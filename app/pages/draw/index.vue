@@ -110,7 +110,7 @@ useSeoMeta({
         :latest-message="latestMessage"
         :peer-connected="peerConnected"
         :role="RealtimeRole.DrawHost"
-        :send="send"
+        :send-realtime-message="send"
       />
     </section>
   </div>

@@ -6,15 +6,15 @@ import { RealtimeMessageType, RealtimeRole } from '~/types/realtime.type'
 import { useDropDebugStats } from './useDropDebugStats'
 
 export interface UseDropPeerConnectionOptions {
-  addSystem: (text: string) => void
+  addSystemMessage: (text: string) => void
   handleDataMessage: (data: DropDataMessage) => void
   handleFileChunk: (chunk: ArrayBuffer) => void
   role: Ref<RealtimeRole.DropHost | RealtimeRole.DropGuest>
-  roomSend: RealtimeSend
-  t: (key: string) => string
+  sendRealtimeMessage: RealtimeSend
 }
 
 export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
+  const { t } = useI18n()
   const connectionState = ref<RTCPeerConnectionState>('new')
   const channelState = ref<RTCDataChannelState>('closed')
 
@@ -38,10 +38,6 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
     return fileChannel
   }
 
-  function setLastError(message: string) {
-    debugStats.setLastError(message)
-  }
-
   function updateChannelState() {
     const debug = debugStats.debug
     const controlState = controlChannel?.readyState ?? 'closed'
@@ -51,7 +47,6 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
 
     if (controlState === 'open' && fileState === 'open') {
       channelState.value = 'open'
-      debug.lastError = ''
       return
     }
 
@@ -69,13 +64,10 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
 
     controlChannel.addEventListener('open', updateChannelState)
     controlChannel.addEventListener('close', updateChannelState)
-    controlChannel.addEventListener('error', (event) => {
-      debugStats.debug.lastError = `control channel error: ${event.type}`
-      updateChannelState()
-    })
+    controlChannel.addEventListener('error', updateChannelState)
 
-    controlChannel.addEventListener('open', () => options.addSystem(options.t('drop.system.connected')))
-    controlChannel.addEventListener('close', () => options.addSystem(options.t('drop.system.offline')))
+    controlChannel.addEventListener('open', () => options.addSystemMessage(t('drop.system.connected')))
+    controlChannel.addEventListener('close', () => options.addSystemMessage(t('drop.system.offline')))
     controlChannel.addEventListener('message', (event) => {
       if (typeof event.data === 'string')
         options.handleDataMessage(JSON.parse(event.data) as DropDataMessage)
@@ -90,10 +82,7 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
 
     fileChannel.addEventListener('open', updateChannelState)
     fileChannel.addEventListener('close', updateChannelState)
-    fileChannel.addEventListener('error', (event) => {
-      debugStats.debug.lastError = `file channel error: ${event.type}`
-      updateChannelState()
-    })
+    fileChannel.addEventListener('error', updateChannelState)
     fileChannel.addEventListener('message', (event) => {
       if (typeof event.data !== 'string')
         options.handleFileChunk(event.data as ArrayBuffer)
@@ -112,24 +101,34 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
     connectionState.value = peer.connectionState
     debugStats.updatePeerDebug()
 
+    // 整體 PeerConnection 狀態改變，例如 connecting / connected / failed。
     peer.addEventListener('connectionstatechange', () => {
       connectionState.value = peer?.connectionState ?? 'closed'
       debugStats.updatePeerDebug()
     })
+
+    // ICE 連線檢查狀態改變，例如 checking / connected / completed。
     peer.addEventListener('iceconnectionstatechange', debugStats.updatePeerDebug)
+
+    // 本機 ICE candidate 收集狀態改變，例如 gathering / complete。
     peer.addEventListener('icegatheringstatechange', debugStats.updatePeerDebug)
+
+    // SDP offer / answer 協商狀態改變，例如 stable / have-local-offer。
     peer.addEventListener('signalingstatechange', debugStats.updatePeerDebug)
-    peer.addEventListener('icecandidateerror', (event) => {
-      if (peer?.connectionState !== 'connected')
-        debugStats.debug.lastError = `ice candidate error: ${event.errorCode} ${event.errorText}`
-      debugStats.updatePeerDebug()
-    })
+
+    // STUN/TURN 或 candidate 收集過程出錯時會觸發。
+    peer.addEventListener('icecandidateerror', debugStats.updatePeerDebug)
+
+    // 瀏覽器找到一個本機 ICE candidate 時觸發。
     peer.addEventListener('icecandidate', (event) => {
       if (event.candidate) {
         debugStats.trackLocalCandidate(event.candidate.candidate)
-        options.roomSend(RealtimeMessageType.SignalIce, { candidate: event.candidate.toJSON() })
+        options.sendRealtimeMessage(RealtimeMessageType.SignalIce, { candidate: event.candidate.toJSON() })
       }
     })
+
+    // guest 不會主動 createDataChannel，而是等 host 建好的 channel 透過 offer 協商過來。
+    // 收到 datachannel 事件後，再依照 label 分別接上 control / file channel。
     peer.addEventListener('datachannel', (event) => {
       if (event.channel.label === DROP_CHANNEL_CONFIG.fileLabel)
         setupFileChannel(event.channel)
@@ -151,32 +150,30 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
   }
 
   async function createOffer() {
-    const pc = createPeer()
+    const peerConnection = createPeer()
 
-    setupControlChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.controlLabel, { ordered: true }))
-    setupFileChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.fileLabel, { ordered: true }))
-    const offer = await pc.createOffer()
-    await pc.setLocalDescription(offer)
+    setupControlChannel(peerConnection.createDataChannel(DROP_CHANNEL_CONFIG.controlLabel, { ordered: true }))
+    setupFileChannel(peerConnection.createDataChannel(DROP_CHANNEL_CONFIG.fileLabel, { ordered: true }))
+    const offer = await peerConnection.createOffer()
+    await peerConnection.setLocalDescription(offer)
     debugStats.updatePeerDebug()
-    options.roomSend(RealtimeMessageType.SignalOffer, { sdp: offer })
+    options.sendRealtimeMessage(RealtimeMessageType.SignalOffer, { sdp: offer })
   }
 
   async function handleSignal(message: RealtimeMessage) {
-    debugStats.debug.lastSignal = message.type
-
     if (message.type === RealtimeMessageType.PeerJoined && options.role.value === RealtimeRole.DropHost) {
       await createOffer()
       return
     }
 
     if (message.type === RealtimeMessageType.SignalOffer) {
-      const pc = createPeer()
-      await pc.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      const peerConnection = createPeer()
+      await peerConnection.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
       debugStats.updatePeerDebug()
-      const answer = await pc.createAnswer()
-      await pc.setLocalDescription(answer)
+      const answer = await peerConnection.createAnswer()
+      await peerConnection.setLocalDescription(answer)
       debugStats.updatePeerDebug()
-      options.roomSend(RealtimeMessageType.SignalAnswer, { sdp: answer })
+      options.sendRealtimeMessage(RealtimeMessageType.SignalAnswer, { sdp: answer })
       return
     }
 
@@ -217,6 +214,5 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
     handleSignal,
     isReady,
     sendText,
-    setLastError,
   }
 }

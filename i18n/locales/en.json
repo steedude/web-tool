@@ -107,8 +107,6 @@
       "receiveRate": "Receive rate",
       "candidatePath": "Path",
       "bytes": "Bytes",
-      "lastSignal": "Last msg",
-      "error": "Error",
       "empty": "?",
       "control": "C:",
       "file": "F:",

@@ -1,5 +1,5 @@
 {
-  "name": "@web-lab/realtime",
+  "name": "@web-tool/realtime",
   "type": "module",
   "private": true,
   "scripts": {

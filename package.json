@@ -1,5 +1,5 @@
 {
-  "name": "suan-ming",
+  "name": "web-tool",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@11.8.0",

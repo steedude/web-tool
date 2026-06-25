@@ -19,8 +19,6 @@ export function createDropConnectionDebug(): DropConnectionDebug {
     fileChannelState: 'closed',
     iceConnectionState: 'new',
     iceGatheringState: 'new',
-    lastError: '',
-    lastSignal: '',
     localCandidateSummary: '0',
     localDescriptionSet: false,
     peerCandidateSummary: '0',

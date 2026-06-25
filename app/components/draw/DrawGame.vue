@@ -6,7 +6,7 @@ const props = defineProps<{
   peerConnected: boolean
   role: RealtimeRole
   roomFull?: boolean
-  send: RealtimeSend
+  sendRealtimeMessage: RealtimeSend
 }>()
 
 const { t } = useI18n()
@@ -31,7 +31,7 @@ const {
   peerConnected: toRef(props, 'peerConnected'),
   role: props.role,
   roomFull: toRef(props, 'roomFull'),
-  send: props.send,
+  sendRealtimeMessage: props.sendRealtimeMessage,
 })
 </script>
 

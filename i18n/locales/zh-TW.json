@@ -107,8 +107,6 @@
       "receiveRate": "接收速率",
       "candidatePath": "路徑",
       "bytes": "流量",
-      "lastSignal": "最後訊息",
-      "error": "錯誤",
       "empty": "?",
       "control": "C:",
       "file": "F:",

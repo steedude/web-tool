@@ -41,7 +41,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build realtime server
-        run: pnpm --filter @web-lab/realtime build
+        run: pnpm --filter @web-tool/realtime build
 
       - name: Create production bundle
         run: |

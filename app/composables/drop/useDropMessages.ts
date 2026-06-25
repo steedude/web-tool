@@ -4,7 +4,7 @@ import { DropMessageKind } from '~/types/drop.type'
 export function useDropMessages() {
   const messages = ref<DropChatItem[]>([])
 
-  function addSystem(text: string) {
+  function addSystemMessage(text: string) {
     messages.value.push({ id: crypto.randomUUID(), kind: DropMessageKind.System, mine: false, text })
   }
 
@@ -31,7 +31,7 @@ export function useDropMessages() {
 
   return {
     addFile,
-    addSystem,
+    addSystemMessage,
     addText,
     messages,
     revokeFileUrls,

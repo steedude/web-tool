@@ -67,8 +67,6 @@ export interface DropConnectionDebug {
   fileChannelState: string
   iceConnectionState: string
   iceGatheringState: string
-  lastError: string
-  lastSignal: string
   localCandidateSummary: string
   localDescriptionSet: boolean
   peerCandidateSummary: string

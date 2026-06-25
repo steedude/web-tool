@@ -1,4 +1,4 @@
-# suan-ming
+# web-tool
 
 Nuxt 4 starter with TypeScript, Pinia, persisted state, i18n, Tailwind CSS 4, and ESLint.
 
