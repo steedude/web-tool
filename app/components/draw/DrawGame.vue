@@ -92,8 +92,8 @@ const {
         </button>
       </form>
 
-      <div v-else class="mt-5 border-2 border-ink bg-white px-4 py-4 text-sm font-black">
-        {{ canInteract ? t('draw.game.waitForGuess') : t('draw.game.waitingForPeer') }}
+      <div v-else-if="!canInteract" class="mt-5 border-2 border-ink bg-white px-4 py-4 text-sm font-black">
+        {{ t('draw.game.waitingForPeer') }}
       </div>
 
       <button

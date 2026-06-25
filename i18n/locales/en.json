@@ -293,7 +293,6 @@
       "guessLabel": "Your guess",
       "guessPlaceholder": "Type the answer",
       "submitGuess": "Submit guess",
-      "waitForGuess": "The other player is guessing. Keep drawing!",
       "waitingForPeer": "Waiting for the other player to join.",
       "undo": "Undo last stroke",
       "giveUp": "Give up / skip",
