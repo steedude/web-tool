@@ -1,5 +1,8 @@
+/** 連結工具目前使用的建立模式。 */
 export enum LinkMode {
+  /** 建立圖片分享頁。 */
   Image = 'image',
+  /** 建立短網址。 */
   Url = 'url',
 }
 

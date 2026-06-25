@@ -71,13 +71,13 @@ useSeoMeta({
 
     <section class="mt-8 grid min-w-0 items-end gap-8 lg:grid-cols-[1fr_21rem]">
       <div class="min-w-0">
-        <p class="break-words font-mono text-xs font-black tracking-[0.16em] text-black/50 lg:tracking-[0.2em]">
+        <p class="wrap-break-word font-mono text-xs font-black tracking-[0.16em] text-black/50 lg:tracking-[0.2em]">
           {{ t('draw.eyebrow') }}
         </p>
-        <h1 class="mt-4 max-w-4xl text-[clamp(3rem,13vw,4.5rem)] leading-[0.94] font-black tracking-[-0.065em] break-words lg:text-7xl">
+        <h1 class="mt-4 max-w-4xl text-[clamp(3rem,13vw,4.5rem)] leading-[0.94] font-black tracking-[-0.065em] wrap-break-word lg:text-7xl">
           {{ t('draw.title') }}
         </h1>
-        <p class="mt-6 max-w-2xl break-words text-base leading-7 font-semibold text-black/60">
+        <p class="mt-6 max-w-2xl wrap-break-word text-base leading-7 font-semibold text-black/60">
           {{ t('draw.description') }}
         </p>
       </div>

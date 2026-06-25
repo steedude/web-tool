@@ -1,7 +1,12 @@
+/** 短網址與圖片分享頁的有效期限選項，數字代表天數。 */
 export enum LinkExpiryDay {
+  /** 永久有效，不設定過期時間。 */
   Forever = 0,
+  /** 一天後過期。 */
   OneDay = 1,
+  /** 一週後過期。 */
   OneWeek = 7,
+  /** 一個月後過期。 */
   OneMonth = 30,
 }
 
