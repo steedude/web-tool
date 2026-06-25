@@ -39,8 +39,8 @@ export function useRemoteDrawingGame(options: UseRemoteDrawingGameOptions) {
   const canGuess = computed(() => canInteract.value && !isDrawer.value)
   const canUndo = computed(() => canDraw.value && strokes.value.length > 0)
 
-  // Strokes are sent as small commands instead of syncing the whole canvas, so undo can
-  // remove the last command on both devices without repainting from an image snapshot.
+  // 筆畫以小指令同步，而不是同步整張 canvas。
+  // 這樣復原時只要在兩台裝置移除最後一筆，不需要從圖片快照重畫。
   function handleStroke(stroke: RemoteDrawStroke) {
     if (!canDraw.value)
       return
@@ -94,8 +94,8 @@ export function useRemoteDrawingGame(options: UseRemoteDrawingGameOptions) {
   })
 
   watch(options.peerConnected, (connected) => {
-    // Desktop owns the initial game state. When the second device joins or reconnects,
-    // sending the state keeps both sides on the same prompt and drawer.
+    // Desktop 負責保存初始遊戲狀態。第二台裝置加入或重連時，
+    // 重新送一次狀態，讓兩邊維持相同題目與畫畫者。
     if (connected && options.role === RealtimeRoleValue.Desktop)
       sendState()
   })
@@ -142,8 +142,8 @@ export function useRemoteDrawingGame(options: UseRemoteDrawingGameOptions) {
       ? t('remote.game.correctResult', { answer: answer.value })
       : t('remote.game.skipResult', { answer: answer.value })
 
-    // The next drawer is simply the device that was not drawing this prompt.
-    // This avoids a separate round/status field just to decide whose turn it is.
+    // 下一位畫畫者就是這題沒有畫的那台裝置。
+    // 這樣不用為了判斷輪到誰，額外維護 round/status。
     state.value = {
       drawerRole: state.value.drawerRole === options.role ? getPeerRole() : options.role,
       promptIndex: (state.value.promptIndex + 1) % REMOTE_DRAWING_PROMPTS.length,

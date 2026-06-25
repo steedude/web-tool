@@ -24,8 +24,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   const localCandidateCounts = new Map<string, number>()
   const remoteCandidateCounts = new Map<string, number>()
 
-  // Sender-side state keyed by file id. We keep the latest receiver ACK here so the
-  // sender can avoid getting too far ahead of the device that is actually receiving.
+  // 以檔案 id 記錄傳送端狀態。這裡保存接收端最新 ACK，
+  // 避免傳送端跑得太快，超過接收端實際處理進度太多。
   const outgoingProgressMap = new Map<string, OutgoingDropFileProgress>()
 
   const isReady = computed(() => channelState.value === 'open' && connectionState.value === 'connected')
@@ -130,24 +130,24 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       url: URL.createObjectURL(blob),
     })
 
-    // Send one final ACK even if FileEnd is delayed or dropped behind binary chunks.
-    // The sender waits for a full ACK before marking its own file as completed.
+    // 即使 FileEnd 被 binary chunks 擋在後面，也先送最後一次 ACK。
+    // 傳送端會等完整 ACK 後，才把自己的檔案標成完成。
     sendFileProgressAck(incomingFile)
     incomingFile = null
   }
 
   function sendFileProgressAck(file: IncomingDropFile) {
-    // This is application-level progress, not WebRTC reliability. DataChannel already
-    // handles reliable delivery; this ACK tells our UI and pacing logic how much the
-    // receiver's JavaScript has actually assembled.
+    // 這是應用層的進度 ACK，不是 WebRTC 可靠傳輸本身。
+    // DataChannel 已經會處理可靠送達；這個 ACK 是告訴 UI 和節流邏輯：
+    // 接收端 JavaScript 實際上已經組好多少資料。
     sendControlMessage({ id: file.id, kind: DropMessageKind.FileProgress, received: file.received, size: file.size })
   }
 
   function updateIncomingFileProgress(file: IncomingDropFile, force = false) {
     const now = Date.now()
 
-    // UI rendering is throttled, but ACKs are not. Keeping these separate prevents the
-    // sender from stalling while waiting for a progress message that the UI throttle held back.
+    // UI 更新可以節流，但 ACK 不節流。兩者分開可以避免傳送端
+    // 因為等不到被 UI throttle 壓住的進度訊息而卡住。
     if (!force && now - lastProgressAt < DROP_FILE_TRANSFER_CONFIG.progressIntervalMs)
       return
 
@@ -194,8 +194,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       status: DropFileTransferStatus.Receiving,
     }))
 
-    // File chunks travel on a different DataChannel from FileStart. There is no ordering
-    // guarantee between channels, so the sender waits for FileReady before sending binary data.
+    // FileStart 和檔案 chunks 走不同 DataChannel，跨 channel 沒有順序保證。
+    // 因此傳送端要等 FileReady，確認接收端狀態建好後才開始送 binary。
     sendControlMessage({ id: file.id, kind: DropMessageKind.FileReady })
   }
 
@@ -331,8 +331,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
 
       const file = incomingFile
 
-      // ACK every chunk immediately. The UI may update only every 100ms, but pacing depends
-      // on timely ACKs so the sender can continue as soon as the receiver has caught up.
+      // 每個 chunk 都立刻 ACK。UI 可以每 100ms 才更新一次，
+      // 但傳送節奏需要即時 ACK，接收端追上後傳送端才能繼續送。
       sendFileProgressAck(file)
       updateIncomingFileProgress(file, file.received >= file.size)
 
@@ -392,8 +392,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
   async function createOffer() {
     const pc = createPeer()
 
-    // The offerer creates both negotiated channels. The answerer receives them through
-    // the peer connection's `datachannel` event.
+    // offerer 負責建立兩條 DataChannel。
+    // answerer 會透過 peer connection 的 `datachannel` 事件收到它們。
     setupControlChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.controlLabel, { ordered: true }))
     setupFileChannel(pc.createDataChannel(DROP_CHANNEL_CONFIG.fileLabel, { ordered: true }))
     const offer = await pc.createOffer()
@@ -474,8 +474,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
           finish()
       }, DROP_FILE_TRANSFER_CONFIG.bufferPollIntervalMs)
 
-      // Some mobile browsers do not fire `bufferedamountlow` consistently, so we listen
-      // for the event and also poll as a fallback.
+      // 有些手機瀏覽器不一定穩定觸發 `bufferedamountlow`，
+      // 所以除了監聽事件，也用輪詢作為 fallback。
       targetChannel.addEventListener('bufferedamountlow', finish)
       targetChannel.addEventListener('close', finish)
       targetChannel.addEventListener('error', finish)
@@ -488,8 +488,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
       if (waitForFullAck)
         return acknowledgedBytes >= sentBytes
 
-      // Receiver-driven pacing: keep only a small amount of unacknowledged data in flight.
-      // This avoids flooding Safari/WebKit with a large DataChannel queue.
+      // 由接收端進度控制傳送節奏：只允許少量尚未 ACK 的資料在路上。
+      // 這可以避免 Safari/WebKit 的 DataChannel 佇列被塞爆。
       return sentBytes - acknowledgedBytes <= DROP_FILE_TRANSFER_CONFIG.maxUnackedBytes
     }
 
@@ -520,8 +520,8 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     }))
     controlChannel.send(JSON.stringify({ id, kind: DropMessageKind.FileStart, name: file.name, size: file.size, type: file.type }))
 
-    // Wait until the receiver has created its incoming-file state before binary chunks
-    // start moving on the file channel.
+    // 等接收端建立好 incoming-file 狀態後，
+    // 才開始在 file channel 上傳送 binary chunks。
     await waitForRemoteReady(id)
 
     const chunkSize = DROP_FILE_TRANSFER_CONFIG.chunkSize

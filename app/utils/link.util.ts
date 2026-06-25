@@ -20,8 +20,8 @@ export function getCharacterCount(value: string, maxLength: number) {
 export function getWebsiteScreenshotUrl(value: string) {
   try {
     const url = new URL(value)
-    // Microlink is used as an image source only. The app backend still only stores URLs;
-    // it does not fetch arbitrary user-provided pages during short-link creation.
+    // Microlink 只當作前端圖片來源。後端仍然只負責儲存網址，
+    // 建立短網址時不會 fetch 使用者提供的任意頁面。
     return `${LINK_SCREENSHOT_CONFIG.provider}/?url=${encodeURIComponent(url.toString())}&screenshot=true&meta=false&embed=screenshot.url`
   }
   catch {
