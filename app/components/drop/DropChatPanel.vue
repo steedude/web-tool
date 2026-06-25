@@ -34,7 +34,7 @@ function fileProgress(message: DropChatItem) {
 </script>
 
 <template>
-  <div class="flex min-h-[620px] flex-col border-2 border-ink bg-white">
+  <div class="flex min-h-155 flex-col border-2 border-ink bg-white">
     <header class="flex items-center justify-between border-b-2 border-ink px-5 py-4">
       <div>
         <p class="text-xs font-black tracking-[.18em]">
