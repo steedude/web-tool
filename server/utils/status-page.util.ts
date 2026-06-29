@@ -23,7 +23,8 @@ export function linkStatusPage(status: LinkResolveStatus.Expired | LinkResolveSt
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${copy.title} - Web Lab</title>
+  <meta name="robots" content="noindex, nofollow">
+  <title>${copy.title} - Web Tool</title>
   <style>
     body{display:grid;min-height:100vh;place-items:center;margin:0;background:linear-gradient(135deg,#f5ffc6,#f8f2df 52%,#d8f3ff);color:#171714;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     section{box-sizing:border-box;width:min(760px,calc(100vw - 32px));border:2px solid #171714;background:#fff;padding:40px;box-shadow:10px 10px 0 #ad9cff}

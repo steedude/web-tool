@@ -3,6 +3,11 @@ import { LinkMode } from '~/types/link.type'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+
+usePageSeo({
+  title: () => `${t('features.links.title')} — ${t('brand')}`,
+  description: () => t('links.description'),
+})
 const {
   copied,
   copyShortUrl,

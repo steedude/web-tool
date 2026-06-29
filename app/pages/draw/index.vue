@@ -57,7 +57,7 @@ onMounted(() => {
   prepareRoom(isRoomCode(normalizedQueryRoom) ? normalizedQueryRoom : undefined)
 })
 
-useSeoMeta({
+usePageSeo({
   title: () => `${t('features.draw.title')} — ${t('brand')}`,
   description: () => t('draw.description'),
 })

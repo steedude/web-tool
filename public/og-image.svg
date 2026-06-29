@@ -1,0 +1,13 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#F8F2DF"/>
+  <circle cx="1040" cy="120" r="230" fill="#D8F3FF"/>
+  <circle cx="90" cy="80" r="230" fill="#F5FFC6"/>
+  <rect x="82" y="82" width="1036" height="466" rx="36" fill="white" stroke="#171714" stroke-width="8"/>
+  <rect x="94" y="94" width="1036" height="466" rx="36" stroke="#171714" stroke-width="8" opacity="0.18"/>
+  <rect x="142" y="142" width="92" height="92" rx="24" fill="#D7FF4F" stroke="#171714" stroke-width="8"/>
+  <text x="188" y="200" text-anchor="middle" fill="#171714" font-family="Arial, sans-serif" font-size="34" font-weight="900">WT</text>
+  <text x="270" y="178" fill="#171714" font-family="Arial, sans-serif" font-size="24" font-weight="900" letter-spacing="9">3854335 WEB TOOL</text>
+  <text x="142" y="338" fill="#171714" font-family="Arial, sans-serif" font-size="78" font-weight="900" letter-spacing="-5">Useful web tools</text>
+  <text x="142" y="420" fill="#171714" font-family="Arial, sans-serif" font-size="78" font-weight="900" letter-spacing="-5">in the browser.</text>
+  <text x="146" y="492" fill="#171714" opacity="0.68" font-family="Arial, sans-serif" font-size="30" font-weight="700">Draw &amp; Guess / WebRTC file transfer / Short links</text>
+</svg>

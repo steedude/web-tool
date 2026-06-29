@@ -2,9 +2,18 @@
 const { t } = useI18n()
 const localePath = useLocalePath()
 
-useSeoMeta({
+usePageSeo({
   title: () => t('home.metaTitle', { brand: t('brand') }),
   description: () => t('home.description'),
+  schema: () => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': t('brand'),
+    'url': 'https://tool.3854335.com',
+    'applicationCategory': 'UtilityApplication',
+    'operatingSystem': 'Web',
+    'description': t('home.description'),
+  }),
 })
 
 const features = useHomeFeatureTranslations(localePath)

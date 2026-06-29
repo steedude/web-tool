@@ -19,6 +19,11 @@ const fileErrorMessage = ref('')
 const { t } = useI18n()
 const localePath = useLocalePath()
 
+usePageSeo({
+  title: () => `${t('features.drop.title')} — ${t('brand')}`,
+  description: () => t('drop.description'),
+})
+
 const { debug, isReady, messages, peerConnected, roomFull, sendFile, sendText: sendDropText } = useDropPeer(roomId, role)
 const joinUrl = computed(() => import.meta.client && roomId.value
   ? `${window.location.origin}/drop?room=${roomId.value}`

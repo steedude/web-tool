@@ -20,8 +20,12 @@ const statusLabel = computed(() => {
 
 onMounted(connect)
 
-useSeoMeta({
+usePageSeo({
   title: () => `${t('draw.player.title')} — ${roomId.value}`,
+  description: () => t('draw.description'),
+  noindex: true,
+})
+useSeoMeta({
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
 })
 </script>

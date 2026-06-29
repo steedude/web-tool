@@ -14,6 +14,12 @@ const { t } = useI18n()
 const getApiErrorMessage = useApiErrorMessage()
 const localePath = useLocalePath()
 
+usePageSeo({
+  title: () => `${t('image.fallbackTitle')} — ${t('brand')}`,
+  description: () => t('image.protectedDescription'),
+  noindex: true,
+})
+
 const needsPassword = computed(() => image.value?.status === 'password_required')
 const isResolved = computed(() => image.value?.status === 'resolved' && image.value.image_url)
 const isExpired = computed(() => image.value?.status === 'expired')

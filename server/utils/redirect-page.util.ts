@@ -4,7 +4,8 @@ export function passwordPage(slug: string, error = '') {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>需要密碼｜Web Lab</title>
+  <meta name="robots" content="noindex, nofollow">
+  <title>需要密碼｜Web Tool</title>
   <style>
     body{display:grid;min-height:100vh;place-items:center;margin:0;background:#f8f2df;color:#171714;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     form{width:min(420px,calc(100vw - 32px));border:2px solid #171714;background:#fff;padding:28px;box-shadow:8px 8px 0 #ad9cff}
