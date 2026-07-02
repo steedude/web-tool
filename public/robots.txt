@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /s/
-Disallow: /image/
-
-Sitemap: https://3854335.com/sitemap.xml

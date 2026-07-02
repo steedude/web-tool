@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const localePath = useLocalePath()
+const requestUrl = useRequestURL()
+const runtimeConfig = useRuntimeConfig()
+const siteUrl = computed(() => String(runtimeConfig.public.siteUrl || requestUrl.origin).replace(/\/$/, ''))
 
 usePageSeo({
   title: () => t('home.metaTitle', { brand: t('brand') }),
@@ -9,7 +12,7 @@ usePageSeo({
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     'name': t('brand'),
-    'url': 'https://3854335.com',
+    'url': siteUrl.value,
     'applicationCategory': 'UtilityApplication',
     'operatingSystem': 'Web',
     'description': t('home.description'),

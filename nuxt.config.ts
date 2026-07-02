@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     supabaseServiceRoleKey: '',
     public: {
       realtimeUrl: 'wss://ws.3854335.com/ws',
-      siteUrl: 'https://3854335.com',
+      siteUrl: '',
       supabasePublishableKey: '',
       supabaseUrl: '',
       turnCredential: '',
