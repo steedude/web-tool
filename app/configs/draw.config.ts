@@ -1,4 +1,15 @@
-import { DrawPromptCategory } from '~/types/draw.type'
+/** 題目分類，用來對應 i18n 類別名稱。 */
+export enum DrawPromptCategory {
+  Animal = 'animal',
+  Fruit = 'fruit',
+  Vegetable = 'vegetable',
+}
+
+/** 一回合結束時的結果。 */
+export enum DrawTurnOutcome {
+  Correct = 'correct',
+  Skip = 'skip',
+}
 
 export const DRAW_PROMPTS = [
   { answerKey: 'cat', category: DrawPromptCategory.Animal },

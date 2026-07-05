@@ -1,3 +1,4 @@
+import type { RealtimeRole } from '~/configs/realtime.config'
 import type {
   DrawGameState,
   DrawGameStatePayload,
@@ -8,10 +9,9 @@ import type {
   DrawTurnResult,
   DrawUndoPayload,
 } from '~/types/draw.type'
-import type { RealtimeMessage, RealtimeRole, RealtimeSend } from '~/types/realtime.type'
-import { DRAW_GAME_CONFIG, DRAW_PROMPTS } from '~/configs/draw.config'
-import { DrawTurnOutcome } from '~/types/draw.type'
-import { RealtimeMessageType, RealtimeRole as RealtimeRoleValue } from '~/types/realtime.type'
+import type { RealtimeMessage, RealtimeSend } from '~/types/realtime.type'
+import { DRAW_GAME_CONFIG, DRAW_PROMPTS, DrawTurnOutcome } from '~/configs/draw.config'
+import { RealtimeMessageType, RealtimeRole as RealtimeRoleValue } from '~/configs/realtime.config'
 
 interface UseDrawGameOptions {
   latestMessage: Ref<RealtimeMessage | null>

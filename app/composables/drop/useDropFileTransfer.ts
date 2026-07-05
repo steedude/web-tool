@@ -1,6 +1,6 @@
 import type { DropChatItem, DropDataMessage, IncomingDropFile, OutgoingDropFileProgress } from '~/types/drop.type'
+import { DropFileTransferStatus, DropMessageKind } from '~/configs/drop.config'
 import { DROP_FILE_TRANSFER_CONFIG } from '~/configs/realtime.config'
-import { DropFileTransferStatus, DropMessageKind } from '~/types/drop.type'
 import { createDropFileMessage, getDropFileProgress, getTransferSpeed } from '~/utils/drop.util'
 
 interface UseDropFileTransferOptions {

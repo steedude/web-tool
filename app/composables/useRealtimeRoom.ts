@@ -1,6 +1,6 @@
-import type { RealtimeMessage, RealtimeRole, RealtimeSend } from '~/types/realtime.type'
-import { REALTIME_RETRY_CONFIG } from '~/configs/realtime.config'
-import { RealtimeMessageType, RealtimeStatus } from '~/types/realtime.type'
+import type { RealtimeRole } from '~/configs/realtime.config'
+import type { RealtimeMessage, RealtimeSend } from '~/types/realtime.type'
+import { REALTIME_RETRY_CONFIG, RealtimeMessageType, RealtimeStatus } from '~/configs/realtime.config'
 
 export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole>) {
   const config = useRuntimeConfig()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LinkMode } from '~/types/link.type'
+import { LinkMode } from '~/configs/link.config'
 
 const { t } = useI18n()
 const localePath = useLocalePath()

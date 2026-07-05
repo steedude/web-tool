@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DropFileTransferStatus, DropMessageKind } from '~/types/drop.type'
+import { DropFileTransferStatus, DropMessageKind } from '~/configs/drop.config'
 import { createDropFileMessage, getDropFileProgress, getTransferSpeed } from './drop.util'
 
 describe('drop utilities', () => {

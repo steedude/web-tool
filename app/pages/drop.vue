@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
-import { DROP_FILE_TRANSFER_CONFIG, DROP_QR_CONFIG } from '~/configs/realtime.config'
-import { RealtimeRole } from '~/types/realtime.type'
+import { DROP_FILE_TRANSFER_CONFIG, DROP_QR_CONFIG, RealtimeRole } from '~/configs/realtime.config'
 import { formatBytes } from '~/utils/file.util'
 import { createRoomCode, isRoomCode, normalizeRoomCode } from '~/utils/realtime.util'
 

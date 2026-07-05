@@ -1,5 +1,5 @@
 import type { DropChatItem } from '~/types/drop.type'
-import { DropMessageKind } from '~/types/drop.type'
+import { DropMessageKind } from '~/configs/drop.config'
 
 export function useDropMessages() {
   const messages = ref<DropChatItem[]>([])

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RealtimeRole, RealtimeStatus } from '~/types/realtime.type'
+import { RealtimeRole, RealtimeStatus } from '~/configs/realtime.config'
 
 const route = useRoute()
 const { t } = useI18n()

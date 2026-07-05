@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropChatItem } from '~/types/drop.type'
-import { DropFileTransferStatus, DropMessageKind } from '~/types/drop.type'
+import { DropFileTransferStatus, DropMessageKind } from '~/configs/drop.config'
 import { formatBytes } from '~/utils/file.util'
 
 defineProps<{

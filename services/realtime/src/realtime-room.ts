@@ -1,6 +1,5 @@
 import type { ClientMessage } from './realtime.type.js'
-import { REALTIME_SERVER_CONFIG } from './realtime.config.js'
-import { RealtimeErrorCode, RealtimeMessageType, RealtimeRole } from './realtime.type.js'
+import { REALTIME_SERVER_CONFIG, RealtimeErrorCode, RealtimeMessageType, RealtimeRole } from './realtime.config.js'
 
 export interface RoomPeer {
   roomId?: string

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createRoomRegistry } from '../src/realtime-room.js'
-import { RealtimeErrorCode, RealtimeMessageType, RealtimeRole } from '../src/realtime.type.js'
+import { RealtimeErrorCode, RealtimeMessageType, RealtimeRole } from '../src/realtime.config.js'
 
 interface TestPeer {
   id: string

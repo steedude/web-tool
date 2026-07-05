@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
-import { DRAW_QR_CONFIG } from '~/configs/realtime.config'
-import { RealtimeRole, RealtimeStatus } from '~/types/realtime.type'
+import { DRAW_QR_CONFIG, RealtimeRole, RealtimeStatus } from '~/configs/realtime.config'
 import { createRoomCode, isRoomCode, normalizeRoomCode } from '~/utils/realtime.util'
 
 const { locale, t } = useI18n()

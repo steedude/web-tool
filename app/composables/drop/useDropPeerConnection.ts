@@ -1,8 +1,7 @@
 import type { DropDataMessage } from '~/types/drop.type'
 import type { RealtimeMessage, RealtimeSend } from '~/types/realtime.type'
-import { DROP_CHANNEL_CONFIG, DROP_FILE_TRANSFER_CONFIG } from '~/configs/realtime.config'
-import { DropMessageKind } from '~/types/drop.type'
-import { RealtimeMessageType, RealtimeRole } from '~/types/realtime.type'
+import { DropMessageKind } from '~/configs/drop.config'
+import { DROP_CHANNEL_CONFIG, DROP_FILE_TRANSFER_CONFIG, RealtimeMessageType, RealtimeRole } from '~/configs/realtime.config'
 import { useDropDebugStats } from './useDropDebugStats'
 
 interface UseDropPeerConnectionOptions {

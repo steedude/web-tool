@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { LinkCreateFormPayload } from '~/types/link.type'
-import { LINK_FORM_LIMITS, LinkExpiryDay } from '~/configs/link.config'
-import { LinkMode } from '~/types/link.type'
+import { LINK_FORM_LIMITS, LinkExpiryDay, LinkMode } from '~/configs/link.config'
 import { getCharacterCount } from '~/utils/link.util'
 
 defineProps<{

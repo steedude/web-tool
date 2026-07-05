@@ -1,4 +1,4 @@
-import type { RealtimeRole } from '~/types/realtime.type'
+import type { RealtimeRole } from '~/configs/realtime.config'
 import { useDropFileTransfer } from '~/composables/drop/useDropFileTransfer'
 import { useDropMessages } from '~/composables/drop/useDropMessages'
 import { useDropPeerConnection } from '~/composables/drop/useDropPeerConnection'

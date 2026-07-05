@@ -1,5 +1,5 @@
 import type { CreateDropFileMessageOptions, DropChatItem, TransferSpeedOptions } from '~/types/drop.type'
-import { DropMessageKind } from '~/types/drop.type'
+import { DropMessageKind } from '~/configs/drop.config'
 
 export function createDropFileMessage(options: CreateDropFileMessageOptions): DropChatItem {
   return {

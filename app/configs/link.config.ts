@@ -10,6 +10,14 @@ export enum LinkExpiryDay {
   OneMonth = 30,
 }
 
+/** 建立連結表單可選的模式。 */
+export enum LinkMode {
+  /** 建立可分享的圖片頁面與對應短連結。 */
+  Image = 'image',
+  /** 建立導向外部網址的短連結。 */
+  Url = 'url',
+}
+
 export const LINK_QR_CONFIG = {
   color: {
     dark: '#171714',

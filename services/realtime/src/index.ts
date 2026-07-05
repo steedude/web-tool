@@ -4,8 +4,7 @@ import { createServer } from 'node:http'
 import process from 'node:process'
 import { WebSocket, WebSocketServer } from 'ws'
 import { createRoomRegistry } from './realtime-room.js'
-import { REALTIME_SERVER_CONFIG } from './realtime.config.js'
-import { RealtimeErrorCode, RealtimeMessageType } from './realtime.type.js'
+import { REALTIME_SERVER_CONFIG, RealtimeErrorCode, RealtimeMessageType } from './realtime.config.js'
 
 const roomRegistry = createRoomRegistry<RealtimeClient>()
 

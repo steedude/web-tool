@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropConnectionDebug } from '~/types/drop.type'
-import { RealtimeRole } from '~/types/realtime.type'
+import { RealtimeRole } from '~/configs/realtime.config'
 
 defineProps<{
   copied: boolean

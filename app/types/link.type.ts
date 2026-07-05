@@ -1,12 +1,4 @@
-import type { LinkExpiryDay } from '~/configs/link.config'
-
-/** 連結工具目前使用的建立模式。 */
-export enum LinkMode {
-  /** 建立圖片分享頁。 */
-  Image = 'image',
-  /** 建立短網址。 */
-  Url = 'url',
-}
+import type { LinkExpiryDay, LinkMode } from '~/configs/link.config'
 
 export interface CreatedLink {
   description: string | null

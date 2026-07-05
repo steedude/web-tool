@@ -1,3 +1,38 @@
+/** 即時連線中的角色，用來區分功能與主客端。 */
+export enum RealtimeRole {
+  DrawGuest = 'draw-guest',
+  DrawHost = 'draw-host',
+  DropGuest = 'drop-guest',
+  DropHost = 'drop-host',
+}
+
+/** WebSocket 訊息種類。 */
+export enum RealtimeMessageType {
+  Connected = 'connected',
+  DrawGiveUp = 'draw:give-up',
+  DrawGuess = 'draw:guess',
+  DrawState = 'draw:state',
+  DrawStroke = 'draw:stroke',
+  DrawUndo = 'draw:undo',
+  Error = 'error',
+  PeerJoined = 'peer:joined',
+  PeerLeft = 'peer:left',
+  RoomFull = 'room:full',
+  RoomJoin = 'room:join',
+  RoomJoined = 'room:joined',
+  SignalAnswer = 'signal:answer',
+  SignalIce = 'signal:ice',
+  SignalOffer = 'signal:offer',
+}
+
+/** 前端顯示的即時連線狀態。 */
+export enum RealtimeStatus {
+  Connected = 'connected',
+  Connecting = 'connecting',
+  Idle = 'idle',
+  Offline = 'offline',
+}
+
 export const ROOM_CODE_CONFIG = {
   alphabet: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789',
   length: 6,

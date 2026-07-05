@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RealtimeRole } from '~/types/realtime.type'
+import { RealtimeRole } from '~/configs/realtime.config'
 import { isRoomCode, normalizeRoomCode } from '~/utils/realtime.util'
 
 defineEmits<{

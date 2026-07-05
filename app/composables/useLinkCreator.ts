@@ -1,8 +1,7 @@
 import type { CreatedLink, LinkCreateFormPayload } from '~/types/link.type'
 import QRCode from 'qrcode'
 import { ApiErrorCode } from '~/configs/error.config'
-import { LINK_FORM_LIMITS, LINK_IMAGE_UPLOAD_TYPES, LINK_QR_CONFIG } from '~/configs/link.config'
-import { LinkMode } from '~/types/link.type'
+import { LINK_FORM_LIMITS, LINK_IMAGE_UPLOAD_TYPES, LINK_QR_CONFIG, LinkMode } from '~/configs/link.config'
 import { createLocalApiError } from '~/utils/error.util'
 import { getWebsiteScreenshotUrl } from '~/utils/link.util'
 

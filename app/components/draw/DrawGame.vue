@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { RealtimeMessage, RealtimeRole, RealtimeSend } from '~/types/realtime.type'
+import type { RealtimeRole } from '~/configs/realtime.config'
+import type { RealtimeMessage, RealtimeSend } from '~/types/realtime.type'
 
 const props = defineProps<{
   latestMessage: RealtimeMessage | null
