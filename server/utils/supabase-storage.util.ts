@@ -1,6 +1,8 @@
+import { SentryFeature, SentryOperation, SentryTagKey } from '../../sentry.shared'
 import { ApiErrorCode } from '../configs/error.config'
 import { LINK_CONFIG } from '../configs/link.config'
 import { throwApiError } from './error.util'
+import { captureHandledServerException } from './sentry.util'
 
 function storageCredentials() {
   const config = useRuntimeConfig()
@@ -30,7 +32,18 @@ export async function uploadPublicImage(path: string, data: Uint8Array, contentT
       body: data,
     })
   }
-  catch {
+  catch (error: unknown) {
+    captureHandledServerException(error, {
+      extra: {
+        bucket: LINK_CONFIG.storage.imageBucket,
+        contentType,
+        size: data.byteLength,
+      },
+      tags: {
+        [SentryTagKey.Feature]: SentryFeature.ImageLink,
+        [SentryTagKey.Operation]: SentryOperation.StorageUpload,
+      },
+    })
     throwApiError(502, ApiErrorCode.ImageUploadFailed)
   }
   return publicStorageUrl(path)

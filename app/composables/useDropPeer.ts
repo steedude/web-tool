@@ -2,6 +2,7 @@ import type { RealtimeRole } from '~/configs/realtime.config'
 import { useDropFileTransfer } from '~/composables/drop/useDropFileTransfer'
 import { useDropMessages } from '~/composables/drop/useDropMessages'
 import { useDropPeerConnection } from '~/composables/drop/useDropPeerConnection'
+import { SentryFeature, SentryOperation, SentryTagKey } from '../../sentry.shared'
 
 export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost | RealtimeRole.DropGuest>) {
   const { t } = useI18n()
@@ -34,7 +35,17 @@ export function useDropPeer(roomId: Ref<string>, role: Ref<RealtimeRole.DropHost
     if (!message)
       return
 
-    connection.handleSignal(message).catch(() => {
+    connection.handleSignal(message).catch((error: unknown) => {
+      captureHandledClientException(error, {
+        extra: {
+          messageType: message.type,
+          role: role.value,
+        },
+        tags: {
+          [SentryTagKey.Feature]: SentryFeature.Drop,
+          [SentryTagKey.Operation]: SentryOperation.HandleSignal,
+        },
+      })
       dropMessages.addSystemMessage(t('drop.system.signalFailed'))
     })
   })

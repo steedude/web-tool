@@ -1,9 +1,11 @@
 import type { NewShortLink } from '../../types/link.type'
 import { randomUUID } from 'node:crypto'
+import { SentryFeature, SentryOperation, SentryTagKey } from '../../../sentry.shared'
 import { ApiErrorCode } from '../../configs/error.config'
 import { LINK_CONFIG } from '../../configs/link.config'
 import { isDuplicateError, throwApiError } from '../../utils/error.util'
 import { buildShortLinkResponse, enforceCreateRateLimit, getExpiresAt, randomSlug, sanitizePassword, sanitizeText } from '../../utils/link.util'
+import { captureHandledServerException } from '../../utils/sentry.util'
 import { createImageShortLink } from '../../utils/supabase-rest.util'
 import { deletePublicImage, uploadPublicImage } from '../../utils/supabase-storage.util'
 
@@ -81,8 +83,17 @@ export default defineEventHandler(async (event) => {
         try {
           await deletePublicImage(path)
         }
-        catch {
-          // 先保留原本的建立失敗錯誤；日後可在這裡補 log 或 orphan cleanup。
+        catch (cleanupError: unknown) {
+          // 保留原本的建立失敗錯誤；這裡只回報清理失敗，避免覆蓋主要錯誤。
+          captureHandledServerException(cleanupError, {
+            extra: {
+              path,
+            },
+            tags: {
+              [SentryTagKey.Feature]: SentryFeature.ImageLink,
+              [SentryTagKey.Operation]: SentryOperation.StorageCleanup,
+            },
+          })
         }
       }
       throw error

@@ -2,6 +2,7 @@ import type { DropChatItem, DropDataMessage, IncomingDropFile, OutgoingDropFileP
 import { DropFileTransferStatus, DropMessageKind } from '~/configs/drop.config'
 import { DROP_FILE_TRANSFER_CONFIG } from '~/configs/realtime.config'
 import { createDropFileMessage, getDropFileProgress, getTransferSpeed } from '~/utils/drop.util'
+import { SentryFeature, SentryOperation, SentryTagKey } from '../../../sentry.shared'
 
 interface UseDropFileTransferOptions {
   addFile: (file: DropChatItem) => void
@@ -286,7 +287,17 @@ export function useDropFileTransfer(options: UseDropFileTransferOptions) {
           await sendQueuedFile(nextFile)
       }
     }
-    catch {}
+    catch (error: unknown) {
+      captureHandledClientException(error, {
+        extra: {
+          pendingFileCount: pendingFiles.length,
+        },
+        tags: {
+          [SentryTagKey.Feature]: SentryFeature.Drop,
+          [SentryTagKey.Operation]: SentryOperation.FileTransferQueue,
+        },
+      })
+    }
     finally {
       sendingFile = false
     }

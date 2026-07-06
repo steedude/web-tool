@@ -30,6 +30,10 @@ The Nuxt development server runs at `http://localhost:3000`.
 Copy `.env.example` to `.env` and fill in the values:
 
 ```bash
+NUXT_PUBLIC_SITE_URL=https://3854335.com
+SENTRY_DSN=https://public-key@o0.ingest.sentry.io/project-id
+SENTRY_ENVIRONMENT=production
+NUXT_PUBLIC_SENTRY_DSN=https://public-key@o0.ingest.sentry.io/project-id
 NUXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 NUXT_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
@@ -40,6 +44,7 @@ NUXT_PUBLIC_TURN_CREDENTIAL=your-turn-password
 ```
 
 `NUXT_SUPABASE_SERVICE_ROLE_KEY` is used only on the server side. Keep it out of client code and never commit `.env`.
+`SENTRY_DSN` enables server-side Nuxt and realtime service error reporting. `NUXT_PUBLIC_SENTRY_DSN` enables browser-side reporting; the DSN is public by design.
 
 ## Supabase
 

@@ -1,3 +1,4 @@
+import process from 'node:process'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
@@ -21,6 +22,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxtjs/i18n',
+    '@sentry/nuxt/module',
   ],
   i18n: {
     defaultLocale: 'zh-TW',
@@ -32,9 +34,12 @@ export default defineNuxtConfig({
     langDir: 'locales',
   },
   runtimeConfig: {
+    sentryDsn: process.env.SENTRY_DSN || '',
     supabaseServiceRoleKey: '',
     public: {
       realtimeUrl: '',
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN || '',
+      sentryEnvironment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || '',
       siteUrl: '',
       supabasePublishableKey: '',
       supabaseUrl: '',

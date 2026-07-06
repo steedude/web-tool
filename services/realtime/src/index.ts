@@ -5,6 +5,7 @@ import process from 'node:process'
 import { WebSocket, WebSocketServer } from 'ws'
 import { createRoomRegistry } from './realtime-room.js'
 import { REALTIME_SERVER_CONFIG, RealtimeErrorCode, RealtimeMessageType } from './realtime.config.js'
+import { captureRealtimeException } from './sentry.js'
 
 const roomRegistry = createRoomRegistry<RealtimeClient>()
 
@@ -27,6 +28,9 @@ const wss = new WebSocketServer({
   path: '/ws',
   maxPayload: REALTIME_SERVER_CONFIG.maxPayloadBytes,
 })
+
+server.on('error', captureRealtimeException)
+wss.on('error', captureRealtimeException)
 
 function send(client: RealtimeClient, message: unknown) {
   if (client.readyState === WebSocket.OPEN)
