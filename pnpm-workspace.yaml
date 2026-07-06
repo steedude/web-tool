@@ -4,6 +4,7 @@ trustPolicy: no-downgrade
 
 allowBuilds:
   '@parcel/watcher': true
+  '@sentry/cli': true
   esbuild: true
   unrs-resolver: true
 trustPolicyExclude:
@@ -14,5 +15,6 @@ packages:
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - '@sentry/cli'
   - esbuild
   - unrs-resolver
