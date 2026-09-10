@@ -1,4 +1,5 @@
-import { LINK_SCREENSHOT_CONFIG } from '~/configs/link.config'
+import type { CreatedLink } from '~/types/link.type'
+import { LINK_SCREENSHOT_CONFIG, LinkMode } from '~/configs/link.config'
 
 export function getHostname(value: string) {
   try {
@@ -27,4 +28,8 @@ export function getWebsiteScreenshotUrl(value: string) {
   catch {
     return ''
   }
+}
+
+export function getCreatedLinkPreview(link: CreatedLink) {
+  return link.mode === LinkMode.Image ? link.image_url || '' : getWebsiteScreenshotUrl(link.target_url)
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import QRCode from 'qrcode'
 import { DROP_FILE_TRANSFER_CONFIG, DROP_QR_CONFIG, RealtimeRole } from '~/configs/realtime.config'
 import { formatBytes } from '~/utils/file.util'
 import { createRoomCode, isRoomCode, normalizeRoomCode } from '~/utils/realtime.util'
@@ -11,12 +10,10 @@ const roleInput = ref(typeof route.query.role === 'string' ? route.query.role : 
 const roomId = ref('')
 const role = ref<RealtimeRole.DropHost | RealtimeRole.DropGuest>(RealtimeRole.DropHost)
 const started = ref(false)
-const qrCode = ref('')
-const copied = ref(false)
+const { copied, copy, copyFailed } = useCopyFeedback()
 const textInput = ref('')
 const fileErrorMessage = ref('')
 const { t } = useI18n()
-const localePath = useLocalePath()
 
 usePageSeo({
   title: () => `${t('features.drop.title')} — ${t('brand')}`,
@@ -24,9 +21,8 @@ usePageSeo({
 })
 
 const { debug, isReady, messages, peerConnected, roomFull, sendFile, sendText: sendDropText } = useDropPeer(roomId, role)
-const joinUrl = computed(() => import.meta.client && roomId.value
-  ? `${window.location.origin}/drop?room=${roomId.value}`
-  : '')
+const joinUrl = useInviteUrl(() => roomId.value ? { path: '/drop', query: { room: roomId.value } } : null)
+const { qrCode, qrFailed, retryQrCode } = useQrCode(() => role.value === RealtimeRole.DropHost ? joinUrl.value : '', DROP_QR_CONFIG)
 
 async function start(selectedRole: RealtimeRole.DropHost | RealtimeRole.DropGuest, code?: string) {
   const normalized = normalizeRoomCode(code || createRoomCode())
@@ -42,11 +38,6 @@ async function start(selectedRole: RealtimeRole.DropHost | RealtimeRole.DropGues
       room: normalized,
     },
   })
-
-  if (selectedRole === RealtimeRole.DropHost) {
-    await nextTick()
-    qrCode.value = await QRCode.toDataURL(joinUrl.value, DROP_QR_CONFIG)
-  }
 }
 
 function sendText() {
@@ -69,10 +60,8 @@ function onFileChange(event: Event) {
   input.value = ''
 }
 
-async function copyJoinUrl() {
-  await navigator.clipboard.writeText(joinUrl.value)
-  copied.value = true
-  setTimeout(() => copied.value = false, 1500)
+function copyJoinUrl() {
+  return copy(joinUrl.value)
 }
 
 onMounted(() => {
@@ -85,24 +74,24 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="mx-auto w-full max-w-7xl px-5 py-10 lg:px-8 lg:py-16">
-    <NuxtLink :to="localePath('/')" class="focus-ring inline-flex font-bold hover:underline">
-      {{ t('common.arrowLeft') }} {{ t('common.backHome') }}
-    </NuxtLink>
+  <PageContainer>
+    <AppBackLink />
+
+    <AppShareFeedback class="mt-4" :copy-failed="copyFailed" :qr-failed="qrFailed" @retry-qr="retryQrCode" />
 
     <DropStartPanel v-if="!started" v-model:room-input="roomInput" @start="start" />
 
     <section v-else class="mt-10 grid min-h-167.5 gap-6 lg:grid-cols-[360px_1fr]">
       <DropRoomSidebar :copied="copied" :debug="debug" :is-ready="isReady" :peer-connected="peerConnected" :qr-code="qrCode" :role="role" :room-id="roomId" @copy-invite="copyJoinUrl" />
       <div class="space-y-4">
-        <p v-if="roomFull" class="border-2 border-ink bg-red-100 px-5 py-4 font-black shadow-[6px_6px_0_#171714]">
+        <AppAlert v-if="roomFull">
           {{ t('drop.status.full') }}
-        </p>
-        <p v-if="fileErrorMessage" class="border-2 border-ink bg-coral/15 px-5 py-4 font-black shadow-[6px_6px_0_#171714]">
+        </AppAlert>
+        <AppAlert v-if="fileErrorMessage">
           {{ fileErrorMessage }}
-        </p>
+        </AppAlert>
         <DropChatPanel v-model:text-input="textInput" :is-ready="isReady" :messages="messages" @choose-file="onFileChange" @send-text="sendText" />
       </div>
     </section>
-  </main>
+  </PageContainer>
 </template>

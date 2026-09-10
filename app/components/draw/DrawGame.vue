@@ -38,7 +38,7 @@ const {
 
 <template>
   <section class="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-    <div class="overflow-hidden border-2 border-ink bg-white shadow-[8px_8px_0_#171714]">
+    <div class="rounded-panel overflow-hidden border-2 border-ink bg-white shadow-panel">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-ink px-5 py-4">
         <div>
           <h2 class="mt-1 text-2xl font-black">
@@ -57,7 +57,7 @@ const {
         <p v-else class="text-lg font-black">
           {{ t('draw.game.category') }}{{ t('common.colon') }}{{ categoryLabel }}
         </p>
-        <p class="mt-1 text-sm font-semibold text-black/55">
+        <p class="mt-1 text-sm font-semibold text-ink/55">
           {{ isDrawer ? t('draw.game.drawerHint') : t('draw.game.guesserHint') }}
         </p>
       </div>
@@ -67,7 +67,7 @@ const {
       </div>
     </div>
 
-    <aside class="h-fit border-2 border-ink bg-sky p-5 shadow-[8px_8px_0_#171714]">
+    <aside class="rounded-panel h-fit border-2 border-ink bg-sky p-5 shadow-panel">
       <p class="font-mono text-xs font-black tracking-[0.25em]">
         {{ t('draw.game.panelEyebrow') }}
       </p>
@@ -84,11 +84,11 @@ const {
         <input
           id="draw-guess"
           v-model="guess"
-          class="focus-ring w-full border-2 border-ink bg-paper px-4 py-4 font-black"
+          class="ui-input w-full py-4 font-black"
           :placeholder="t('draw.game.guessPlaceholder')"
           autocomplete="off"
         >
-        <button class="focus-ring w-full border-2 border-ink bg-ink px-5 py-4 font-black text-white disabled:opacity-40" :disabled="!guess.trim()">
+        <button class="ui-button ui-button-primary w-full px-5 py-4" :disabled="!guess.trim()">
           {{ t('draw.game.submitGuess') }}
         </button>
       </form>
@@ -99,7 +99,7 @@ const {
 
       <button
         v-if="isDrawer"
-        class="focus-ring mt-4 w-full border-2 border-ink bg-white px-5 py-4 font-black disabled:opacity-40"
+        class="ui-button mt-4 w-full bg-white px-5 py-4"
         :disabled="!canUndo"
         type="button"
         @click="undoLastStroke"
@@ -108,7 +108,7 @@ const {
       </button>
 
       <button
-        class="focus-ring mt-4 w-full border-2 border-ink bg-coral px-5 py-4 font-black disabled:opacity-40"
+        class="ui-button mt-4 w-full bg-coral px-5 py-4"
         :disabled="!canInteract"
         type="button"
         @click="giveUp"
@@ -116,7 +116,7 @@ const {
         {{ t('draw.game.giveUp') }}
       </button>
 
-      <p class="mt-4 text-xs leading-5 font-semibold text-black/55">
+      <p class="mt-4 text-xs leading-5 font-semibold text-ink/55">
         {{ t('draw.game.ruleHint') }}
       </p>
     </aside>

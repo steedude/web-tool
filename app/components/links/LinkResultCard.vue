@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CreatedLink } from '~/types/link.type'
+import { LinkMode } from '~/configs/link.config'
 import { getHostname } from '~/utils/link.util'
 
 const props = defineProps<{
@@ -17,11 +18,11 @@ defineEmits<{
 
 const { t } = useI18n()
 const hostname = computed(() => getHostname(props.created.target_url))
-const isImage = computed(() => props.created.target_url.includes('/image/'))
+const isImage = computed(() => props.created.mode === LinkMode.Image)
 </script>
 
 <template>
-  <div class="border-2 border-ink bg-acid p-5 shadow-[8px_8px_0_#171714] lg:p-7">
+  <div class="rounded-panel border-2 border-ink bg-acid p-5 shadow-panel lg:p-7">
     <p class="text-xs font-black tracking-[.2em]">
       {{ t('links.result.eyebrow') }}
     </p>
@@ -48,22 +49,22 @@ const isImage = computed(() => props.created.target_url.includes('/image/'))
           <img v-if="created.favicon_url" :src="created.favicon_url" alt="" class="size-5" @error="($event.target as HTMLImageElement).style.display = 'none'">
           <span>{{ hostname }}</span>
         </div>
-        <h2 class="mt-2 line-clamp-2 break-all text-xl font-black [overflow-wrap:anywhere]">
+        <h2 class="mt-2 line-clamp-2 break-all text-xl font-black wrap-anywhere">
           {{ created.title || created.target_url }}
         </h2>
-        <p v-if="created.description" class="mt-2 line-clamp-3 break-all text-sm leading-6 text-ink/70 [overflow-wrap:anywhere]">
+        <p v-if="created.description" class="mt-2 line-clamp-3 break-all text-sm leading-6 text-ink/70 wrap-anywhere">
           {{ created.description }}
         </p>
       </div>
     </div>
     <div class="mt-6 grid items-start gap-5 lg:grid-cols-[170px_1fr]">
-      <img :src="qrCode" :alt="t('links.result.qrAlt')" class="w-full border-2 border-ink bg-white p-2">
+      <img v-if="qrCode" :src="qrCode" :alt="t('links.result.qrAlt')" class="w-full border-2 border-ink bg-white p-2">
       <div class="space-y-4">
         <p v-if="created.password_required" class="inline-flex border border-ink bg-white px-2 py-1 text-xs font-black">
           {{ t('links.result.passwordProtected') }}
         </p>
         <div>
-          <button class="focus-ring border-2 border-ink bg-white px-5 py-3 font-black" @click="$emit('copy')">
+          <button class="ui-button bg-white px-5" @click="$emit('copy')">
             {{ copied ? t('links.actions.copied') : t('links.actions.copyShortUrl') }}
           </button>
         </div>

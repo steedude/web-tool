@@ -1,6 +1,7 @@
 import type { NewShortLink } from '../../types/link.type'
 import { randomUUID } from 'node:crypto'
 import { SentryFeature, SentryOperation, SentryTagKey } from '../../../sentry.shared'
+import { LINK_IMAGE_UPLOAD_TYPES } from '../../../shared/configs/link.config'
 import { ApiErrorCode } from '../../configs/error.config'
 import { LINK_CONFIG } from '../../configs/link.config'
 import { isDuplicateError, throwApiError } from '../../utils/error.util'
@@ -8,8 +9,6 @@ import { buildShortLinkResponse, enforceCreateRateLimit, getExpiresAt, randomSlu
 import { captureHandledServerException } from '../../utils/sentry.util'
 import { createImageShortLink } from '../../utils/supabase-rest.util'
 import { deletePublicImage, uploadPublicImage } from '../../utils/supabase-storage.util'
-
-const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 
 function extensionFor(type: string) {
   if (type === 'image/jpeg')
@@ -39,7 +38,7 @@ export default defineEventHandler(async (event) => {
     throwApiError(400, ApiErrorCode.ImageRequired)
 
   const contentType = image.type || 'application/octet-stream'
-  if (!allowedTypes.has(contentType))
+  if (!LINK_IMAGE_UPLOAD_TYPES.has(contentType))
     throwApiError(400, ApiErrorCode.InvalidImageType)
   if (image.data.byteLength > LINK_CONFIG.maxImageUploadBytes)
     throwApiError(400, ApiErrorCode.ImageTooLarge)

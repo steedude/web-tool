@@ -167,7 +167,7 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
 
     if (message.type === RealtimeMessageType.SignalOffer) {
       const peerConnection = createPeer()
-      await peerConnection.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      await peerConnection.setRemoteDescription(message.payload.sdp)
       debugStats.updatePeerDebug()
       const answer = await peerConnection.createAnswer()
       await peerConnection.setLocalDescription(answer)
@@ -177,13 +177,13 @@ export function useDropPeerConnection(options: UseDropPeerConnectionOptions) {
     }
 
     if (message.type === RealtimeMessageType.SignalAnswer && peer) {
-      await peer.setRemoteDescription(message.payload?.sdp as RTCSessionDescriptionInit)
+      await peer.setRemoteDescription(message.payload.sdp)
       debugStats.updatePeerDebug()
       return
     }
 
-    if (message.type === RealtimeMessageType.SignalIce && message.payload?.candidate)
-      await addIceCandidate(message.payload.candidate as RTCIceCandidateInit)
+    if (message.type === RealtimeMessageType.SignalIce && message.payload.candidate)
+      await addIceCandidate(message.payload.candidate)
   }
 
   function sendText(text: string) {

@@ -8,6 +8,12 @@
   --color-coral: #ff735c;
   --color-sky: #8fd7ff;
   --color-violet: #ad9cff;
+  --radius-control: 0.75rem;
+  --radius-panel: 1.5rem;
+  --shadow-control: 3px 3px 0 var(--color-ink);
+  --shadow-panel: 8px 8px 0 var(--color-ink);
+  --shadow-emphasis: 10px 10px 0 var(--color-ink);
+  --shadow-accent: 8px 8px 0 var(--color-violet);
 }
 
 :root {
@@ -63,7 +69,35 @@ button:disabled,
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
 }
 
-.focus-ring:focus-visible {
+.focus-ring:focus-visible,
+.ui-button:focus-visible,
+.ui-input:focus-visible {
   outline: 3px solid var(--color-ink);
   outline-offset: 4px;
+}
+
+@layer components {
+  .ui-button {
+    @apply rounded-control border-2 border-ink px-4 py-3 font-black transition disabled:opacity-40;
+  }
+
+  .ui-button-primary {
+    @apply bg-ink text-white;
+  }
+
+  .ui-input {
+    @apply rounded-control border-2 border-ink bg-paper px-4 py-3 disabled:opacity-40;
+  }
+
+  .page-eyebrow {
+    @apply font-mono text-xs font-black tracking-[0.2em] text-ink/60;
+  }
+
+  .page-title {
+    @apply mt-5 max-w-4xl text-[clamp(2.5rem,8vw,4.5rem)] leading-[0.95] font-black tracking-[-0.055em] wrap-break-word lg:text-7xl;
+  }
+
+  .page-description {
+    @apply mt-6 max-w-2xl text-base leading-7 font-semibold text-ink/70 lg:text-lg lg:leading-8;
+  }
 }

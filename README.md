@@ -140,6 +140,10 @@ app/
   configs/        前端可使用的設定與 enum
   utils/          前端工具函式
 
+shared/
+  configs/        前後端共用的錯誤代碼、有效期限與輸入限制
+  types/          API 請求與回應格式
+
 server/
   api/            Nuxt Server API
   routes/         redirect、sitemap、robots 等自訂 route
@@ -234,3 +238,14 @@ pnpm --dir services/realtime build
 - Drop 檔案傳輸工具函式
 - link utility
 - file utility
+
+## 共用 UI 與互動
+
+- 頁面留白與標題使用 `PageContainer`、`PageHeader`、`AppBackLink`；主要內容的 `main` 由 layout 提供。
+- 色彩、圓角、陰影與表單樣式集中在 `app/assets/css/main.css`；一般按鈕與輸入框使用 `ui-button`、`ui-input`。
+- 密碼欄位、提示訊息使用 `AppPasswordInput`、`AppAlert`，避免各頁面各自處理相同互動。
+- `useCopyFeedback` 管理複製提示與清理，`useQrCode` 管理 QR Code 非同步產生與重試，`useInviteUrl` 保留分享連結的語系。
+- WebSocket 訊息在接收邊界驗證，再依訊息種類取得對應的 payload 型別。
+- 畫布按畫面更新批次繪製新增線段；撤銷、換題或尺寸改變才完整重畫。
+
+回歸測試另涵蓋圖片載入失敗與重試、連結預覽類型、複製計時器、QR Code 競態、訊息驗證及畫布增量繪製。

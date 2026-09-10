@@ -93,11 +93,11 @@ function fileProgress(message: DropChatItem) {
     </div>
     <form class="flex gap-2 border-t-2 border-ink p-3 lg:p-4" @submit.prevent="$emit('sendText')">
       <input ref="fileInput" type="file" class="hidden" @change="$emit('chooseFile', $event)">
-      <button type="button" class="focus-ring border-2 border-ink px-4 text-xl font-black disabled:opacity-30" :disabled="!isReady" :aria-label="t('drop.actions.chooseFile')" @click="fileInput?.click()">
+      <button type="button" class="ui-button text-xl" :disabled="!isReady" :aria-label="t('drop.actions.chooseFile')" @click="fileInput?.click()">
         {{ t('common.plus') }}
       </button>
-      <input v-model="textInput" class="focus-ring min-w-0 flex-1 border-2 border-ink bg-paper px-4 py-3" :placeholder="t('drop.messagePlaceholder')" :disabled="!isReady">
-      <button class="focus-ring border-2 border-ink bg-ink px-5 font-black text-white disabled:opacity-30" :disabled="!isReady || !textInput.trim()">
+      <input v-model="textInput" class="ui-input min-w-0 flex-1" :placeholder="t('drop.messagePlaceholder')" :disabled="!isReady">
+      <button class="ui-button ui-button-primary px-5" :disabled="!isReady || !textInput.trim()">
         {{ t('drop.actions.send') }}
       </button>
     </form>

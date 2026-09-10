@@ -18,7 +18,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="w-full border-2 border-ink bg-white p-6 shadow-[10px_10px_0_#ad9cff] lg:p-10">
+  <section class="rounded-panel w-full border-2 border-ink bg-white p-6 shadow-accent lg:p-10">
     <p class="text-xs font-black tracking-[.24em] text-ink/50">
       {{ eyebrow }}
     </p>

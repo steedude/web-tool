@@ -15,43 +15,43 @@ const { t } = useI18n()
       {{ t('drop.debug.title') }}
     </summary>
     <dl class="mt-3 grid grid-cols-[8rem_1fr] gap-x-3 gap-y-2 font-mono">
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.peer') }}
       </dt>
       <dd class="break-all">
         {{ peerConnected ? t('drop.debug.yes') : t('drop.debug.no') }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.connection') }}
       </dt>
       <dd class="break-all">
         {{ debug.connectionState }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.ice') }}
       </dt>
       <dd class="break-all">
         {{ debug.iceConnectionState }} {{ t('drop.debug.separator') }} {{ debug.iceGatheringState }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.localIce') }}
       </dt>
       <dd class="break-all">
         {{ debug.localCandidateSummary }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.peerIce') }}
       </dt>
       <dd class="break-all">
         {{ debug.peerCandidateSummary }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.signaling') }}
       </dt>
       <dd class="break-all">
         {{ debug.signalingState }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.sdp') }}
       </dt>
       <dd class="break-all">
@@ -59,7 +59,7 @@ const { t } = useI18n()
         {{ t('drop.debug.separator') }}
         {{ t('drop.debug.peerLabel') }}{{ debug.peerDescriptionSet ? t('drop.debug.yes') : t('drop.debug.no') }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.channels') }}
       </dt>
       <dd class="break-all">
@@ -67,37 +67,37 @@ const { t } = useI18n()
         {{ t('drop.debug.separator') }}
         {{ t('drop.debug.file') }}{{ debug.fileChannelState }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.buffer') }}
       </dt>
       <dd class="break-all">
         {{ debug.bufferedAmount }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.rtt') }}
       </dt>
       <dd class="break-all">
         {{ debug.roundTripTime }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.sendRate') }}
       </dt>
       <dd class="break-all">
         {{ debug.sendRate }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.receiveRate') }}
       </dt>
       <dd class="break-all">
         {{ debug.receiveRate }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.candidatePath') }}
       </dt>
       <dd class="break-all">
         {{ debug.candidatePath }}
       </dd>
-      <dt class="font-bold text-black/55">
+      <dt class="font-bold text-ink/55">
         {{ t('drop.debug.bytes') }}
       </dt>
       <dd class="break-all">

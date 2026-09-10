@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DrawStroke } from '~/types/draw.type'
 import { DRAW_CANVAS_CONFIG } from '~/configs/draw.config'
+import { createStrokeRenderer } from '~/utils/draw-renderer.util'
 
 const props = defineProps<{
   disabled: boolean
@@ -16,6 +17,22 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const drawing = ref(false)
 const activeStrokeId = ref('')
 const lastPoint = ref<{ x: number, y: number } | null>(null)
+let canvasSize = { width: 0, height: 0 }
+let frame: number | null = null
+let resizeObserver: ResizeObserver | null = null
+const renderer = createStrokeRenderer(
+  () => getContext()?.clearRect(0, 0, canvasSize.width, canvasSize.height),
+  drawStroke,
+)
+
+function scheduleRender() {
+  if (frame !== null)
+    return
+  frame = requestAnimationFrame(() => {
+    frame = null
+    renderer.render(props.strokes, props.resetKey)
+  })
+}
 
 function getContext() {
   return canvasRef.value?.getContext('2d') ?? null
@@ -27,6 +44,7 @@ function resizeCanvas() {
     return
 
   const rect = canvas.getBoundingClientRect()
+  canvasSize = { width: rect.width, height: rect.height }
   const ratio = window.devicePixelRatio || 1
   canvas.width = Math.round(rect.width * ratio)
   canvas.height = Math.round(rect.height * ratio)
@@ -36,7 +54,7 @@ function resizeCanvas() {
     return
 
   context.setTransform(ratio, 0, 0, ratio, 0, 0)
-  redraw()
+  renderer.render(props.strokes, props.resetKey, true)
 }
 
 function drawStroke(stroke: DrawStroke) {
@@ -45,7 +63,7 @@ function drawStroke(stroke: DrawStroke) {
   if (!canvas || !context)
     return
 
-  const rect = canvas.getBoundingClientRect()
+  const rect = canvasSize
   context.lineCap = 'round'
   context.lineJoin = 'round'
   context.lineWidth = DRAW_CANVAS_CONFIG.lineWidth
@@ -54,17 +72,6 @@ function drawStroke(stroke: DrawStroke) {
   context.moveTo(stroke.x0 * rect.width, stroke.y0 * rect.height)
   context.lineTo(stroke.x1 * rect.width, stroke.y1 * rect.height)
   context.stroke()
-}
-
-function redraw() {
-  const canvas = canvasRef.value
-  const context = getContext()
-  if (!canvas || !context)
-    return
-
-  const rect = canvas.getBoundingClientRect()
-  context.clearRect(0, 0, rect.width, rect.height)
-  props.strokes.forEach(drawStroke)
 }
 
 // 將視窗座標轉成 canvas 內的 0～1 比例，讓不同螢幕能重畫在相同相對位置。
@@ -116,15 +123,21 @@ function stopDrawing() {
   lastPoint.value = null
 }
 
-watch(() => props.strokes.length, redraw, { flush: 'post' })
-watch(() => props.resetKey, redraw, { flush: 'post' })
+watch([() => props.strokes, () => props.strokes.length, () => props.resetKey], scheduleRender, { flush: 'post' })
+watch(() => props.disabled, stopDrawing)
 
 onMounted(() => {
   resizeCanvas()
+  resizeObserver = new ResizeObserver(resizeCanvas)
+  if (canvasRef.value)
+    resizeObserver.observe(canvasRef.value)
   window.addEventListener('resize', resizeCanvas)
 })
 
 onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  if (frame !== null)
+    cancelAnimationFrame(frame)
   window.removeEventListener('resize', resizeCanvas)
 })
 </script>

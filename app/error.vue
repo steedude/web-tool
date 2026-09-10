@@ -18,7 +18,7 @@ function goHome() {
 
 <template>
   <NuxtLayout>
-    <main class="mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-5xl place-items-center px-5 py-12 lg:px-8">
+    <PageContainer width="narrow" class="grid min-h-[calc(100vh-96px)] place-items-center">
       <AppStatusCard
         :action-label="t('status.actions.home')"
         :eyebrow="isNotFound ? t('status.notFound.eyebrow') : t('status.error.eyebrow')"
@@ -28,6 +28,6 @@ function goHome() {
         to="/"
         @action="goHome"
       />
-    </main>
+    </PageContainer>
   </NuxtLayout>
 </template>

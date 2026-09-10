@@ -1,10 +1,26 @@
 import type { RealtimeMessageType, RealtimeRole } from '~/configs/realtime.config'
+import type { DrawGameStatePayload, DrawGiveUpPayload, DrawGuessPayload, DrawStrokePayload, DrawUndoPayload } from '~/types/draw.type'
 
-export interface RealtimeMessage {
-  from?: RealtimeRole
-  payload?: Record<string, unknown>
-  role?: RealtimeRole
-  type: RealtimeMessageType
+export interface RealtimePayloads {
+  [RealtimeMessageType.DrawGiveUp]: DrawGiveUpPayload
+  [RealtimeMessageType.DrawGuess]: DrawGuessPayload
+  [RealtimeMessageType.DrawState]: DrawGameStatePayload
+  [RealtimeMessageType.DrawStroke]: DrawStrokePayload
+  [RealtimeMessageType.DrawUndo]: DrawUndoPayload
+  [RealtimeMessageType.SignalAnswer]: { sdp: RTCSessionDescriptionInit }
+  [RealtimeMessageType.SignalIce]: { candidate: RTCIceCandidateInit }
+  [RealtimeMessageType.SignalOffer]: { sdp: RTCSessionDescriptionInit }
 }
 
-export type RealtimeSend = (type: RealtimeMessageType, payload?: Record<string, unknown>) => boolean
+interface RealtimeMetadata {
+  from?: RealtimeRole
+  role?: RealtimeRole
+}
+
+export type RealtimeMessage = {
+  [T in RealtimeMessageType]: RealtimeMetadata & { type: T } & (
+    T extends keyof RealtimePayloads ? { payload: RealtimePayloads[T] } : { payload?: never }
+  )
+}[RealtimeMessageType]
+
+export type RealtimeSend = <T extends keyof RealtimePayloads>(type: T, payload: RealtimePayloads[T]) => boolean

@@ -2,7 +2,6 @@
 import { LinkMode } from '~/configs/link.config'
 
 const { t } = useI18n()
-const localePath = useLocalePath()
 
 usePageSeo({
   title: () => `${t('features.links.title')} — ${t('brand')}`,
@@ -10,6 +9,7 @@ usePageSeo({
 })
 const {
   copied,
+  copyFailed,
   copyShortUrl,
   createLink,
   created,
@@ -18,6 +18,8 @@ const {
   errorMessage,
   markPreviewFailed,
   qrCode,
+  qrFailed,
+  retryQrCode,
   resetResult,
   shouldShowCreatedPreviewImage,
 } = useLinkCreator()
@@ -31,22 +33,12 @@ const imageDraft = ref({
 </script>
 
 <template>
-  <main class="mx-auto w-full max-w-7xl px-5 py-10 lg:px-8 lg:py-16">
-    <NuxtLink :to="localePath('/')" class="focus-ring inline-flex font-bold hover:underline">
-      {{ t('common.backHome') }}
-    </NuxtLink>
+  <PageContainer>
+    <AppBackLink />
 
     <div class="mt-10 grid gap-10 lg:grid-cols-[.9fr_1.1fr]">
       <section>
-        <p class="text-sm font-black tracking-[.24em]">
-          {{ t('links.eyebrow') }}
-        </p>
-        <h1 class="mt-5 text-5xl leading-[.95] font-black tracking-[-.055em] lg:text-7xl">
-          {{ t('links.title') }}
-        </h1>
-        <p class="mt-6 max-w-xl text-lg leading-8">
-          {{ t('links.description') }}
-        </p>
+        <PageHeader :eyebrow="t('links.eyebrow')" :title="t('links.title')" :description="t('links.description')" />
 
         <LinksLinkCreateForm
           :creating="creating"
@@ -57,7 +49,8 @@ const imageDraft = ref({
         />
       </section>
 
-      <section class="lg:pt-12">
+      <section class="space-y-4 lg:pt-12">
+        <AppShareFeedback :copy-failed="copyFailed" :qr-failed="qrFailed" @retry-qr="retryQrCode" />
         <LinksLinkResultCard
           v-if="created"
           :copied="copied"
@@ -77,5 +70,5 @@ const imageDraft = ref({
         <LinksLinkEmptyPreview v-else />
       </section>
     </div>
-  </main>
+  </PageContainer>
 </template>

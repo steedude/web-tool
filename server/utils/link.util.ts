@@ -27,7 +27,7 @@ export function sanitizePassword(value: string | undefined) {
   const password = value?.trim()
   if (!password)
     return null
-  if (password.length < 4)
+  if (password.length < LINK_CONFIG.minPasswordLength)
     throwApiError(400, ApiErrorCode.PasswordTooShort)
   if (password.length > LINK_CONFIG.maxPasswordLength)
     throwApiError(400, ApiErrorCode.PasswordTooLong)

@@ -16,7 +16,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <aside class="h-fit rounded-4xl border-2 border-ink bg-white p-5 shadow-[7px_7px_0_#171714]">
+  <aside class="h-fit rounded-panel border-2 border-ink bg-white p-5 shadow-panel">
     <div class="flex items-center justify-between gap-3">
       <span class="text-xs font-black">{{ t('draw.room') }}</span>
       <span class="inline-flex items-center gap-2 text-[11px] font-black">
@@ -37,16 +37,16 @@ const { t } = useI18n()
     </div>
     <button
       type="button"
-      class="focus-ring mt-4 w-full rounded-xl border-2 border-ink bg-acid px-4 py-3 text-sm font-black transition hover:-translate-y-0.5"
+      class="ui-button mt-4 w-full rounded-xl bg-acid text-sm hover:-translate-y-0.5"
       :disabled="!inviteUrl"
       @click="$emit('copyLink')"
     >
       {{ copied ? t('draw.copied') : t('draw.copyLink') }}
     </button>
-    <p class="mt-4 text-center text-[11px] leading-5 font-semibold text-black/45">
+    <p class="mt-4 text-center text-[11px] leading-5 font-semibold text-ink/45">
       {{ t('draw.desktopHint') }}
     </p>
-    <p class="mt-3 rounded-xl border border-ink/15 bg-paper px-3 py-2 text-center text-[11px] leading-5 font-semibold text-black/55">
+    <p class="mt-3 rounded-xl border border-ink/15 bg-paper px-3 py-2 text-center text-[11px] leading-5 font-semibold text-ink/55">
       {{ t('draw.networkHint') }}
     </p>
   </aside>

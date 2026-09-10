@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { LINK_SCREENSHOT_CONFIG } from '~/configs/link.config'
-import { getCharacterCount, getHostname, getPreviewImage, getWebsiteScreenshotUrl } from './link.util'
+import { LINK_SCREENSHOT_CONFIG, LinkMode } from '~/configs/link.config'
+import { getCharacterCount, getCreatedLinkPreview, getHostname, getPreviewImage, getWebsiteScreenshotUrl } from './link.util'
 
 describe('link utilities', () => {
   it('extracts hostnames from valid URLs only', () => {
@@ -23,5 +23,25 @@ describe('link utilities', () => {
 
   it('formats text length counters', () => {
     expect(getCharacterCount('hello', 20)).toBe('5/20')
+  })
+})
+
+describe('created link previews', () => {
+  const link = {
+    description: null,
+    expires_at: null,
+    favicon_url: null,
+    image_url: 'https://storage.example/picture.png',
+    password_required: false,
+    screenshot_url: null,
+    shortUrl: 'https://example.com/s/abc123',
+    slug: 'abc123',
+    target_url: 'https://other.example/image/article',
+    title: null,
+  }
+
+  it('uses the creation mode instead of guessing from the URL path', () => {
+    expect(getCreatedLinkPreview({ ...link, mode: LinkMode.Url })).toContain(LINK_SCREENSHOT_CONFIG.provider)
+    expect(getCreatedLinkPreview({ ...link, mode: LinkMode.Image })).toBe(link.image_url)
   })
 })

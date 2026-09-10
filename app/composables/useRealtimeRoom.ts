@@ -1,6 +1,7 @@
 import type { RealtimeRole } from '~/configs/realtime.config'
 import type { RealtimeMessage, RealtimeSend } from '~/types/realtime.type'
 import { REALTIME_RETRY_CONFIG, RealtimeMessageType, RealtimeStatus } from '~/configs/realtime.config'
+import { parseRealtimeMessage } from '~/utils/realtime-message.util'
 
 export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole>) {
   const config = useRuntimeConfig()
@@ -41,7 +42,9 @@ export function useRealtimeRoom(roomId: Ref<string>, role: MaybeRef<RealtimeRole
     socket = new WebSocket(getRealtimeUrl())
 
     socket.addEventListener('message', (event) => {
-      const message = JSON.parse(event.data) as RealtimeMessage
+      const message = parseRealtimeMessage(event.data)
+      if (!message)
+        return
 
       if (message.type === RealtimeMessageType.Connected) {
         joinRoom()

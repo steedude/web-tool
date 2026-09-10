@@ -20,7 +20,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <aside class="border-2 border-ink bg-sky p-5 shadow-[6px_6px_0_#171714]">
+  <aside class="rounded-panel border-2 border-ink bg-sky p-5 shadow-panel">
     <p class="text-xs font-black tracking-[.2em]">
       {{ t('drop.room') }}
     </p>
@@ -36,14 +36,14 @@ const { t } = useI18n()
       <div class="mt-6 border-2 border-ink bg-white p-3">
         <img v-if="qrCode" :src="qrCode" :alt="t('drop.qrAlt')" class="w-full">
       </div>
-      <button class="focus-ring mt-4 w-full border-2 border-ink bg-white px-4 py-3 font-black" @click="$emit('copyInvite')">
+      <button class="ui-button mt-4 w-full bg-white" @click="$emit('copyInvite')">
         {{ copied ? t('drop.actions.copied') : t('drop.actions.copyInvite') }}
       </button>
     </template>
     <p class="mt-5 text-sm leading-6">
       {{ t('drop.privacyHint') }}
     </p>
-    <p class="mt-3 border border-ink/20 bg-white/70 px-3 py-2 text-xs leading-5 font-semibold text-black/60">
+    <p class="mt-3 border border-ink/20 bg-white/70 px-3 py-2 text-xs leading-5 font-semibold text-ink/60">
       {{ t('drop.networkHint') }}
     </p>
 

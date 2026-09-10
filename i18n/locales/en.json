@@ -18,7 +18,10 @@
     "percent": "%",
     "showPassword": "Show",
     "hidePassword": "Hide",
-    "colon": ": "
+    "colon": ": ",
+    "retry": "Try again",
+    "copyFailed": "Could not copy. Please try again.",
+    "qrFailed": "Could not generate the QR code. You can still copy the link."
   },
   "home": {
     "metaTitle": "{brand} — Web Tools",
@@ -171,7 +174,7 @@
     }
   },
   "image": {
-    "backToLinks": "← Back to link toolkit",
+    "backToLinks": "Back to link toolkit",
     "eyebrow": "PROTECTED IMAGE SHARE",
     "loading": "Loading image information…",
     "unlocked": "IMAGE UNLOCKED",
@@ -191,7 +194,8 @@
     "notFoundDescription": "This image link does not exist, or the code was typed incorrectly.",
     "errors": {
       "wrongPassword": "Password is incorrect. Please try again."
-    }
+    },
+    "loadFailedTitle": "Unable to load this image"
   },
   "status": {
     "actions": {

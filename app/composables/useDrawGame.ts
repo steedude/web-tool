@@ -84,15 +84,15 @@ export function useDrawGame(options: UseDrawGameOptions) {
       return
 
     if (message.type === RealtimeMessageType.DrawState)
-      applyDrawState(message.payload as unknown as DrawGameStatePayload)
+      applyDrawState(message.payload)
     else if (message.type === RealtimeMessageType.DrawStroke)
-      applyDrawStroke(message.payload as unknown as DrawStrokePayload)
+      applyDrawStroke(message.payload)
     else if (message.type === RealtimeMessageType.DrawGuess)
-      applyDrawGuess(message.payload as unknown as DrawGuessPayload, message.from)
+      applyDrawGuess(message.payload, message.from)
     else if (message.type === RealtimeMessageType.DrawGiveUp)
-      applyDrawGiveUp(message.payload as unknown as DrawGiveUpPayload, message.from)
+      applyDrawGiveUp(message.payload, message.from)
     else if (message.type === RealtimeMessageType.DrawUndo)
-      applyDrawUndo(message.payload as unknown as DrawUndoPayload)
+      applyDrawUndo(message.payload)
   })
 
   watch(options.peerConnected, (connected) => {

@@ -18,7 +18,10 @@
     "percent": "%",
     "showPassword": "顯示",
     "hidePassword": "隱藏",
-    "colon": "："
+    "colon": "：",
+    "retry": "再試一次",
+    "copyFailed": "複製失敗，請再試一次。",
+    "qrFailed": "QR Code 產生失敗，仍可複製連結分享。"
   },
   "home": {
     "metaTitle": "{brand} — 網頁工具箱",
@@ -171,7 +174,7 @@
     }
   },
   "image": {
-    "backToLinks": "← 回到短網址工具",
+    "backToLinks": "回到短網址工具",
     "eyebrow": "PROTECTED IMAGE SHARE",
     "loading": "讀取圖片資訊中…",
     "unlocked": "IMAGE UNLOCKED",
@@ -191,7 +194,8 @@
     "notFoundDescription": "這個圖片連結不存在，或代碼輸入錯誤。",
     "errors": {
       "wrongPassword": "密碼不正確，請再試一次。"
-    }
+    },
+    "loadFailedTitle": "暫時無法載入圖片"
   },
   "status": {
     "actions": {

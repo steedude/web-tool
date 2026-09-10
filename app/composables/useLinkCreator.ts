@@ -1,59 +1,49 @@
+import type { ShortLinkResponse } from '#shared/types/link.type'
 import type { CreatedLink, LinkCreateFormPayload } from '~/types/link.type'
-import QRCode from 'qrcode'
 import { ApiErrorCode } from '~/configs/error.config'
 import { LINK_FORM_LIMITS, LINK_IMAGE_UPLOAD_TYPES, LINK_QR_CONFIG, LinkMode } from '~/configs/link.config'
 import { createLocalApiError } from '~/utils/error.util'
-import { getWebsiteScreenshotUrl } from '~/utils/link.util'
+import { getCreatedLinkPreview } from '~/utils/link.util'
 
 export function useLinkCreator() {
   const getApiErrorMessage = useApiErrorMessage()
   const created = ref<CreatedLink | null>(null)
-  const qrCode = ref('')
   const creating = ref(false)
   const errorMessage = ref('')
-  const copied = ref(false)
+  const { copied, copy, copyFailed, reset: resetCopy } = useCopyFeedback()
+  const { qrCode, qrFailed, retryQrCode } = useQrCode(() => created.value?.shortUrl || '', LINK_QR_CONFIG)
+  let revision = 0
   const createdPreviewFailed = ref(false)
 
-  const createdIsImage = computed(() => Boolean(created.value?.target_url.includes('/image/')))
-  const createdPreviewImage = computed(() => {
-    const link = created.value
-    if (!link)
-      return ''
-
-    if (createdIsImage.value)
-      return link.image_url || ''
-
-    return getWebsiteScreenshotUrl(link.target_url)
-  })
+  const createdPreviewImage = computed(() => created.value ? getCreatedLinkPreview(created.value) : '')
   const shouldShowCreatedPreviewImage = computed(() => Boolean(createdPreviewImage.value && !createdPreviewFailed.value))
 
   async function createLink(payload: LinkCreateFormPayload) {
+    if (creating.value)
+      return
+    const currentRevision = revision
     creating.value = true
     errorMessage.value = ''
     try {
       createdPreviewFailed.value = false
-      if (payload.mode === LinkMode.Url)
-        await createUrlLink(payload)
-      else
-        await createImageLink(payload)
+      const result = payload.mode === LinkMode.Url
+        ? await createUrlLink(payload)
+        : await createImageLink(payload)
 
-      if (created.value)
-        qrCode.value = await QRCode.toDataURL(created.value.shortUrl, LINK_QR_CONFIG)
+      if (currentRevision === revision)
+        created.value = { ...result, mode: payload.mode }
     }
-    catch (error: any) {
-      errorMessage.value = getApiErrorMessage(error, ApiErrorCode.CreateLinkFailed)
+    catch (error: unknown) {
+      if (currentRevision === revision)
+        errorMessage.value = getApiErrorMessage(error, ApiErrorCode.CreateLinkFailed)
     }
     finally {
       creating.value = false
     }
   }
 
-  async function copyShortUrl() {
-    if (!created.value)
-      return
-    await navigator.clipboard.writeText(created.value.shortUrl)
-    copied.value = true
-    setTimeout(() => copied.value = false, 1500)
+  function copyShortUrl() {
+    return copy(created.value?.shortUrl || '')
   }
 
   function markPreviewFailed() {
@@ -62,24 +52,10 @@ export function useLinkCreator() {
 
   function resetResult() {
     created.value = null
-    qrCode.value = ''
-    copied.value = false
+    revision += 1
+    resetCopy()
     createdPreviewFailed.value = false
     errorMessage.value = ''
-  }
-
-  return {
-    copied,
-    copyShortUrl,
-    createLink,
-    created,
-    createdPreviewImage,
-    creating,
-    errorMessage,
-    markPreviewFailed,
-    qrCode,
-    resetResult,
-    shouldShowCreatedPreviewImage,
   }
 
   function limitText(value: string, maxLength: number) {
@@ -98,11 +74,10 @@ export function useLinkCreator() {
 
   async function createUrlLink(payload: LinkCreateFormPayload) {
     if (!isValidHttpUrlInput(payload.url)) {
-      errorMessage.value = getApiErrorMessage(createLocalApiError(ApiErrorCode.InvalidUrl))
-      return
+      throw createLocalApiError(ApiErrorCode.InvalidUrl)
     }
 
-    created.value = await $fetch<CreatedLink>('/api/links', {
+    return $fetch<ShortLinkResponse>('/api/links', {
       method: 'POST',
       body: {
         expiresInDays: payload.expiresInDays,
@@ -113,8 +88,9 @@ export function useLinkCreator() {
   }
 
   async function createImageLink(payload: LinkCreateFormPayload) {
-    if (!payload.image || !validateImage(payload.image))
-      return
+    if (!payload.image)
+      throw createLocalApiError(ApiErrorCode.ImageRequired)
+    validateImage(payload.image)
 
     const body = new FormData()
     body.append('image', payload.image)
@@ -122,23 +98,33 @@ export function useLinkCreator() {
     body.append('title', limitText(payload.imageTitle, LINK_FORM_LIMITS.title))
     body.append('description', limitText(payload.imageDescription, LINK_FORM_LIMITS.description))
     body.append('expiresInDays', String(payload.expiresInDays))
-    created.value = await $fetch<CreatedLink>('/api/links/image', {
+    return $fetch<ShortLinkResponse>('/api/links/image', {
       method: 'POST',
       body,
     })
   }
 
-  function validateImage(file: File | null) {
-    if (!file)
-      return true
-    if (!LINK_IMAGE_UPLOAD_TYPES.has(file.type)) {
-      errorMessage.value = getApiErrorMessage(createLocalApiError(ApiErrorCode.InvalidImageType))
-      return false
-    }
-    if (file.size > LINK_FORM_LIMITS.imageBytes) {
-      errorMessage.value = getApiErrorMessage(createLocalApiError(ApiErrorCode.ImageTooLarge))
-      return false
-    }
-    return true
+  function validateImage(file: File) {
+    if (!LINK_IMAGE_UPLOAD_TYPES.has(file.type))
+      throw createLocalApiError(ApiErrorCode.InvalidImageType)
+    if (file.size > LINK_FORM_LIMITS.imageBytes)
+      throw createLocalApiError(ApiErrorCode.ImageTooLarge)
+  }
+
+  return {
+    copied,
+    copyShortUrl,
+    copyFailed,
+    createLink,
+    created,
+    createdPreviewImage,
+    creating,
+    errorMessage,
+    markPreviewFailed,
+    qrCode,
+    qrFailed,
+    retryQrCode,
+    resetResult,
+    shouldShowCreatedPreviewImage,
   }
 }
